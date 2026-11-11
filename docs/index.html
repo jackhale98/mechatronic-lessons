@@ -747,7 +747,14 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </ul>
 
   <h2>Velocity from an encoder</h2>
-  <p>Differencing counts over a fixed time gives velocity, but at low speed only a few counts arrive per sample, so the estimate is coarse and noisy. Options: a longer window (adds delay), timing the interval between edges, or a filter or observer. This trade between noise and delay comes up again in Module 15.</p>
+  <p>An encoder measures position. Every velocity loop has to derive speed from it, and each way of doing that trades noise against delay. The trade comes up again in Modules 15 and 16.</p>
+  <ul>
+    <li><strong>Count differencing</strong> (frequency measurement): ω = Δcounts·(2π/CPR)/(N·T<sub>s</sub>) over a window of N samples. One count more or less changes the result by 2π/(CPR·N·T<sub>s</sub>), which is 15 rpm for 4000 counts per rev at 1 kHz. That step is the same at every speed, so the method is poor at low speed and good at high speed. A longer window shrinks the step and adds a delay of about N·T<sub>s</sub>/2.</li>
+    <li><strong>Edge timing</strong> (period measurement): capture a timer at each edge and compute ω = (2π/CPR)/Δt. The relative error is about the count rate times the timer resolution, so it is excellent at low speed and degrades at high speed, where only a few timer ticks separate the edges. It also updates only when an edge arrives, so at a crawl the estimate goes stale. Real encoders have uneven edge spacing, so time a full cycle of four edges.</li>
+    <li><strong>Both together</strong> (the M/T method): count the edges in the window and time the first and last of them. This works across the whole speed range and is what most servo drives do.</li>
+    <li><strong>A tracking observer</strong> treats the count as a noisy position measurement and runs a small model, θ̇ = ω, corrected by the position error. It smooths quantization without a hard window, at the cost of a lag of about 2/ω<sub>o</sub> for an observer bandwidth ω<sub>o</sub>. Feeding the model the commanded torque removes most of that lag (Module 17).</li>
+  </ul>
+  <p>The two basic methods are equally good where the count rate is 1/√(N·T<sub>s</sub>·δt). With a 1 ms sample and a 1 µs timer that is about 32 kHz, or 470 rpm on a 4000 count encoder: use edge timing below it and differencing above it.</p>
 
   <h2>Force, torque and strain</h2>
   <p>A strain gauge's resistance changes by ΔR/R = GF·ε, where the gauge factor GF ≈ 2 and ε is strain. That change is tiny (0.1% at 500 µε), so gauges sit in a Wheatstone bridge, which outputs only the imbalance. A quarter bridge (one active gauge) outputs about V<sub>ex</sub>·GF·ε/4. A full bridge with four active gauges gives 4× the signal and cancels temperature drift. Load cells and torque transducers are full bridges rated in mV/V. The output, a few millivolts, needs an instrumentation amplifier before the ADC.</p>
@@ -767,6 +774,8 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <div class="eq"><code>ΔR/R = GF·ε</code><span>Strain gauge</span></div>
     <div class="eq"><code>V<sub>out</sub> ≈ V<sub>ex</sub>·GF·ε / 4</code><span>Quarter bridge (half bridge ½, full bridge 1)</span></div>
     <div class="eq"><code>V<sub>shunt</sub> = I·R<sub>shunt</sub></code><span>Shunt current sensing</span></div>
+    <div class="eq"><code>Δω = 2π / (CPR·N·T<sub>s</sub>)</code><span>Velocity step of count differencing over N samples</span></div>
+    <div class="eq"><code>Δω/ω ≈ f<sub>count</sub>·δt</code><span>Relative error of edge timing with timer resolution δt</span></div>
   </div>
 
   <section class="lab" data-lab="encoder">
@@ -791,6 +800,21 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <div class="try"><strong>Try this</strong><ul>
       <li>Switch from a quarter to a full bridge. The signal quadruples, and so does resolution per count.</li>
       <li>Raise the gain until the output clips, then back off. Choose gain so full-scale strain uses most of the ADC range.</li>
+    </ul></div>
+  </section>
+
+  <section class="lab" data-lab="velest">
+    <div class="lab-head"><span class="lab-tag">Lab 07c</span><h3>Velocity from encoder counts</h3></div>
+    <p class="lab-note">A shaft turns at the mean speed you set, varying by ±50% five times a second. Three estimators read the same encoder: count differencing, edge timing with a 1 µs timer, and a tracking observer. Errors are measured after the first 100 ms.</p>
+    <div class="controls" id="c-velest"></div>
+    <div class="screen"><canvas id="cv-velest"></canvas></div>
+    <div class="legend"><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>True speed</span><span class="lg"><i style="--c:var(--ch2)"></i>Count differencing</span><span class="lg"><i style="--c:var(--ch1)"></i>Edge timing</span><span class="lg"><i style="--c:var(--ch3)"></i>Tracking observer</span></div>
+    <div class="readouts" id="ro-velest"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>At the default 60 rpm, differencing jumps in 15 rpm steps while edge timing sits on the true curve. Raise the speed to 3000 rpm and they swap: the edges are now 5 µs apart and a 1 µs timer can't resolve them.</li>
+      <li>Back at 60 rpm, widen the differencing window. The error falls until about 5 samples, then rises again as the delay takes over. Every filter has a best setting like this.</li>
+      <li>Lower the observer bandwidth to 10 Hz. The trace is smooth but lags the true speed. That lag is phase the velocity loop has to pay for.</li>
+      <li>Switch to 400 counts per rev at 10 rpm. An edge arrives only every 15 ms, and no method does well: at low speed, resolution is what you need to buy.</li>
     </ul></div>
   </section>
 </section>
@@ -974,6 +998,18 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   <p>A second-order system has G(s) = ω<sub>n</sub>²/(s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²). It is the familiar mass–spring–damper, m·ẍ + c·ẋ + k·x = F, with ω<sub>n</sub> = √(k/m) and ζ = c/(2√(km)). Its poles sit at −ζω<sub>n</sub> ± jω<sub>n</sub>√(1−ζ²). Many closed position loops behave this way.</p>
   <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>A proportional position loop is a virtual spring and the derivative term is a virtual damper. Tuning PD gains is choosing k and c for a mass–spring–damper you build in software (Module 15).</p></div>
 
+  <details class="deriv"><summary>Show derivation: the DC motor as a first-order system, and when it isn't</summary><div class="d">
+    <p>Start from the two motor equations of Module 09 with no load torque. If the inductance is small, the current follows the voltage almost instantly, so i = (V − K<sub>e</sub>ω)/R. Put that into the torque balance:</p>
+    <div class="math">
+      <div>J·dω/dt = K<sub>t</sub>(V − K<sub>e</sub>ω)/R − b·ω</div>
+      <div>(J·R/(K<sub>t</sub>K<sub>e</sub> + b·R))·dω/dt + ω = (K<sub>t</sub>/(K<sub>t</sub>K<sub>e</sub> + b·R))·V</div>
+    </div>
+    <p>That is τ·dω/dt + ω = K·V. Friction is usually small next to the back-EMF term (b·R ≪ K<sub>t</sub>K<sub>e</sub>), which leaves τ<sub>m</sub> = J·R/(K<sub>t</sub>K<sub>e</sub>) and K = 1/K<sub>e</sub>. The back-EMF is what makes a voltage-driven motor self-regulating: it acts as a damper of size K<sub>t</sub>K<sub>e</sub>/R.</p>
+    <p>Keep the inductance and the denominator becomes second order. With b = 0:</p>
+    <div class="math"><div>ω/V = (1/K<sub>e</sub>) / (τ<sub>e</sub>τ<sub>m</sub>s² + τ<sub>m</sub>s + 1), &nbsp; τ<sub>e</sub> = L/R</div></div>
+    <p>Its poles are real when τ<sub>m</sub> ≥ 4τ<sub>e</sub>, and when τ<sub>m</sub> ≫ τ<sub>e</sub> they sit close to −1/τ<sub>m</sub> and −1/τ<sub>e</sub>: a slow mechanical pole and a fast electrical one. That is the usual case, and the reason the first-order model works. A low-inertia motor with a large inductance can have τ<sub>m</sub> &lt; 4τ<sub>e</sub>, and then its speed rings after a voltage step.</p>
+  </div></details>
+
   <h2>Step response specs</h2>
   <ul>
     <li><strong>Overshoot</strong> M<sub>p</sub> = e<sup>−πζ/√(1−ζ²)</sup>, depending only on ζ. ζ = 0.7 gives about 4.6%; ζ = 0.5 gives about 16%.</li>
@@ -981,6 +1017,35 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <li><strong>Settling time</strong> (2% band) t<sub>s</sub> ≈ 4/(ζω<sub>n</sub>), set by how far left the poles are.</li>
     <li><strong>Rise time</strong> (10–90%) t<sub>r</sub> ≈ 1.8/ω<sub>n</sub> for moderate damping.</li>
   </ul>
+
+  <details class="deriv"><summary>Show derivation: overshoot, peak time and settling time</summary><div class="d">
+    <p>For 0 &lt; ζ &lt; 1, the unit step response of the standard second-order system is</p>
+    <div class="math"><div>y(t) = 1 − e<sup>−ζω<sub>n</sub>t</sup>·[cos ω<sub>d</sub>t + (ζ/√(1−ζ²))·sin ω<sub>d</sub>t]</div></div>
+    <p>Differentiate. The cosine terms cancel and what remains is the impulse response:</p>
+    <div class="math"><div>dy/dt = (ω<sub>n</sub>/√(1−ζ²))·e<sup>−ζω<sub>n</sub>t</sup>·sin ω<sub>d</sub>t</div></div>
+    <p>The slope is zero whenever sin ω<sub>d</sub>t = 0. The first zero after the start, ω<sub>d</sub>t = π, is the peak, so t<sub>p</sub> = π/ω<sub>d</sub>. At that instant the cosine is −1 and the sine is 0:</p>
+    <div class="math"><div>y(t<sub>p</sub>) = 1 + e<sup>−ζω<sub>n</sub>π/ω<sub>d</sub></sup> = 1 + e<sup>−πζ/√(1−ζ²)</sup></div></div>
+    <p>The excess over 1 is the overshoot M<sub>p</sub>. Solving for the damping that gives a wanted overshoot: ζ = −ln M<sub>p</sub>/√(π² + ln²M<sub>p</sub>).</p>
+    <p>For settling, the bracket above never exceeds 1/√(1−ζ²), so the response stays inside the envelope 1 ± e<sup>−ζω<sub>n</sub>t</sup>/√(1−ζ²). The envelope enters a 2% band when ζω<sub>n</sub>t = ln(50/√(1−ζ²)), which is 3.9 at small ζ and 4.2 at ζ = 0.7. Hence t<sub>s</sub> ≈ 4/(ζω<sub>n</sub>). For a 5% band the constant is about 3.</p>
+  </div></details>
+
+  <h2>Designing from specifications</h2>
+  <p>Each time-domain spec marks out a region of the s-plane, and the design job is to put the dominant poles inside all of them at once.</p>
+  <ul>
+    <li><strong>Overshoot</strong> fixes a minimum ζ. Lines of constant ζ are rays from the origin at an angle cos<sup>−1</sup>ζ from the negative real axis, so the poles must lie inside a wedge.</li>
+    <li><strong>Settling time</strong> fixes a minimum ζω<sub>n</sub>, the distance of the poles from the imaginary axis: a vertical line the poles must be left of.</li>
+    <li><strong>Rise time or bandwidth</strong> fixes a minimum ω<sub>n</sub>, the distance from the origin: a circle the poles must be outside.</li>
+  </ul>
+  <div class="callout"><span class="tag">Worked example</span><p>An axis must settle within 0.2 s with no more than 10% overshoot. Overshoot: ζ ≥ −ln 0.1/√(π² + ln²0.1) = 2.30/3.90 = 0.59. Settling: ζω<sub>n</sub> ≥ 4/0.2 = 20 s⁻¹, so ω<sub>n</sub> ≥ 20/0.59 = 34 rad/s (5.4 Hz). The poles go at −20 ± j27 rad/s, and the peak arrives at t<sub>p</sub> = π/27 = 0.12 s. For a 1 kg mass that is a spring of ω<sub>n</sub>² = 1150 N/m and a damper of 2ζω<sub>n</sub> = 40 N·s/m. Set ζ = 0.59 and ω<sub>n</sub> = 34 rad/s in Lab 14 to check it.</p></div>
+
+  <h2>Zeros, extra poles and dominant poles</h2>
+  <p>Real loops are never exactly second order. They carry extra poles from filters, current loops and delays, and zeros from PI and PD controllers. The second-order formulas still work when one pole pair is <strong>dominant</strong>, meaning everything else is much farther from the origin.</p>
+  <ul>
+    <li><strong>A zero</strong> at −z adds a scaled copy of the response's derivative: y = y<sub>0</sub> + (1/z)·dy<sub>0</sub>/dt. The response rises faster and overshoots more. A PI controller puts a zero in the closed loop, which is why a loop with integral action overshoots more than its ζ suggests.</li>
+    <li><strong>A right-half-plane zero</strong> subtracts the derivative instead, so the output first moves the wrong way. No controller can remove that, and it caps the usable bandwidth at roughly half the zero's frequency. It appears when you sense a flexible structure away from the actuator (Module 18).</li>
+    <li><strong>An extra pole</strong> at −p is a low-pass filter on the response: slower rise, less overshoot, more lag in the loop.</li>
+  </ul>
+  <div class="callout"><span class="tag">Rule of thumb</span><p>An extra pole or zero more than about 5× farther from the origin than the dominant pair's real part ζω<sub>n</sub> changes the step response by only a few percent, and can be ignored for hand design. Closer than that, include it. Lab 14b lets you find the boundary.</p></div>
 
   <h2>Block diagrams</h2>
   <p>Blocks in series multiply. A loop with forward path G and feedback H has closed-loop transfer function G/(1 + G·H). Here is the DC motor from Module 09 as a block diagram. Note the back-EMF path: it is a built-in feedback loop that gives the motor its natural damping.</p>
@@ -1012,6 +1077,25 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </figure>
   <p>From voltage to angle the motor is θ/V = K<sub>t</sub> / (s·[(Ls+R)(Js+b) + K<sub>t</sub>K<sub>e</sub>]). The lone s in front is an integrator. A position axis is “type 1”: a constant voltage gives a constant speed, so position ramps forever.</p>
 
+  <h2>Steady-state error and system type</h2>
+  <p>How well a loop follows a command in the long run depends on how many pure integrators its open-loop transfer function L(s) contains. That count is the <strong>system type</strong>. Each integrator removes one kind of steady error.</p>
+  <div class="tbl"><table>
+    <tr><th>Type</th><th>Example</th><th>Step command</th><th>Ramp at rate v</th><th>Constant acceleration a</th></tr>
+    <tr><td>0</td><td>Speed loop with P control</td><td>1/(1 + K)</td><td>grows without limit</td><td>grows without limit</td></tr>
+    <tr><td>1</td><td>Position loop with P or PD; speed loop with PI</td><td>0</td><td>v/K<sub>v</sub></td><td>grows without limit</td></tr>
+    <tr><td>2</td><td>Position loop with PI or PID</td><td>0</td><td>0</td><td>a/K<sub>a</sub></td></tr>
+  </table></div>
+  <p>K is the loop's DC gain, K<sub>v</sub> = lim s·L(s) is the velocity constant in s⁻¹, and K<sub>a</sub> = lim s²·L(s). A P position loop on a motor is type 1, so it reaches a fixed target exactly but lags a constant-velocity move by v/K<sub>v</sub>. Servo engineers quote K<sub>v</sub> for that reason, and Module 15's feedforward exists to remove the lag without raising the gain.</p>
+  <p>Disturbances follow a stricter rule. A constant disturbance is rejected completely only if an integrator sits <em>before</em> the point where it enters the loop. The motor's own integrator (speed to position) comes after the load torque, so it doesn't help: a type-1 position loop still sags under load until the controller gets an integral term.</p>
+  <details class="deriv"><summary>Show derivation: the error constants</summary><div class="d">
+    <p>With unity feedback the error is E(s) = R(s)/(1 + L(s)). The final value theorem says that if the loop is stable, the long-run value of a signal is lim<sub>s→0</sub> s·E(s). Write the loop as L(s) = K·N(s)/(s<sup>n</sup>·D(s)) with N(0) = D(0) = 1, so n is the type.</p>
+    <div class="math">
+      <div>step, R = 1/s: &nbsp; e<sub>ss</sub> = lim 1/(1 + L) = 1/(1 + K) for n = 0, and 0 for n ≥ 1</div>
+      <div>ramp, R = v/s²: &nbsp; e<sub>ss</sub> = lim v/(s + s·L) = v/lim s·L = v/K<sub>v</sub> for n = 1, and 0 for n ≥ 2</div>
+    </div>
+    <p>For the motor under P position control, L = (K<sub>p</sub>/K<sub>e</sub>)/(s(τ<sub>m</sub>s + 1)), so K<sub>v</sub> = K<sub>p</sub>/K<sub>e</sub>. The theorem only applies to a stable loop: an unstable one has no final value.</p>
+  </div></details>
+
   <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
     <div class="eq"><code>G(s) = K / (τs + 1)</code><span>First order</span></div>
     <div class="eq"><code>G(s) = ω<sub>n</sub>² / (s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²)</code><span>Second order</span></div>
@@ -1019,6 +1103,9 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <div class="eq"><code>t<sub>s</sub> ≈ 4/(ζω<sub>n</sub>) &nbsp; t<sub>p</sub> = π/ω<sub>d</sub></code><span>Settling (2%) and peak time</span></div>
     <div class="eq"><code>ω<sub>d</sub> = ω<sub>n</sub>√(1−ζ²)</code><span>Damped natural frequency</span></div>
     <div class="eq"><code>T(s) = G / (1 + G·H)</code><span>Closed-loop transfer function</span></div>
+    <div class="eq"><code>ζ = −ln M<sub>p</sub> / √(π² + ln²M<sub>p</sub>)</code><span>Damping needed for an overshoot M<sub>p</sub></span></div>
+    <div class="eq"><code>τ<sub>m</sub> = J·R/(K<sub>t</sub>K<sub>e</sub>), real poles if τ<sub>m</sub> ≥ 4τ<sub>e</sub></code><span>Motor speed response to voltage</span></div>
+    <div class="eq"><code>e<sub>ramp</sub> = v/K<sub>v</sub>, &nbsp; K<sub>v</sub> = lim s·L(s)</code><span>Following error of a type-1 loop</span></div>
   </div>
 
   <section class="lab" data-lab="dynamics">
@@ -1030,10 +1117,21 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <div class="screen short"><canvas id="cv-poles"></canvas></div>
     <div class="legend"><span class="lg"><i style="--c:var(--ch3)"></i>Poles in the s-plane (× marks)</span><span class="lg"><i class="dash" style="--c:var(--ch4)"></i>Line of constant ζ</span></div>
     <div class="readouts" id="ro-dynamics"></div>
+    <div class="sublab">
+      <h4>Lab 14b · One extra zero or pole</h4>
+      <p class="lab-note">A pole pair with ω<sub>n</sub> = 10 rad/s, plus one real zero or pole whose distance from the origin you set as a multiple of ζω<sub>n</sub>. The dashed curve is the pole pair alone.</p>
+      <div class="controls" id="c-pz"></div>
+      <div class="screen short"><canvas id="cv-pz"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>With the extra zero or pole</span><span class="lg"><i class="dash" style="--c:var(--scope-text)"></i>Pole pair alone</span></div>
+      <div class="readouts" id="ro-pz"></div>
+    </div>
     <div class="try"><strong>Try this</strong><ul>
       <li>Hold ω<sub>n</sub> and sweep ζ from 0.1 to 1. Poles move along a circle of radius ω<sub>n</sub> toward the real axis, and overshoot vanishes at ζ = 1.</li>
       <li>Push ζ to 2. Overdamped is not faster: one pole slides toward the origin and settling slows down.</li>
       <li>Hold ζ = 0.7 and double ω<sub>n</sub>. Same shape, twice as fast.</li>
+      <li>In 14b, add a zero at 1× ζω<sub>n</sub>. Overshoot jumps from 16% to about 70%. Slide it out to 5× and the response is back within a couple of percent of the dashed curve.</li>
+      <li>Switch to a right-half-plane zero. The response starts by going the wrong way, and the closer the zero, the deeper the dip.</li>
+      <li>Add an extra pole at 1×. The overshoot disappears but the rise time doubles: that is what a heavy filter does to a loop.</li>
     </ul></div>
   </section>
 </section>
@@ -1051,11 +1149,41 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </ul>
   <p>Proportional control alone leaves an error against a constant disturbance torque. For the motor in the lab below, that error is e<sub>ss</sub> = T<sub>d</sub>·R/(K<sub>t</sub>·K<sub>p</sub>): the virtual spring has to deflect to produce the torque.</p>
 
+  <details class="deriv"><summary>Show derivation: the closed loop under P and PD control</summary><div class="d">
+    <p>Take the voltage-driven motor with small inductance, so i = (u − K<sub>e</sub>θ̇)/R, and a disturbance torque T<sub>d</sub>. Multiply the torque balance by R/K<sub>t</sub> to work in volts:</p>
+    <div class="math"><div>(J·R/K<sub>t</sub>)·θ̈ + (K<sub>e</sub> + b·R/K<sub>t</sub>)·θ̇ = u − (R/K<sub>t</sub>)·T<sub>d</sub></div></div>
+    <p>Apply u = K<sub>p</sub>(r − θ) − K<sub>d</sub>θ̇, with the derivative on the measurement:</p>
+    <div class="math"><div>(J·R/K<sub>t</sub>)·θ̈ + (K<sub>e</sub> + b·R/K<sub>t</sub> + K<sub>d</sub>)·θ̇ + K<sub>p</sub>·θ = K<sub>p</sub>·r − (R/K<sub>t</sub>)·T<sub>d</sub></div></div>
+    <p>This is a mass–spring–damper. K<sub>p</sub> is the spring, and K<sub>d</sub> adds to the damping the back-EMF already provides. Matching it to s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²:</p>
+    <div class="math">
+      <div>ω<sub>n</sub> = √(K<sub>p</sub>·K<sub>t</sub>/(J·R)), &nbsp; 2ζω<sub>n</sub> = (K<sub>e</sub> + b·R/K<sub>t</sub> + K<sub>d</sub>)·K<sub>t</sub>/(J·R)</div>
+    </div>
+    <p>At rest the derivatives vanish, so K<sub>p</sub>(r − θ) = (R/K<sub>t</sub>)·T<sub>d</sub>, which is the steady error e<sub>ss</sub> = T<sub>d</sub>·R/(K<sub>t</sub>·K<sub>p</sub>) quoted above.</p>
+    <p>For the lab motor, K<sub>t</sub>/(J·R) = 1000 rad/(s²·V). With K<sub>p</sub> = 10 V/rad and no K<sub>d</sub>: ω<sub>n</sub> = 100 rad/s and ζ = 0.0305 × 1000/(2 × 100) = 0.15, which predicts 62% overshoot. The lab's P-only preset shows 64%. A 0.05 N·m load gives e<sub>ss</sub> = 0.05 × 1.5/(0.03 × 10) = 0.25 rad = 14.3°, as the lab shows.</p>
+  </div></details>
+  <details class="deriv"><summary>Show derivation: how much integral gain is too much</summary><div class="d">
+    <p>Add K<sub>i</sub>∫e dt to the PD law and differentiate the closed-loop equation once to clear the integral. The characteristic polynomial becomes third order:</p>
+    <div class="math"><div>s³ + 2ζω<sub>n</sub>·s² + ω<sub>n</sub>²·s + K<sub>i</sub>·K<sub>t</sub>/(J·R) = 0</div></div>
+    <p>with ζ and ω<sub>n</sub> as defined for the PD loop. A cubic s³ + a<sub>2</sub>s² + a<sub>1</sub>s + a<sub>0</sub> with positive coefficients has all its roots in the left half-plane only if a<sub>2</sub>·a<sub>1</sub> &gt; a<sub>0</sub> (the Routh–Hurwitz condition). Here that reads 2ζω<sub>n</sub>·ω<sub>n</sub>² &gt; K<sub>i</sub>K<sub>t</sub>/(J·R), and since ω<sub>n</sub>² = K<sub>p</sub>K<sub>t</sub>/(J·R):</p>
+    <div class="math"><div>K<sub>i</sub> &lt; 2ζω<sub>n</sub>·K<sub>p</sub></div></div>
+    <p>The ratio K<sub>i</sub>/K<sub>p</sub> is the integral corner frequency in rad/s, so the condition says the integrator must cut in more slowly than the loop's damping rate 2ζω<sub>n</sub>. That limit is where the loop goes unstable. For a well-damped response keep K<sub>i</sub>/K<sub>p</sub> between ω<sub>n</sub>/10 and ω<sub>n</sub>/5. In the lab, K<sub>p</sub> = 10 and K<sub>d</sub> = 0 give 2ζω<sub>n</sub> = 30.5 s⁻¹ and a limit of K<sub>i</sub> = 305; the simulation starts ringing without decay between 250 and 300, a little early because of its sampling delay.</p>
+  </div></details>
+  <div class="callout"><span class="tag">Worked example</span><p>Tune the lab motor for ω<sub>n</sub> = 150 rad/s (24 Hz) with ζ = 0.9. Spring: K<sub>p</sub> = ω<sub>n</sub>²·J·R/K<sub>t</sub> = 22 500/1000 = 22.5 V/rad. Damper: K<sub>d</sub> = 2ζω<sub>n</sub>·J·R/K<sub>t</sub> − K<sub>e</sub> − b·R/K<sub>t</sub> = 0.270 − 0.0305 = 0.24 V·s/rad. Integral: K<sub>i</sub> = K<sub>p</sub>·ω<sub>n</sub>/10 ≈ 340 V/(rad·s), far below the limit of 2ζω<sub>n</sub>·K<sub>p</sub> = 6075. In Lab 15 with a 20° step, the PD gains alone give no overshoot and settle in about 35 ms, but sag 6.4° under the load. Adding the integral removes the sag and brings 14% overshoot, because PI action puts a zero in the closed loop (Module 14). Halving K<sub>i</sub> halves that overshoot and doubles the time to clear the sag.</p></div>
+
   <h2>Integrator windup</h2>
   <p>When the output saturates (the driver is at full voltage), the integrator keeps accumulating error it can't act on. When the error finally reverses, the oversized integral has to unwind, which causes large overshoot. <strong>Anti-windup</strong> stops integrating while the output is saturated and the error would push it further, or bleeds the integral back (back-calculation).</p>
 
   <h2>Feedforward</h2>
   <p>If you know the torque a move needs (J·α for acceleration, plus friction and gravity), add it directly to the output. Feedback then only corrects what the model got wrong. For motion profiles this improves tracking more than any amount of gain tuning.</p>
+
+  <p>For the voltage-driven motor, turn the torque into volts and add the back-EMF the move will generate:</p>
+  <div class="math"><div>u<sub>ff</sub> = K<sub>e</sub>·ω<sub>ref</sub> + (R/K<sub>t</sub>)·(J·α<sub>ref</sub> + b·ω<sub>ref</sub> + T<sub>f</sub>·sign ω<sub>ref</sub> + T<sub>g</sub>)</div></div>
+  <p>The term proportional to ω<sub>ref</sub> is <strong>velocity feedforward</strong> and the term proportional to α<sub>ref</sub> is <strong>acceleration feedforward</strong>. Two details matter in practice. For tracking, the derivative term should act on the velocity <em>error</em>, K<sub>d</sub>(ω<sub>ref</sub> − ω), or it drags against the commanded motion. And feedforward needs a smooth reference: it differentiates the profile, so a step command would ask for infinite voltage. Feed it trapezoidal or S-curve profiles (Module 22).</p>
+  <details class="deriv"><summary>Show derivation: following error without feedforward</summary><div class="d">
+    <p>During the constant-velocity part of a move the acceleration is zero and the integral has had little time to act. The motor needs a steady voltage of (K<sub>e</sub> + b·R/K<sub>t</sub>)·ω just to hold that speed. Without feedforward, the only source of that voltage is the proportional term acting on the error:</p>
+    <div class="math"><div>K<sub>p</sub>·e = (K<sub>e</sub> + b·R/K<sub>t</sub>)·ω &nbsp;⇒&nbsp; e = ω/K<sub>v</sub>, &nbsp; K<sub>v</sub> = K<sub>p</sub>/(K<sub>e</sub> + b·R/K<sub>t</sub>)</div></div>
+    <p>This is the type-1 ramp error from Module 14. While accelerating, the error grows by a further (J·R/K<sub>t</sub>)·α/K<sub>p</sub>. Supplying both voltages directly leaves the feedback with only the model's mistakes to correct, so the remaining error scales with the model error rather than with the speed of the move. With K<sub>p</sub> = 30 V/rad and a cruise speed of 188 rad/s, the lab motor lags by 0.0305 × 188/30 = 0.19 rad = 11°.</p>
+  </div></details>
 
   <h2>A practical tuning sequence</h2>
   <ol>
@@ -1083,11 +1211,29 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     return sat;
 }</pre>
 
+  <h2>Derivative filtering and quantization</h2>
+  <p>The code above low-pass filters the derivative with <code>alpha</code> = 1 − e<sup>−2π·f<sub>c</sub>·T<sub>s</sub></sup>. The filter is not optional. An encoder reports position in steps of q = 2π/CPR, so the raw derivative jumps by q/T<sub>s</sub> every time one count arrives. With 4000 counts per rev at 2 kHz that is 3.1 rad/s per count, and K<sub>d</sub> = 0.3 turns each count into a 0.94 V kick. At 400 counts per rev the kick is 9.4 V.</p>
+  <p>Choosing the corner f<sub>c</sub> is the noise-against-delay trade from Module 07. Put it at 5–10× the loop's bandwidth so it costs only a few degrees of phase there (Module 16). If the output still chatters, the fixes in order of preference are a finer encoder, a velocity estimate from edge timing or an observer (Lab 07c), and only then a lower corner or less K<sub>d</sub>.</p>
+
+  <h2>Common mistakes</h2>
+  <ul>
+    <li><strong>Gains without units.</strong> A K<sub>p</sub> tuned in volts per count is wrong the day the encoder changes. Convert to SI at the edge of the controller and tune in V/rad or N·m/rad.</li>
+    <li><strong>Sample time folded into the gains.</strong> Writing <code>integ += e</code> instead of <code>e*Ts</code> works until the loop rate changes, and then K<sub>i</sub> and K<sub>d</sub> silently change with it.</li>
+    <li><strong>Integrating while disabled or saturated.</strong> Reset the integrator when the drive is disabled, and clamp or back-calculate while the output is limited.</li>
+    <li><strong>Tuning with small steps only.</strong> A loop that looks perfect on a 1° step can overshoot badly on a 90° step once the voltage saturates. Test at full size, with real profiles.</li>
+    <li><strong>Raising gain to fix following error.</strong> Following error in a move is a feedforward problem. Gain should be set by stability margin and disturbance rejection.</li>
+    <li><strong>Wrong feedback sign.</strong> If the axis runs away at the first enable, the encoder and motor directions disagree. Check with a low current limit before closing any loop.</li>
+  </ul>
+
   <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
     <div class="eq"><code>u = K<sub>p</sub>e + K<sub>i</sub>∫e dt + K<sub>d</sub>·de/dt</code><span>PID law</span></div>
     <div class="eq"><code>e<sub>ss</sub> = T<sub>d</sub>·R / (K<sub>t</sub>·K<sub>p</sub>)</code><span>P-only error against disturbance T<sub>d</sub> (voltage-driven motor)</span></div>
     <div class="eq"><code>u<sub>ff</sub> = J·α<sub>ref</sub> + b·ω<sub>ref</sub> + T<sub>f</sub> + T<sub>g</sub></code><span>Torque feedforward</span></div>
     <div class="eq"><code>integ += e·T<sub>s</sub> (unless saturated)</code><span>Discrete integral with anti-windup</span></div>
+    <div class="eq"><code>ω<sub>n</sub> = √(K<sub>p</sub>K<sub>t</sub>/(J·R)), &nbsp; 2ζω<sub>n</sub> = (K<sub>e</sub> + bR/K<sub>t</sub> + K<sub>d</sub>)·K<sub>t</sub>/(J·R)</code><span>PD position loop on a voltage-driven motor</span></div>
+    <div class="eq"><code>K<sub>i</sub> &lt; 2ζω<sub>n</sub>·K<sub>p</sub></code><span>Stability limit on integral gain; use K<sub>i</sub>/K<sub>p</sub> ≈ ω<sub>n</sub>/10 to ω<sub>n</sub>/5</span></div>
+    <div class="eq"><code>u<sub>ff</sub> = K<sub>e</sub>ω<sub>ref</sub> + (R/K<sub>t</sub>)(J·α<sub>ref</sub> + b·ω<sub>ref</sub>)</code><span>Voltage feedforward for a motor</span></div>
+    <div class="eq"><code>e = ω/K<sub>v</sub>, &nbsp; K<sub>v</sub> = K<sub>p</sub>/(K<sub>e</sub> + bR/K<sub>t</sub>)</code><span>Cruise following error without feedforward</span></div>
   </div>
 
   <section class="lab" data-lab="pid">
@@ -1098,11 +1244,22 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <div class="screen"><canvas id="cv-pid"></canvas></div>
     <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Shaft angle (left axis)</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Target</span><span class="lg"><i style="--c:var(--ch2)"></i>Motor voltage (right axis)</span><span class="lg"><i class="dash" style="--c:var(--ch4)"></i>Load torque applied</span></div>
     <div class="readouts" id="ro-pid"></div>
+    <div class="sublab">
+      <h4>Lab 15b · Tracking a move with feedforward</h4>
+      <p class="lab-note">The same motor follows a one-third trapezoidal move instead of a step, with the Tuned PID gains (K<sub>p</sub> = 30, K<sub>i</sub> = 200, K<sub>d</sub> = 0.3, derivative on velocity error). Choose which feedforward terms the controller adds, and how wrong its inertia estimate is.</p>
+      <div class="controls" id="c-ff"></div>
+      <div class="screen"><canvas id="cv-ff"></canvas></div>
+      <div class="legend"><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Commanded angle</span><span class="lg"><i style="--c:var(--ch1)"></i>Shaft angle</span><span class="lg"><i style="--c:var(--ch3)"></i>Following error (right axis)</span></div>
+      <div class="readouts" id="ro-ff"></div>
+    </div>
     <div class="try"><strong>Try this</strong><ul>
       <li>Load the P-only preset. It overshoots and rings, then sags under the load torque. Add K<sub>d</sub> to damp it and K<sub>i</sub> to remove the sag.</li>
       <li>Load the windup preset, then turn anti-windup on. Same gains, far less overshoot.</li>
       <li>Drop the loop rate to 100 Hz with the default gains. The sampling delay alone destabilizes a loop that was fine at 2 kHz.</li>
       <li>Set the encoder to 400 counts/rev and watch the voltage trace chatter. The derivative term amplifies quantization.</li>
+      <li>In 15b, start with no feedforward: the shaft trails the command by up to 17°. Add velocity feedforward and the cruise error goes, leaving the acceleration and deceleration humps. Add acceleration feedforward and the peak falls below 1°, with the same gains throughout.</li>
+      <li>With both terms on, set the inertia estimate 20% wrong. About 2° of error comes back: feedforward is only as good as the model, which is why Module 20 measures it.</li>
+      <li>Shorten the move to 50 ms. The voltage hits ±24 V and the error is large whatever you add. Feedforward can't supply voltage the supply doesn't have.</li>
     </ul></div>
   </section>
 </section>
@@ -1114,12 +1271,58 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <h2>Frequency response</h2>
   <p>Drive a linear system with a sine and the output is a sine at the same frequency, scaled and shifted. A Bode plot shows that scale (in dB) and shift (in degrees) across frequency. For a loop, look at the open-loop transfer function L(s) = C(s)·G(s): controller times plant, around the loop once.</p>
 
+  <h2>Sketching a Bode plot by hand</h2>
+  <p>A transfer function is a product of simple factors. On a Bode plot the magnitudes in dB add and the phases add, so the whole plot is a sum of a few standard shapes. Being able to sketch them is what lets you look at a loop and see what to change.</p>
+  <div class="tbl"><table>
+    <tr><th>Factor</th><th>Magnitude</th><th>Phase</th></tr>
+    <tr><td>Gain K</td><td>Flat at 20·log K</td><td>0°</td></tr>
+    <tr><td>Integrator 1/s</td><td>−20 dB per decade at all frequencies, 0 dB at 1 rad/s</td><td>−90°</td></tr>
+    <tr><td>Real pole 1/(τs + 1)</td><td>Flat to the corner 1/τ, then −20 dB per decade; −3 dB at the corner</td><td>0° to −90°, −45° at the corner, spread over a decade each side</td></tr>
+    <tr><td>Real zero (τs + 1)</td><td>The mirror image: +20 dB per decade above the corner</td><td>0° to +90°</td></tr>
+    <tr><td>Complex pole pair</td><td>−40 dB per decade above ω<sub>n</sub>, with a peak of about 1/(2ζ) at ω<sub>n</sub></td><td>0° to −180°, the sharper the smaller ζ</td></tr>
+    <tr><td>Delay e<sup>−sT</sup></td><td>0 dB</td><td>−ω·T radians, with no lower limit</td></tr>
+  </table></div>
+  <p>For well-behaved loops the slope and the phase are tied together: a magnitude falling at −20 dB per decade goes with about −90° of phase, and −40 dB per decade with about −180°. So a loop that crosses 0 dB on a long −20 dB per decade slope has good phase margin, and one that crosses at −40 dB per decade has almost none. Much of loop shaping comes down to arranging that slope at crossover. Delays and right-half-plane zeros break the rule by taking phase without changing the slope.</p>
+
   <h2>Crossover and phase margin</h2>
   <p>The <strong>crossover frequency</strong> ω<sub>c</sub> is where |L| = 1 (0 dB). It is roughly the closed-loop bandwidth: the loop follows commands and rejects disturbances below it and ignores them above it. The <strong>phase margin</strong> is how far the loop phase is from −180° at crossover: PM = 180° + ∠L(jω<sub>c</sub>). At −180° the feedback reverses sign and the loop oscillates. Aim for 45–60°. As a rule of thumb, closed-loop damping is about ζ ≈ PM/100.</p>
   <p>The <strong>gain margin</strong> is how much the gain could rise before the loop goes unstable, measured where the phase crosses −180°.</p>
 
+  <details class="deriv"><summary>Show derivation: phase margin and damping ratio</summary><div class="d">
+    <p>The loop L(s) = ω<sub>n</sub>²/(s(s + 2ζω<sub>n</sub>)) closes to exactly the standard second-order system, since L/(1 + L) = ω<sub>n</sub>²/(s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²). Its crossover is where |L| = 1:</p>
+    <div class="math"><div>ω<sub>n</sub>⁴ = ω<sub>c</sub>²(ω<sub>c</sub>² + 4ζ²ω<sub>n</sub>²) &nbsp;⇒&nbsp; (ω<sub>c</sub>/ω<sub>n</sub>)² = √(1 + 4ζ⁴) − 2ζ²</div></div>
+    <p>The phase there is −90° − atan(ω<sub>c</sub>/(2ζω<sub>n</sub>)), so</p>
+    <div class="math"><div>PM = 90° − atan(ω<sub>c</sub>/(2ζω<sub>n</sub>)) = atan(2ζ / √(√(1 + 4ζ⁴) − 2ζ²))</div></div>
+    <p>Evaluating: ζ = 0.3 gives 33°, ζ = 0.5 gives 52°, ζ = 0.6 gives 59° and ζ = 0.7 gives 65°. The straight line ζ ≈ PM/100 fits within a few degrees up to about 60° and then flattens, which is why the rule is quoted with that limit. It is exact only for this loop shape; extra lags and delay make a real loop ring a little more than the rule predicts.</p>
+  </div></details>
+
   <h2>Delay costs phase</h2>
   <p>A pure delay T<sub>d</sub> doesn't change magnitude but adds a phase lag of ω·T<sub>d</sub> radians, growing without limit. A digital controller adds about 1.5 sample periods of delay (computation plus the zero-order hold), so a 1 kHz loop has roughly 1.5 ms. At 100 Hz that costs 54° of phase. Filters, sensor latency and PWM add more. This is why the loop rate must be well above the crossover frequency.</p>
+
+  <details class="deriv"><summary>Show derivation: where 1.5 sample periods comes from</summary><div class="d">
+    <p>Two things happen between a sample and its effect. First, the controller needs time to compute. The usual arrangement samples at the start of one period and writes the output at the start of the next, which is one full period T<sub>s</sub> of delay.</p>
+    <p>Second, the output is then held constant for a whole period. A zero-order hold has the transfer function</p>
+    <div class="math"><div>(1 − e<sup>−sT<sub>s</sub></sup>)/(s·T<sub>s</sub>) = e<sup>−sT<sub>s</sub>/2</sup> · sin(ωT<sub>s</sub>/2)/(ωT<sub>s</sub>/2)</div></div>
+    <p>The first factor is a pure delay of half a period: a held value is, on average, half a period old. The second is a gain that stays within 2% of 1 below a tenth of the sample rate. Adding the two delays gives 1.5·T<sub>s</sub>. A loop that samples, computes and updates the PWM within the same period gets closer to 0.5·T<sub>s</sub> plus the computation time, which is why fast current loops are synchronized to the PWM carrier.</p>
+  </div></details>
+
+  <h2>Sensitivity, Nyquist and robustness</h2>
+  <p>Two transfer functions describe everything a loop does. The <strong>sensitivity</strong> S = 1/(1 + L) is the fraction of a disturbance or a command that remains as error. The <strong>complementary sensitivity</strong> T = L/(1 + L) is the fraction of the command, and of sensor noise, that reaches the output. They always sum to 1, so a loop can't reject disturbances and ignore sensor noise at the same frequency.</p>
+  <p>At low frequency |L| is large and |S| ≈ 1/|L|: disturbances are cut by the loop gain. Above crossover |S| ≈ 1 and feedback does nothing. In between, near crossover, |S| rises <em>above</em> 1, and there feedback makes disturbances worse than no control at all. The height of that peak, M<sub>s</sub> = max|S|, is the best single measure of how fragile a loop is.</p>
+  <p>The <strong>Nyquist plot</strong> shows why. Plot L(jω) as a curve in the complex plane as ω runs from low to high. For a loop that is stable when open, the closed loop is stable as long as the curve does not encircle the point −1. The distance from the curve to −1 is |1 + L| = 1/|S|, so the closest approach is 1/M<sub>s</sub>. Gain margin and phase margin each measure that clearance along one direction only; M<sub>s</sub> measures it in every direction, and guarantees both:</p>
+  <div class="math"><div>GM ≥ M<sub>s</sub>/(M<sub>s</sub> − 1), &nbsp; PM ≥ 2·asin(1/(2M<sub>s</sub>))</div></div>
+  <p>M<sub>s</sub> = 2 guarantees a gain margin of at least 2 (6 dB) and a phase margin of at least 29°. M<sub>s</sub> = 1.6 guarantees 8.5 dB and 36°. Aim for 1.3 to 2.</p>
+  <div class="callout"><span class="tag">Rule of thumb</span><p>Sensitivity is conserved. For any stable loop that rolls off by at least 40 dB per decade, Bode's integral says the area of ln|S| below 0 dB equals the area above it. Pushing disturbance rejection down at low frequency pushes the peak up somewhere near crossover, like pressing on a waterbed. Limited bandwidth (delay, resonances) forces that bulge into a narrow band, which is why delay hurts so much.</p></div>
+
+  <h2>Compensators: lead, lag and PI</h2>
+  <p>When raising the gain runs out of phase margin, reshape the loop instead.</p>
+  <ul>
+    <li><strong>Lead</strong>, C(s) = (1 + s/ω<sub>z</sub>)/(1 + s/ω<sub>p</sub>) with the pole a times higher than the zero, adds phase between the two corners. The most it adds is φ<sub>max</sub> = asin((a − 1)/(a + 1)), at the geometric mean √(ω<sub>z</sub>ω<sub>p</sub>): 37° for a = 4, 55° for a = 10. Center it on the crossover. The price is gain: it lifts everything above the pole by a factor a, noise and resonances included. A PD controller with a filtered derivative is a lead compensator.</li>
+    <li><strong>PI</strong>, C(s) = K<sub>p</sub>(1 + ω<sub>i</sub>/s), adds an integrator for zero steady error and costs phase: atan(ω<sub>i</sub>/ω<sub>c</sub>) at crossover. A corner at ω<sub>c</sub>/5 costs 11°, at ω<sub>c</sub>/10 costs 6°. Place it as high as the margin can afford, since a higher corner rejects disturbances sooner.</li>
+    <li><strong>Lag</strong>, a zero above a pole, raises low-frequency gain without an integrator and has the same phase cost just above its corners.</li>
+    <li><strong>Notch</strong> filters remove a resonance peak (Module 18) and cost phase below the notch.</li>
+  </ul>
+  <p>Lab 16b applies a lead and a PI term to the loop from Lab 16 and shows the effect on the margins, on |S| and on the Nyquist curve.</p>
 
   <h2>Cascaded loops</h2>
   <p>Servo drives nest three loops. Each inner loop is made much faster than the one around it, so the outer loop sees it as nearly ideal. Tune from the inside out: current first, then velocity, then position.</p>
@@ -1155,6 +1358,8 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </figure>
   <p>Mechanical resonances show up as peaks in the plant's magnitude. If a peak pokes above 0 dB near or beyond crossover, the loop rings or goes unstable there. Notch filters cut the peak, at some cost in phase.</p>
 
+  <div class="callout"><span class="tag">Worked example</span><p>Tune a velocity loop, then the position loop around it. The axis has J = 5 × 10⁻⁵ kg·m² in total and K<sub>t</sub> = 0.05 N·m/A, with a current loop of 1 kHz bandwidth and an 8 kHz controller. Target a 100 Hz velocity crossover, ω<sub>c</sub> = 628 rad/s. With the current loop treated as ideal the plant is K<sub>t</sub>/(J·s), so |L| = 1 needs K<sub>p</sub> = J·ω<sub>c</sub>/K<sub>t</sub> = 0.63 A·s/rad. Put the PI corner at ω<sub>c</sub>/5: K<sub>i</sub> = K<sub>p</sub> × 126 = 79 A/rad. Now the phase budget at 100 Hz. The integrating plant gives −90°. The current loop, a lag at 1 kHz, costs atan(0.1) = 6°. The 1.5-sample delay of 0.19 ms costs 7°. The PI costs 11°. Phase margin is 180 − 90 − 6 − 7 − 11 = 66°. The position loop is then a single gain: K<sub>v</sub> = 2π × 20 = 126 s⁻¹ puts its crossover at 20 Hz, a factor of 5 below, where the closed velocity loop costs only about 11°. Following error without feedforward is ω/K<sub>v</sub>, as in Module 14.</p></div>
+
   <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
     <div class="eq"><code>|L(jω<sub>c</sub>)| = 1</code><span>Crossover ≈ closed-loop bandwidth</span></div>
     <div class="eq"><code>PM = 180° + ∠L(jω<sub>c</sub>)</code><span>Phase margin; aim for 45–60°</span></div>
@@ -1162,6 +1367,11 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <div class="eq"><code>∠delay = −ω·T<sub>d</sub> (rad)</code><span>Phase lag of a pure delay</span></div>
     <div class="eq"><code>T<sub>d,digital</sub> ≈ 1.5·T<sub>s</sub></code><span>Effective delay of a sampled controller</span></div>
     <div class="eq"><code>f<sub>inner</sub> ≥ 5–10 × f<sub>outer</sub></code><span>Cascade bandwidth separation</span></div>
+    <div class="eq"><code>S = 1/(1 + L), &nbsp; T = L/(1 + L), &nbsp; S + T = 1</code><span>Sensitivity and complementary sensitivity</span></div>
+    <div class="eq"><code>GM ≥ M<sub>s</sub>/(M<sub>s</sub> − 1), &nbsp; PM ≥ 2·asin(1/(2M<sub>s</sub>))</code><span>Margins guaranteed by peak sensitivity M<sub>s</sub></span></div>
+    <div class="eq"><code>φ<sub>max</sub> = asin((a − 1)/(a + 1)) at √(ω<sub>z</sub>ω<sub>p</sub>)</code><span>Lead compensator, pole/zero ratio a</span></div>
+    <div class="eq"><code>∠PI = −atan(ω<sub>i</sub>/ω<sub>c</sub>)</code><span>Phase cost of a PI corner at crossover</span></div>
+    <div class="eq"><code>K<sub>p</sub> = J·ω<sub>c</sub>/K<sub>t</sub></code><span>Velocity-loop gain for a crossover ω<sub>c</sub></span></div>
   </div>
 
   <section class="lab" data-lab="frequency">
@@ -1174,10 +1384,26 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <div class="screen short"><canvas id="cv-freq-step"></canvas></div>
     <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Closed-loop step response</span></div>
     <div class="readouts" id="ro-frequency"></div>
+    <div class="sublab">
+      <h4>Lab 16b · Lead, PI and sensitivity</h4>
+      <p class="lab-note">The same loop with τ fixed at 5 ms and the gain set too high, so it starts with 24° of margin. Add a lead compensator and a PI corner. The lead here is scaled to unity gain at its center frequency, so placing it on the crossover adds phase without moving the crossover. Dashed curves are the loop without compensation.</p>
+      <div class="controls" id="c-ls"></div>
+      <div class="screen short"><canvas id="cv-ls-bode"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>|L| (dB, left)</span><span class="lg"><i style="--c:var(--ch2)"></i>∠L (°, right)</span><span class="lg"><i class="dash" style="--c:var(--ch1)"></i>Uncompensated</span></div>
+      <div class="screen short"><canvas id="cv-ls-sens"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch3)"></i>|S|: error left from a disturbance</span><span class="lg"><i style="--c:var(--ch4)"></i>|T|: command reaching the output</span><span class="lg"><i class="dash" style="--c:var(--ch3)"></i>|S| uncompensated</span></div>
+      <div class="screen" style="max-width:480px"><canvas id="cv-ls-nyq"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Nyquist curve L(jω)</span><span class="lg"><i style="--c:var(--ch5)"></i>Closest approach to −1 (radius 1/Mₛ)</span><span class="lg"><i class="dash" style="--c:var(--scope-axis)"></i>Unit circle</span></div>
+      <div class="readouts" id="ro-ls"></div>
+    </div>
     <div class="try"><strong>Try this</strong><ul>
       <li>Raise the gain. Crossover moves right, phase margin shrinks and overshoot grows.</li>
       <li>Add 3 ms of delay. Magnitude is unchanged but phase falls off a cliff; lower the gain to recover 45° of margin.</li>
       <li>Read the “equivalent loop rate” readout: it is the slowest sample rate whose delay fits your setting.</li>
+      <li>In 16b, add 40° of lead centered at 40 Hz, on the crossover. Phase margin goes from 24° to 64°, M<sub>s</sub> falls from 2.9 to 1.6, and the Nyquist curve pulls away from −1.</li>
+      <li>Move the lead's center down to 20 Hz. It now adds gain at crossover as well as phase, the crossover moves up to 55 Hz, and the margin falls back to 39°. Placement matters as much as size.</li>
+      <li>With the lead back at 40 Hz, bring the PI corner up from off. At 4 Hz (a tenth of crossover) it costs 6°. At 20 Hz it costs nearly 30°. Watch |S| at low frequency fall as the corner rises: that is what the phase buys.</li>
+      <li>Raise the delay and watch the sensitivity peak grow and narrow: the waterbed effect.</li>
     </ul></div>
   </section>
 </section>
@@ -2535,6 +2761,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <div class="eq"><code>K = e<sup>−ζπ/√(1−ζ²)</sup></code><span>Shaper amplitude ratio</span></div>
     <div class="eq"><code>ZV: [1, K]/(1+K) at [0, π/ω<sub>d</sub>]</code><span>Zero-vibration shaper</span></div>
     <div class="eq"><code>ZVD: [1, 2K, K²]/(1+K)² at [0, π/ω<sub>d</sub>, 2π/ω<sub>d</sub>]</code><span>Robust shaper</span></div>
+    <div class="eq"><code>f<sub>c,high</sub> ≥ f<sub>c,rigid</sub>·(1 + J<sub>2</sub>/J<sub>1</sub>)</code><span>Motor-side loop: last crossover, above the resonance</span></div>
   </div>
 
   <section class="lab" data-lab="vibration">
@@ -2551,10 +2778,25 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
       <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Gain (dB, left)</span><span class="lg"><i style="--c:var(--ch2)"></i>Phase (°, right)</span></div>
       <div class="readouts" id="ro-notch"></div>
     </div>
+    <div class="sublab">
+      <h4>Lab 18c · A two-mass axis inside a velocity loop</h4>
+      <p class="lab-note">A proportional velocity loop around the two-mass system, with motor inertia J<sub>1</sub> = 10⁻⁴ kg·m². The gain is set as the crossover the loop would have if the axis were rigid. Top: open-loop Bode plot, with dots at every 0 dB crossing. Bottom: closed-loop response to a 1 rad/s speed command.</p>
+      <div class="controls" id="c-tm"></div>
+      <div class="screen"><canvas id="cv-tm-bode"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>|L| (dB, left)</span><span class="lg"><i style="--c:var(--ch2)"></i>∠L (°, right)</span><span class="lg"><i class="dash" style="--c:var(--ch1)"></i>|L| without notch or delay</span></div>
+      <div class="screen short"><canvas id="cv-tm-step"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Motor speed</span><span class="lg"><i style="--c:var(--ch3)"></i>Load speed</span></div>
+      <div class="readouts" id="ro-tm"></div>
+    </div>
     <div class="try"><strong>Try this</strong><ul>
       <li>Compare unshaped with ZV at zero frequency error. Residual vibration nearly vanishes at the cost of half a period of delay.</li>
       <li>Set the frequency error to +20%. ZV loses much of its benefit; ZVD keeps most of it.</li>
       <li>In 18b, widen the notch and watch the phase lag at one third of the notch frequency grow.</li>
+      <li>In 18c with motor-side feedback, raise the gain. The loop stays stable far past the resonance, because the phase swings up between f<sub>ar</sub> and f<sub>r</sub>. It finally fails near 120 Hz at a third crossing above the resonance, where only the motor inertia is left and the delay has used up the phase.</li>
+      <li>Raise the inertia ratio to 10 at a 50 Hz gain. That last crossing moves out beyond f·(1 + J<sub>2</sub>/J<sub>1</sub>) = 550 Hz and the loop goes unstable. This is the inertia-ratio guideline, seen on a Bode plot.</li>
+      <li>Switch to load-side feedback at the default gain. The resonant peak now crosses 0 dB with the phase already falling through −180°, and the loop is unstable at a gain the motor-side loop handled easily.</li>
+      <li>Turn the notch on: the peak is cut below 0 dB and the load-side loop is stable again. Then raise the gain to 60 Hz and set the notch 20% low. A notch only works if it sits on the resonance.</li>
+      <li>Turn the notch off, return the gain to 30 Hz and raise the mechanical damping to 0.1. The peak drops below 0 dB on its own: fix the mechanics first.</li>
     </ul></div>
   </section>
 </section>
@@ -2972,18 +3214,18 @@ const MODULES = [
   {id:"switching", part:"II", title:"Diodes, transistors & H-bridges", mins:30, builds:["circuits","transients"], desc:"MOSFET switches, flyback protection and the four-switch bridge."},
   {id:"pwm", part:"II", title:"PWM & power electronics", mins:20, builds:["transients","switching"], desc:"Duty cycle, current ripple, switching frequency and regeneration."},
   {id:"sampling", part:"III", title:"Microcontrollers, ADCs & sampling", mins:30, builds:["circuits","transients"], desc:"Peripherals, ADC resolution, aliasing, digital filters and buses."},
-  {id:"sensors", part:"IV", title:"Sensors: encoders, bridges & more", mins:30, builds:["circuits","sampling"], desc:"Quadrature encoders, strain bridges, current sensing and specs."},
+  {id:"sensors", part:"IV", title:"Sensors: encoders, bridges & more", mins:40, builds:["circuits","sampling"], desc:"Quadrature encoders, velocity estimation, strain bridges, current sensing and specs."},
   {id:"magnetics", part:"V", title:"Magnetics & electromagnetic actuators", mins:40, builds:["circuits","transients"], desc:"Magnetic circuits, Lorentz and reluctance force, solenoids and voice-coil actuators."},
   {id:"dcmotor", part:"V", title:"The DC motor model", mins:30, builds:["rotation","transients","magnetics"], desc:"Two coupled equations, the torque–speed line, datasheets and time constants."},
   {id:"motortypes", part:"V", title:"Brushless, steppers & servos", mins:25, builds:["sensors","dcmotor"], desc:"Commutation, six-step vs FOC, steppers, servos and induction motors."},
   {id:"transmission", part:"VI", title:"Gears, belts & screws", mins:25, builds:["rotation","dcmotor"], desc:"Ratios, reflected inertia, transmission types, backlash and resonance."},
   {id:"linkages", part:"VI", title:"Linkages", mins:50, builds:["rotation","transmission"], desc:"Mobility, Grashof, vector-loop position analysis, transmission angle, instant centers and synthesis."},
   {id:"cams", part:"VI", title:"Cams", mins:45, builds:["rotation","linkages"], desc:"Follower motion laws, SVAJ, pressure angle, curvature, follower springs and electronic cams."},
-  {id:"dynamics", part:"VII", title:"System models & step response", mins:30, builds:["rotation","dcmotor"], desc:"Transfer functions, poles, second-order specs and block diagrams."},
-  {id:"pid", part:"VII", title:"Feedback & PID", mins:35, builds:["dcmotor","dynamics"], desc:"P, I and D as springs and dampers, windup, feedforward and code."},
-  {id:"frequency", part:"VII", title:"Frequency response & cascaded loops", mins:30, builds:["dynamics","pid"], desc:"Bode plots, crossover, phase margin, delay and loop nesting."},
+  {id:"dynamics", part:"VII", title:"System models & step response", mins:45, builds:["rotation","dcmotor"], desc:"Transfer functions, poles, second-order specs, zeros, system type and block diagrams."},
+  {id:"pid", part:"VII", title:"Feedback & PID", mins:50, builds:["dcmotor","dynamics"], desc:"P, I and D as springs and dampers, gains from a model, windup, feedforward and code."},
+  {id:"frequency", part:"VII", title:"Frequency response & cascaded loops", mins:50, builds:["dynamics","pid"], desc:"Bode plots, phase margin, delay, sensitivity, lead and PI compensation, and loop nesting."},
   {id:"statespace", part:"VII", title:"State space, observers & Kalman filters", mins:55, builds:["dynamics","pid","frequency"], desc:"State models, pole placement, LQR, observers, and Kalman and complementary filters."},
-  {id:"vibration", part:"VII", title:"Resonance & vibration suppression", mins:45, builds:["transmission","dynamics","frequency"], desc:"Two-mass systems, notch filters, input shaping and jerk-limited commands."},
+  {id:"vibration", part:"VII", title:"Resonance & vibration suppression", mins:50, builds:["transmission","dynamics","frequency"], desc:"Two-mass systems, notch filters, input shaping and jerk-limited commands."},
   {id:"friction", part:"VII", title:"Friction & nonlinearities", mins:40, builds:["rotation","pid"], desc:"Stribeck and LuGre models, stick-slip, hunting, backlash and compensation."},
   {id:"sysid", part:"VII", title:"System identification & testing", mins:45, builds:["dynamics","frequency"], desc:"Step tests, stepped-sine and chirp FRFs, coherence and least-squares fitting."},
   {id:"wiring", part:"VIII", title:"Power, wiring & safety", mins:20, builds:["switching","pwm"], desc:"Supplies, grounding, noise, wire drop, regeneration and e-stops."},
@@ -3047,7 +3289,8 @@ sensors:[
  {q:"An encoder has 1000 lines (PPR) and is decoded 4×. What is its angular resolution?", o:["0.36°","0.09°","0.9°","0.036°"], a:1, why:"4 × 1000 = 4000 counts/rev, so 360°/4000 = 0.09°."},
  {q:"Channel A normally leads channel B. Now B leads A. What changed?", o:["The encoder is damaged","The shaft reversed direction","The speed doubled","The index pulse fired"], a:1, why:"The phase order of A and B encodes direction."},
  {q:"A quarter bridge with GF = 2 and 5 V excitation sees 500 µε. Roughly what is the bridge output?", o:["1.25 mV","5 mV","12.5 mV","0.5 mV"], a:0, why:"V ≈ V_ex·GF·ε/4 = 5 × 2 × 500 × 10⁻⁶ / 4 = 1.25 mV. It needs an instrumentation amplifier before the ADC."},
- {q:"Which best describes repeatability?", o:["The smallest change the sensor can report","How close the reading is to the true value","How consistent readings are for the same input","The range of inputs it accepts"], a:2, why:"Repeatability is consistency. Many motion systems care more about it than absolute accuracy, because they can be calibrated."}
+ {q:"Which best describes repeatability?", o:["The smallest change the sensor can report","How close the reading is to the true value","How consistent readings are for the same input","The range of inputs it accepts"], a:2, why:"Repeatability is consistency. Many motion systems care more about it than absolute accuracy, because they can be calibrated."},
+ {q:"A 4000 count/rev encoder is differenced once per 1 ms sample. What is the smallest velocity change it can report?", o:["0.015 rpm","1.5 rpm","15 rpm","150 rpm"], a:2, why:"One count per sample is 60/(4000 × 0.001) = 15 rpm. A longer window or edge timing does better at low speed."}
 ],
 dcmotor:[
  {q:"A motor has K_v = 100 rpm/V. What is its torque constant in SI units?", o:["0.0955 N·m/A","0.01 N·m/A","0.628 N·m/A","9.55 N·m/A"], a:0, why:"K_e = 60/(2π × 100) ≈ 0.0955 V·s/rad, and in SI K_t = K_e."},
@@ -3083,19 +3326,28 @@ dynamics:[
  {q:"A second-order system has ζ = 0.7. Roughly how much does its step response overshoot?", o:["0%","4.6%","16%","25%"], a:1, why:"M_p = exp(−πζ/√(1 − ζ²)) ≈ 4.6% at ζ = 0.7."},
  {q:"A 2 kg mass on an 800 N/m spring has what natural frequency?", o:["20 rad/s","400 rad/s","0.05 rad/s","10 rad/s"], a:0, why:"ω_n = √(k/m) = √400 = 20 rad/s, about 3.2 Hz."},
  {q:"Moving a system's poles further left in the s-plane (larger ζω_n) mainly:", o:["Increases overshoot","Shortens settling time","Lowers the natural frequency","Destabilizes it"], a:1, why:"Settling time ≈ 4/(ζω_n). The real part of the poles sets how fast motion decays."},
- {q:"A plant G with unity feedback has which closed-loop transfer function?", o:["G·(1 + G)","G/(1 − G)","G/(1 + G)","1/(1 + G)"], a:2, why:"T = G/(1 + GH) with H = 1. The term 1/(1 + G) is the sensitivity function, the error's response."}
+ {q:"A plant G with unity feedback has which closed-loop transfer function?", o:["G·(1 + G)","G/(1 − G)","G/(1 + G)","1/(1 + G)"], a:2, why:"T = G/(1 + GH) with H = 1. The term 1/(1 + G) is the sensitivity function, the error's response."},
+ {q:"A type-1 position loop has velocity constant K_v = 50 s⁻¹. With no feedforward, what is its steady following error on a 100 mm/s ramp?", o:["0 mm","2 mm","0.5 mm","50 mm"], a:1, why:"e = v/K_v = 100/50 = 2 mm. One integrator in the loop removes step error but leaves a constant lag on a ramp."},
+ {q:"A closed loop has an extra real zero close to its dominant pole pair. Compared with the pole pair alone, its step response:", o:["Is unchanged","Rises faster and overshoots more","Loses its overshoot","Starts in the wrong direction"], a:1, why:"A left-half-plane zero adds a scaled copy of the response's derivative. Only a right-half-plane zero makes the output start the wrong way."},
+ {q:"An axis must overshoot no more than 5% and settle (2%) within 0.1 s. Roughly where do the dominant poles go?", o:["ζ ≥ 0.69 and ζω_n ≥ 40 s⁻¹","ζ ≥ 0.5 and ζω_n ≥ 10 s⁻¹","ζ ≥ 0.3 and ω_n ≥ 4 rad/s","ζ ≥ 0.9 and ζω_n ≥ 4 s⁻¹"], a:0, why:"ζ = −ln 0.05/√(π² + ln²0.05) = 0.69, and t_s ≈ 4/(ζω_n) ≤ 0.1 s needs ζω_n ≥ 40 s⁻¹."}
 ],
 pid:[
  {q:"A position loop uses only proportional control, and a constant load torque acts on the shaft. What happens?", o:["The error goes to zero","A steady error remains, inversely proportional to K_p","It oscillates indefinitely","The motor stalls"], a:1, why:"The virtual spring must deflect to produce torque, so e_ss ∝ T_d/K_p. Integral action removes it."},
  {q:"What is integrator windup?", o:["Noise amplified by the integral term","The integral growing while the output is saturated, causing overshoot when the error reverses","The integral resetting every sample","A steady-state error"], a:1, why:"During saturation the integrator accumulates error it can't act on, and it has to unwind later."},
  {q:"Why is the derivative term usually computed from the measurement rather than the error?", o:["It's more accurate","To avoid a huge spike when the setpoint steps","It removes the need for filtering","It reduces steady-state error"], a:1, why:"A setpoint step makes de/dt momentarily enormous (derivative kick). The measurement doesn't jump."},
- {q:"For a motion profile, what does feedforward add to the controller output?", o:["Extra integral action","The torque the model predicts the move needs, such as J·α plus friction","A filter on the encoder","More proportional gain"], a:1, why:"Feedforward supplies the predicted effort directly, so feedback only corrects model errors and disturbances."}
+ {q:"For a motion profile, what does feedforward add to the controller output?", o:["Extra integral action","The torque the model predicts the move needs, such as J·α plus friction","A filter on the encoder","More proportional gain"], a:1, why:"Feedforward supplies the predicted effort directly, so feedback only corrects model errors and disturbances."},
+ {q:"The Lab 15 motor has K_t/(J·R) = 1000 rad/(s²·V). With K_p = 40 V/rad, what is the natural frequency of the position loop?", o:["40 rad/s","200 rad/s","632 rad/s","4000 rad/s"], a:1, why:"ω_n = √(K_p·K_t/(J·R)) = √(40 × 1000) = 200 rad/s. Stiffness sets ω_n; damping comes from back-EMF and K_d."},
+ {q:"During the constant-speed part of a move, a PD position loop with no feedforward shows a steady following error. What removes it most directly?", o:["More derivative gain","Velocity feedforward","A slower loop rate","A lower derivative filter corner"], a:1, why:"The motor needs a voltage proportional to speed just to keep moving. Velocity feedforward supplies it, so the error no longer has to."},
+ {q:"A PD loop has ω_n = 100 rad/s and ζ = 0.5, with K_p = 20. Above roughly what K_i does adding integral action make it unstable?", o:["20","200","2000","20 000"], a:2, why:"K_i < 2ζω_n·K_p = 2 × 0.5 × 100 × 20 = 2000. A practical choice is far lower, around K_p·ω_n/10 = 200."}
 ],
 frequency:[
  {q:"A loop has 30° of phase margin. What will its step response look like?", o:["No overshoot","About 5% overshoot","Lightly damped, with noticeable overshoot and ringing","Unstable"], a:2, why:"ζ ≈ PM/100 ≈ 0.3, which overshoots roughly 35%. Aim for 45–60°."},
  {q:"A digital loop runs at 1 kHz with about 1.5 samples of delay. How much phase does that cost at 100 Hz?", o:["5.4°","54°","15°","0.9°"], a:1, why:"T_d = 1.5 ms, so the lag is 360° × 100 × 0.0015 = 54°."},
  {q:"In which order should cascaded servo loops be tuned?", o:["Position, velocity, current","Velocity, position, current","Current, velocity, position","All at once"], a:2, why:"Inside out. Each outer loop assumes the inner loop is already fast and well behaved."},
- {q:"Crossover frequency is a good estimate of:", o:["The mechanical resonance","The closed-loop bandwidth","The PWM frequency","The gain margin"], a:1, why:"Below crossover the loop gain is large and the system follows commands; above it the loop has little effect."}
+ {q:"Crossover frequency is a good estimate of:", o:["The mechanical resonance","The closed-loop bandwidth","The PWM frequency","The gain margin"], a:1, why:"Below crossover the loop gain is large and the system follows commands; above it the loop has little effect."},
+ {q:"A lead compensator has its pole at 4× its zero frequency. What is the most phase it can add?", o:["About 19°","About 37°","About 55°","90°"], a:1, why:"φ_max = asin((a − 1)/(a + 1)) = asin(3/5) = 37°, at the geometric mean of the two corners."},
+ {q:"A loop has peak sensitivity M_s = 2. What does that guarantee?", o:["At least 60° of phase margin","Gain margin of at least 6 dB and phase margin of at least 29°","No overshoot","A bandwidth of 2 Hz"], a:1, why:"GM ≥ M_s/(M_s − 1) = 2 and PM ≥ 2·asin(1/(2M_s)) = 29°. M_s is the inverse of the Nyquist curve's closest approach to −1."},
+ {q:"A PI controller's corner is placed at one fifth of the crossover frequency. How much phase margin does it cost?", o:["About 1°","About 11°","About 45°","About 79°"], a:1, why:"atan(ω_i/ω_c) = atan(0.2) = 11°. At one tenth it costs about 6°."}
 ],
 wiring:[
  {q:"Every time the motor starts, the microcontroller resets. What's the most likely cause?", o:["A bug in the PID code","Supply sag or ground bounce from the motor's inrush current","Encoder noise","Too much bus capacitance"], a:1, why:"A shared supply or ground return lets the motor's current spike pull the logic below its brownout threshold. Separate and decouple the logic supply."},
@@ -3143,7 +3395,8 @@ vibration:[
  {q:"A motor drives a load through a compliant shaft. Measured at the motor, where is the anti-resonance?", o:["√(k/J_motor)","√(k/J_load)","√(k(J₁+J₂)/(J₁J₂))","At zero frequency"], a:1, why:"The load oscillates on the spring while the motor stays nearly still, at √(k/J₂)."},
  {q:"A lightly damped resonance is at 10 Hz. About how much delay does a ZV input shaper add?", o:["10 ms","50 ms","100 ms","200 ms"], a:1, why:"ZV adds half a damped period: 0.5 × (1/10 Hz) = 50 ms."},
  {q:"A notch filter with ζ_z = 0.05 and ζ_p = 0.5 has what gain at its center frequency?", o:["0.5 (−6 dB)","0.1 (−20 dB)","0.01 (−40 dB)","1 (0 dB)"], a:1, why:"Depth = ζ_z/ζ_p = 0.1, which is −20 dB."},
- {q:"Why choose a ZVD shaper over ZV?", o:["It adds no delay","It tolerates errors in the assumed frequency much better, at the cost of more delay","It needs no damping estimate","It works only for undamped systems"], a:1, why:"ZVD also zeroes the sensitivity to frequency error, flattening the residual-vibration curve, and adds a full period of delay."}
+ {q:"Why choose a ZVD shaper over ZV?", o:["It adds no delay","It tolerates errors in the assumed frequency much better, at the cost of more delay","It needs no damping estimate","It works only for undamped systems"], a:1, why:"ZVD also zeroes the sensitivity to frequency error, flattening the residual-vibration curve, and adds a full period of delay."},
+ {q:"A motor drives a load of 4× its own inertia through a compliant coupling, with the encoder on the motor. Above the resonance, the velocity loop's gain is:", o:["The same as the rigid-body estimate","About 5× the rigid-body estimate, because only the motor inertia is left","About 5× lower","Zero"], a:1, why:"Above the resonance the load is decoupled, so the plant is 1/(J₁s) instead of 1/((J₁+J₂)s): the gain rises by 1 + J₂/J₁ = 5 and so does the last crossover."}
 ],
 friction:[
  {q:"What feature of the Stribeck curve causes stick-slip?", o:["Viscous friction rising with speed","Friction falling as speed rises from zero, which acts as negative damping","Constant Coulomb friction","Pre-sliding stiffness"], a:1, why:"A negative slope of force versus velocity at low speed feeds energy into oscillation."},
@@ -5336,6 +5589,272 @@ defineSim("cams",()=>{
   render(); srender();
   return {render:()=>{ render(); srender(); }};
 });
+/* ================= new-lab simulations (pure functions) ================= */
+/* 07c: velocity estimation from a quadrature encoder */
+function simVel(v){
+  const w0=v.rpm*TAU/60, q=TAU/v.cpr, Ts=1/v.fs, T=0.4, fm=5, wm=TAU*fm, sub=20, dts=Ts/sub, tq=1e-6;
+  const om=t=>w0*(1+0.5*Math.sin(wm*t)), th=t=>w0*(t+0.5*(1-Math.cos(wm*t))/wm);
+  const wo=TAU*Math.min(v.fo,v.fs/12), l1=2*wo, l2=wo*wo, N=Math.max(1,Math.round(v.N));
+  const n=Math.round(T/Ts), hist=[]; let tLast=NaN, tPrev=NaN, thO=0, wO=w0;
+  const out={t:[],tr:[],d:[],e:[],o:[]}; const err={d:0,e:0,o:0}; let ne=0;
+  for(let k=0;k<=n;k++){
+    const t=k*Ts;
+    if(k>0) for(let j=0;j<sub;j++){                       // capture edge times inside the sample, 1 µs timer
+      const ta=t-Ts+j*dts, a=th(ta), b=th(ta+dts), ca=Math.floor(a/q), cb=Math.floor(b/q);
+      if(cb>ca){ const tE=c=>Math.round((ta+(c*q-a)/(b-a)*dts)/tq)*tq; tPrev=cb-ca>=2?tE(cb-1):tLast; tLast=tE(cb); }
+    }
+    const c=Math.floor(th(t)/q); hist.push(c);
+    const kd=Math.max(0,hist.length-1-N), vd=hist.length>1?(c-hist[kd])*q/((hist.length-1-kd)*Ts):0;
+    let ve=0; if(isFinite(tLast)&&isFinite(tPrev)&&tLast>tPrev){ const P=tLast-tPrev, idle=t-tLast; ve=q/Math.max(P,idle); }
+    const eo=c*q+q/2-thO; thO+=Ts*(wO+l1*eo); wO+=Ts*l2*eo;       // tracking observer on the count
+    const R=60/TAU, tw=om(t);
+    if(t>=0.1){ err.d+=(vd-tw)**2; err.e+=(ve-tw)**2; err.o+=(wO-tw)**2; ne++; }
+    out.t.push(t*1000); out.tr.push(tw*R); out.d.push(vd*R); out.e.push(ve*R); out.o.push(wO*R);
+  }
+  const rm=x=>Math.sqrt(err[x]/Math.max(1,ne))*60/TAU;
+  out.rms={d:rm("d"),e:rm("e"),o:rm("o")}; out.cps=v.cpr*v.rpm/60; out.perSample=out.cps*Ts;
+  out.resDiff=60/(v.cpr*N*Ts); out.resEdge=v.rpm*out.cps*tq; out.delayDiff=N*Ts/2; out.fo=wo/TAU; return out;
+}
+
+/* 14b: second-order step with one extra real zero or pole at -alpha*zeta*wn */
+function stepPZ(z,wn,kind,alpha,Tend,n){
+  const ts=linspace(0,Tend,n), y0=ts.map(t=>step2(z,wn,t)), a=alpha*z*wn, h=1e-5/wn;
+  const d0=t=>t<=0?0:(step2(z,wn,t+h)-step2(z,wn,Math.max(0,t-h)))/(t<h?t+h:2*h);
+  let y;
+  if(kind==="none") y=y0.slice();
+  else if(kind==="zero") y=ts.map((t,i)=>y0[i]+d0(t)/a);
+  else if(kind==="rhp") y=ts.map((t,i)=>y0[i]-d0(t)/a);
+  else { y=[0]; const m=40, dt=(ts[1]-ts[0])/m, g=1-Math.exp(-a*dt); let yf=0; for(let i=1;i<n;i++){ for(let j=1;j<=m;j++){ yf+=g*(step2(z,wn,ts[i-1]+(j-0.5)*dt)-yf); } y.push(yf); } }
+  return {ts,y,y0};
+}
+
+/* 15b: tracking a trapezoidal move with and without feedforward (same motor as Lab 15) */
+function simFF(p){
+  const J=2e-5,b=1e-5,Kt=0.03,Ke=0.03,R=1.5,Vmax=24, dt=2e-5, Ts=1/2000, cpr=4000, q=TAU/cpr;
+  const Kp=p.Kp, Ki=p.Ki, Kd=p.Kd, D=p.move*Math.PI/180, tm=p.tm, ta=tm/3, vp=D/(tm-ta), acc=vp/ta, T=tm+0.15, Jhat=J*(1+p.jerr/100);
+  const ref=t=>{ if(t<=0) return [0,0,0]; if(t<ta) return [0.5*acc*t*t,acc*t,acc]; if(t<tm-ta) return [0.5*acc*ta*ta+vp*(t-ta),vp,0]; if(t<tm){ const r=tm-t; return [D-0.5*acc*r*r,acc*r,-acc]; } return [D,0,0]; };
+  const fc=400, al=1-Math.exp(-TAU*fc*Ts);
+  let th=0,w=0,integ=0,u=0,tNext=0,prevM=0,dF=0,rF=0,sat=0,nC=0; const out={t:[],r:[],th:[],e:[],u:[]}; let ePk=0,eEnd=0,eSet=0,uPk=0,e2=0,ne=0;
+  const steps=Math.round(T/dt), rec=Math.max(1,Math.round(steps/1400));
+  for(let i=0;i<=steps;i++){
+    const t=i*dt, [rp,rv,ra]=ref(t);
+    if(t>=tNext-1e-12){
+      const meas=Math.round(th/q)*q, e=rp-meas, vRaw=(meas-prevM)/Ts; prevM=meas; dF+=al*(vRaw-dF); rF+=al*(ref(t-Ts/2)[1]-rF);   // reference velocity through the same filter, so the D term sees no false error
+      let uff=0; if(p.ff!=="none") uff+=(Ke+R*b/Kt)*rv; if(p.ff==="va") uff+=R*Jhat/Kt*ra;
+      const uu=Kp*e+Ki*integ+Kd*(rF-dF)+uff; u=clamp(uu,-Vmax,Vmax);
+      if(u===uu||e*uu<0) integ+=e*Ts; if(u!==uu) sat++; nC++; tNext+=Ts;
+    }
+    const cur=(u-Ke*w)/R, a=(Kt*cur-b*w)/J; w+=a*dt; th+=w*dt;
+    const e=(rp-th)*180/Math.PI; if(t<=tm){ ePk=Math.max(ePk,Math.abs(e)); e2+=e*e; ne++; } if(Math.abs(t-tm)<dt/2) eEnd=e; if(t>tm&&Math.abs(e)>0.1) eSet=t-tm; uPk=Math.max(uPk,Math.abs(u));
+    if(i%rec===0){ out.t.push(t*1000); out.r.push(rp*180/Math.PI); out.th.push(th*180/Math.PI); out.e.push(e); out.u.push(u); }
+    if(!isFinite(th)) break;
+  }
+  out.ePk=ePk; out.eEnd=eEnd; out.eRms=Math.sqrt(e2/Math.max(1,ne)); out.settle=eSet; out.uPk=uPk; out.sat=sat/Math.max(1,nC); out.tm=tm*1000; out.vp=vp; out.acc=acc;
+  out.eCruise=(Ke+R*b/Kt)*vp/Kp*180/Math.PI; return out;
+}
+
+/* 16b: loop shaping. L = K * lead * PI * exp(-s Td) / (s (tau s + 1)) */
+function loopShape(v){
+  const K=v.K, tau=0.005, Td=v.Td/1000, R2=180/Math.PI, phi=v.phi*Math.PI/180, a=(1+Math.sin(phi))/(1-Math.sin(phi)), wm=TAU*v.fl, wz=wm/Math.sqrt(a), wp=wm*Math.sqrt(a), wi=TAU*v.fi;
+  const mk=(lead,pi)=>{
+    const mag=w=>K/(w*Math.sqrt(1+(w*tau)**2))*(lead?Math.sqrt((1+(w/wz)**2)/(1+(w/wp)**2))/Math.sqrt(a):1)*(pi?Math.sqrt(1+(wi/w)**2):1);
+    const ph=w=>-90-Math.atan(w*tau)*R2-w*Td*R2+(lead?(Math.atan(w/wz)-Math.atan(w/wp))*R2:0)-(pi?Math.atan(wi/w)*R2:0);
+    return {mag,ph};
+  };
+  const lead=v.phi>0.5, pi=v.fi>0.01, C=mk(lead,pi), U=mk(false,false);
+  const margins=F=>{
+    let lo=1e-2,hi=1e6; for(let i=0;i<200;i++){ const m=Math.sqrt(lo*hi); if(F.mag(m)>1) lo=m; else hi=m; } const wc=Math.sqrt(lo*hi), PM=180+F.ph(wc);
+    const ws=logspace(wc/30,wc*300,4000); let w180=null; for(let i=1;i<ws.length;i++){ if(F.ph(ws[i-1])>-180&&F.ph(ws[i])<=-180){ w180=ws[i]; break; } }
+    let Ms=0,wMs=0,Mt=0; logspace(wc/100,wc*100,3000).forEach(w=>{ const m=F.mag(w), p=F.ph(w)/R2, re=m*Math.cos(p), im=m*Math.sin(p), d=Math.hypot(1+re,im), s=1/d; if(s>Ms){ Ms=s; wMs=w; } Mt=Math.max(Mt,m/d); });
+    return {wc,PM,GM:w180?-20*Math.log10(F.mag(w180)):Infinity,w180,Ms,wMs,Mt};
+  };
+  return {C,U,mc:margins(C),mu:margins(U),a,wz,wp,wm,wi,lead,pi};
+}
+
+/* 18c: two-mass plant inside a velocity loop */
+function twoMass(v){
+  const J1=1e-4, J2=v.ratio*J1, war=TAU*v.far, k=war*war*J2, c=2*v.zeta*Math.sqrt(k*J2), wr=war*Math.sqrt(1+v.ratio);
+  const Kv=TAU*v.fb*(J1+J2), Td=v.Td/1000, wnN=wr*(1+v.mis/100), zz=0.05, zp=0.5, load=v.sensor==="load", notch=v.notch==="on";
+  const cdiv=(a,b)=>{ const d=b[0]*b[0]+b[1]*b[1]; return [(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d]; }, cmul=(a,b)=>[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]];
+  const G=w=>{ const num=load?[k,c*w]:[k-J2*w*w,c*w], br=[k*(J1+J2)-J1*J2*w*w,c*(J1+J2)*w], den=cmul([0,w],br); return cdiv(num,den); };
+  const Nf=w=>notch?cdiv([wnN*wnN-w*w,2*zz*wnN*w],[wnN*wnN-w*w,2*zp*wnN*w]):[1,0];
+  const Lf=w=>{ let x=cmul(G(w),Nf(w)); x=cmul(x,[Math.cos(w*Td),-Math.sin(w*Td)]); return [Kv*x[0],Kv*x[1]]; };
+  const fs=logspace(1,5000,900), mag=[], ph=[], pmag=[]; let prev=-90, off=0;
+  fs.forEach((f,i)=>{ const w=TAU*f, L=Lf(w), g=G(w); mag.push(20*Math.log10(Math.hypot(L[0],L[1]))); pmag.push(20*Math.log10(Math.hypot(g[0],g[1])*Kv)); let p=Math.atan2(L[1],L[0])*180/Math.PI+off; while(p-prev>180){ p-=360; off-=360; } while(p-prev<-180){ p+=360; off+=360; } ph.push(p); prev=p; });
+  const cross=[]; for(let i=1;i<fs.length;i++){ if((mag[i-1]>0)!==(mag[i]>0)){ const t=mag[i-1]/(mag[i-1]-mag[i]), f=fs[i-1]*Math.pow(fs[i]/fs[i-1],t), p=ph[i-1]+t*(ph[i]-ph[i-1]); cross.push({f,pm:p+180}); } }
+  // closed-loop velocity step, 1 rad/s command
+  const dt=1e-5, T=Math.min(0.4,Math.max(0.08,6/v.fb)), n=Math.round(T/dt), nd=Math.round(Td/dt), buf=new Float64Array(nd+1); let bi=0;
+  let w1=0,w2=0,tw=0,x1=0,x2=0; const out={t:[],w1:[],w2:[]}; let bad=false; const rec=Math.max(1,Math.round(n/900));
+  for(let i=0;i<=n;i++){
+    const meas=load?w2:w1; buf[bi]=meas; const md=nd?buf[(bi+1)%(nd+1)]:meas; bi=(bi+1)%(nd+1);
+    let u=Kv*(1-md);
+    if(notch){ const y=u+2*(zz-zp)*wnN*x2; const dx2=-wnN*wnN*x1-2*zp*wnN*x2+u; x2+=dx2*dt; x1+=x2*dt; u=y; }
+    const Ts=k*tw+c*(w1-w2); w1+=(u-Ts)/J1*dt; w2+=Ts/J2*dt; tw+=(w1-w2)*dt;
+    if(!isFinite(w1)||Math.abs(w1)>50||Math.abs(w2)>50){ bad=true; break; }
+    if(i%rec===0){ out.t.push(i*dt*1000); out.w1.push(w1); out.w2.push(w2); }
+  }
+  const tail=out.w2.slice(Math.floor(out.w2.length*0.7)), ring=tail.length?Math.max(...tail)-Math.min(...tail):0;
+  return {fs,mag,ph,pmag,cross,far:v.far,fr:wr/TAU,Kv,out,bad,ring,pmMin:cross.length?Math.min(...cross.map(x=>x.pm)):Infinity,T:T*1000};
+}
+
+/* ================= 07c velocity estimation ================= */
+defineSim("sensors",()=>{
+  const cv=$("cv-velest");
+  const c=controls("c-velest",[
+    {id:"rpm",label:"Mean shaft speed",min:1,max:3000,value:60,log:true,fmt:v=>fx(v,v<10?1:0)+" rpm"},
+    {id:"cpr",type:"seg",label:"Counts per rev (after 4× decoding)",value:4000,options:[{label:"400",value:400},{label:"4 000",value:4000},{label:"40 000",value:40000}]},
+    {id:"fs",type:"seg",label:"Sample rate",value:1000,options:[{label:"1 kHz",value:1000},{label:"5 kHz",value:5000}]},
+    {id:"N",label:"Differencing window",min:1,max:50,step:1,value:1,fmt:v=>v.toFixed(0)+(v===1?" sample":" samples")},
+    {id:"fo",label:"Observer bandwidth",min:5,max:200,value:50,log:true,fmt:v=>fx(v,0)+" Hz"}
+  ],render);
+  function render(){
+    const v=c.vals, o=simVel(v), top=v.rpm*1.5, hi=Math.min(Math.max(top*1.25,...o.e.map(x=>isFinite(x)?x:0),...o.o),top*2.2), clip=a=>a.map(x=>Math.min(x,hi*1.5));
+    plot(cv,{x:[0,400],y:[0,hi],xlabel:"Time (ms)",ylabel:"Speed (rpm)",
+      series:[{x:o.t,y:clip(o.d),color:"--ch2",width:1.2,step:true,alpha:.8},{x:o.t,y:clip(o.e),color:"--ch1",width:1.6},{x:o.t,y:clip(o.o),color:"--ch3",width:1.8},{x:o.t,y:o.tr,color:"--ch5",width:1.6,dash:[6,4]}],
+      vlines:[{x:100,color:"--scope-text",dash:[2,5],label:"errors measured from here"}]});
+    const pc=x=>fx(100*x/v.rpm,x/v.rpm<0.1?1:0)+" % of mean", best=Math.min(o.rms.d,o.rms.e,o.rms.o), tag=x=>x===best?["good","best here"]:null;
+    readouts("ro-velest",[
+      ["Count rate",eng(o.cps,"Hz")],["Counts per sample",fx(o.perSample,o.perSample<10?2:0)],
+      ["Differencing step, one count",fx(o.resDiff,o.resDiff<10?2:0)+" rpm"],["Differencing delay ≈ N·T_s/2",eng(o.delayDiff,"s")],
+      ["Edge-timing step, 1 µs timer",fx(o.resEdge,o.resEdge<10?3:0)+" rpm"],["Observer bandwidth used",fx(o.fo,0)+" Hz"+(o.fo<v.fo-0.5?" (capped at f_s/12)":"")],
+      ["RMS error, differencing",fx(o.rms.d,2)+" rpm ("+pc(o.rms.d)+")",tag(o.rms.d)],["RMS error, edge timing",fx(o.rms.e,2)+" rpm ("+pc(o.rms.e)+")",tag(o.rms.e)],["RMS error, observer",fx(o.rms.o,2)+" rpm ("+pc(o.rms.o)+")",tag(o.rms.o)]
+    ]);
+  }
+  render(); return {render};
+});
+
+/* ================= 14b extra pole or zero ================= */
+defineSim("dynamics",()=>{
+  const cv=$("cv-pz"), wn=10;
+  const c=controls("c-pz",[
+    {id:"kind",type:"seg",label:"Add to the second-order system",value:"zero",options:[{label:"Nothing",value:"none"},{label:"Zero",value:"zero"},{label:"Right-half-plane zero",value:"rhp"},{label:"Extra pole",value:"pole"}]},
+    {id:"z",label:"Damping ratio ζ of the pole pair",min:0.2,max:1,step:0.01,value:0.5,fmt:v=>fx(v,2)},
+    {id:"al",label:"Distance from the origin, relative to ζω_n",min:0.3,max:20,value:2,log:true,fmt:v=>fx(v,v<10?1:0)+" ×"}
+  ],render);
+  function render(){
+    const v=c.vals, Tend=Math.max(8/(v.z*wn),v.kind==="pole"?10/(v.al*v.z*wn):0), o=stepPZ(v.z,wn,v.kind,v.al,Tend,1200), M=stepMetrics(o.ts,o.y), B=stepMetrics(o.ts,o.y0);
+    const lo=Math.min(-0.05,Math.min(...o.y)-0.05), hi=Math.max(1.3,Math.max(...o.y)+0.1);
+    plot(cv,{x:[0,Tend],y:[Math.max(lo,-2.5),Math.min(hi,3.2)],xlabel:"Time (s)",ylabel:"Response",
+      ybands:[{y0:0.98,y1:1.02,color:"rgba(127,220,122,.12)"}],
+      series:[{x:o.ts,y:o.y0,color:"--scope-text",dash:[5,4],width:1.4},{x:o.ts,y:o.y,color:"--ch1"}]});
+    const loc=v.al*v.z*wn, und=Math.max(0,-Math.min(...o.y));
+    readouts("ro-pz",[
+      ["Pole pair",`${fx(-v.z*wn,1)} ± j${fx(wn*Math.sqrt(Math.max(0,1-v.z*v.z)),1)} rad/s`],
+      ["Added "+(v.kind==="pole"?"pole":"zero")+" at",v.kind==="none"?"—":(v.kind==="rhp"?"+":"−")+fx(loc,1)+" rad/s"],
+      ["Overshoot (pair alone)",fx(M.os*100,1)+" % ("+fx(B.os*100,1)+" %)"],["Rise time 10–90% (pair alone)",eng(M.tr,"s")+" ("+eng(B.tr,"s")+")"],
+      ["Settling time 2% (pair alone)",(isFinite(M.tsl)?eng(M.tsl,"s"):"beyond window")+" ("+eng(B.tsl,"s")+")"],
+      ["Initial undershoot",und>0.005?fx(und*100,0)+" % of the step":"none",und>0.005?["warn","moves the wrong way first"]:null],
+      ["Does it matter?",v.kind==="none"?"—":(v.al>=5?"barely: more than 5× farther out":"yes: inside 5× the pair's real part"),v.kind==="none"?null:(v.al>=5?["good","negligible"]:["warn","not negligible"])]
+    ]);
+  }
+  render(); return {render};
+});
+
+/* ================= 15b feedforward ================= */
+defineSim("pid",()=>{
+  const cv=$("cv-ff");
+  const c=controls("c-ff",[
+    {id:"ff",type:"seg",label:"Feedforward",value:"none",options:[{label:"None",value:"none"},{label:"Velocity",value:"v"},{label:"Velocity + acceleration",value:"va"}]},
+    {id:"move",label:"Move size",min:90,max:1440,step:30,value:720,fmt:v=>v.toFixed(0)+"°"},
+    {id:"tm",label:"Move time",min:0.05,max:0.5,value:0.1,log:true,fmt:v=>eng(v,"s")},
+    {id:"jerr",label:"Inertia in the feedforward model",min:-50,max:100,step:5,value:0,fmt:v=>(v>0?"+":"")+v.toFixed(0)+" % vs. actual"}
+  ],render);
+  function render(){
+    const v=c.vals, o=simFF({Kp:30,Ki:200,Kd:0.3,move:v.move,tm:v.tm,jerr:v.jerr,ff:v.ff}), em=Math.max(1,...o.e.map(Math.abs))*1.2;
+    plot(cv,{x:[0,o.t[o.t.length-1]],y:[-0.08*v.move,1.15*v.move],y2:[-em,em],xlabel:"Time (ms)",ylabel:"Angle (°)",y2label:"Following error (°)",ycolor:"--ch1",y2color:"--ch3",
+      series:[{x:o.t,y:o.r,color:"--ch5",dash:[6,4],width:1.5},{x:o.t,y:o.th,color:"--ch1",width:2},{x:o.t,y:o.e,color:"--ch3",axis:2,width:1.8}],
+      hlines:[{y:0,axis:2,color:"--ch3",dash:[2,5]}],vlines:[{x:o.tm,color:"--scope-text",dash:[2,5],label:"profile ends"}]});
+    readouts("ro-ff",[
+      ["Peak following error",fx(o.ePk,2)+"°",chip(o.ePk<1,o.ePk<5,"tight","moderate","large")],["Error when the profile ends",fx(o.eEnd,2)+"°"],
+      ["Time to settle within 0.1° after the profile",o.settle>0.149?"more than 150 ms":eng(o.settle,"s")],
+      ["Peak speed / acceleration",fx(o.vp,0)+" rad/s / "+fx(o.acc,0)+" rad/s²"],
+      ["Peak voltage",fx(o.uPk,1)+" V",o.sat>0.005?["bad","saturating: no controller can track this"]:["good","within ±24 V"]],
+      ["Predicted cruise error without feedforward, (K_e + R·b/K_t)·ω/K_p",fx(o.eCruise,1)+"°",null,true]
+    ]);
+  }
+  render(); return {render};
+});
+
+/* ================= 16b lead, PI and sensitivity ================= */
+defineSim("frequency",()=>{
+  const cb=$("cv-ls-bode"), cs=$("cv-ls-sens"), cn=$("cv-ls-nyq");
+  const c=controls("c-ls",[
+    {id:"K",label:"Loop gain K",min:20,max:3000,value:400,log:true,fmt:v=>fx(v,0)+" 1/s"},
+    {id:"Td",label:"Delay T_d",min:0,max:5,step:0.1,value:1,fmt:v=>fx(v,1)+" ms"},
+    {id:"phi",label:"Lead: phase added at its center",min:0,max:60,step:1,value:0,fmt:v=>v<0.5?"off":v.toFixed(0)+"°"},
+    {id:"fl",label:"Lead: center frequency",min:5,max:500,value:40,log:true,fmt:v=>fx(v,0)+" Hz"},
+    {id:"fi",label:"Integral (PI) corner frequency",min:0,max:30,step:0.5,value:0,fmt:v=>v<0.01?"off":fx(v,1)+" Hz"}
+  ],render);
+  function render(){
+    const v=c.vals, o=loopShape(v), m=o.mc, u=o.mu, R2=180/Math.PI, fs=logspace(1,1000,360), stable=m.PM>0&&m.GM>0;
+    const db=F=>fs.map(f=>20*Math.log10(F.mag(TAU*f))), ph=F=>fs.map(f=>F.ph(TAU*f));
+    plot(cb,{x:[1,1000],logx:true,y:[-50,50],y2:[-300,-30],xlabel:"Frequency (Hz)",ylabel:"|L| (dB)",y2label:"∠L (°)",ycolor:"--ch1",y2color:"--ch2",
+      series:[{x:fs,y:db(o.U),color:"--ch1",dash:[4,4],width:1.2,alpha:.7},{x:fs,y:ph(o.U),color:"--ch2",axis:2,dash:[4,4],width:1.2,alpha:.7},{x:fs,y:db(o.C),color:"--ch1"},{x:fs,y:ph(o.C),color:"--ch2",axis:2}],
+      hlines:[{y:0,color:"--scope-axis",dash:[]},{y:-180,axis:2,color:"--ch3",label:"−180°"}],vlines:[{x:m.wc/TAU,color:"--ch5",label:"f_c "+eng(m.wc/TAU,"Hz")}]});
+    const ST=F=>{ const S=[],T=[]; fs.forEach(f=>{ const w=TAU*f, mg=F.mag(w), p=F.ph(w)/R2, d=Math.hypot(1+mg*Math.cos(p),mg*Math.sin(p)); S.push(20*Math.log10(1/d)); T.push(20*Math.log10(mg/d)); }); return {S,T}; };
+    const sc=ST(o.C), su=ST(o.U);
+    plot(cs,{x:[1,1000],logx:true,y:[-40,25],xlabel:"Frequency (Hz)",ylabel:"dB",
+      series:[{x:fs,y:su.S,color:"--ch3",dash:[4,4],width:1.2,alpha:.7},{x:fs,y:sc.T,color:"--ch4",width:1.6},{x:fs,y:sc.S,color:"--ch3"}],
+      hlines:[{y:0,color:"--scope-axis",dash:[]},{y:6.02,color:"--ch5",label:"M_s = 2 (6 dB)"}]});
+    // Nyquist, equal scale on both axes
+    const W=cn.clientWidth||600, H=cn.clientHeight||220, hy=1.6, hx=hy*Math.max(1,(W-68))/Math.max(1,(H-52)), cx=-0.7;
+    const wsN=logspace(m.wc/60,m.wc*60,700), nx=[], ny=[]; wsN.forEach(w=>{ const mg=o.C.mag(w), p=o.C.ph(w)/R2; nx.push(mg*Math.cos(p)); ny.push(mg*Math.sin(p)); });
+    const ang=linspace(0,TAU,90), rS=stable?1/m.Ms:0;
+    plot(cn,{x:[cx-hx,cx+hx],y:[-hy,hy],xlabel:"Re L(jω)",ylabel:"Im L(jω)",
+      series:[{x:ang.map(Math.cos),y:ang.map(Math.sin),color:"--scope-axis",width:1,dash:[2,4]},{x:ang.map(a=>-1+rS*Math.cos(a)),y:ang.map(a=>rS*Math.sin(a)),color:"--ch5",width:1.3},{x:nx,y:ny,color:"--ch1"}],
+      markers:[{x:-1,y:0,color:"--ch3",shape:"x",r:6}],texts:[{x:-1,y:0,dx:8,dy:-12,text:"−1",color:"--ch3"}]});
+    const lead=o.lead, addC=lead?(Math.atan(m.wc/o.wz)-Math.atan(m.wc/o.wp))*R2:0, costPI=o.pi?Math.atan(o.wi/m.wc)*R2:0;
+    readouts("ro-ls",[
+      ["Crossover f_c",eng(m.wc/TAU,"Hz")+(o.lead||o.pi?" (was "+eng(u.wc/TAU,"Hz")+")":"")],
+      ["Phase margin",fx(m.PM,1)+"°"+(o.lead||o.pi?" (was "+fx(u.PM,1)+"°)":""),m.PM<=0?["bad","unstable"]:chip(m.PM>=45,m.PM>=30,"healthy","marginal","ringing")],
+      ["Gain margin",isFinite(m.GM)?fx(m.GM,1)+" dB":"∞",isFinite(m.GM)&&m.GM<=0?["bad","unstable"]:null],
+      ["Peak sensitivity M_s",stable?fx(m.Ms,2)+" at "+eng(m.wMs/TAU,"Hz"):"—",stable?chip(m.Ms<=1.6,m.Ms<=2,"robust","acceptable","fragile"):["bad","unstable"]],
+      ["Peak closed-loop gain M_t",stable?fx(m.Mt,2)+" ("+fx(Math.max(0,20*Math.log10(m.Mt)),1)+" dB)":"—"],
+      ["Lead: zero / pole, ratio a",lead?eng(o.wz/TAU,"Hz")+" / "+eng(o.wp/TAU,"Hz")+", a = "+fx(o.a,1):"off"],
+      ["Lead: phase it adds at crossover",lead?fx(addC,1)+"°":"—"],["Lead: low-frequency gain it gives up",lead?fx(20*Math.log10(Math.sqrt(o.a)),1)+" dB":"—"],
+      ["PI: phase it costs at crossover",o.pi?fx(costPI,1)+"° (corner at f_c/"+fx(m.wc/o.wi,1)+")":"—"]
+    ]);
+  }
+  render(); return {render};
+});
+
+/* ================= 18c two-mass loop ================= */
+defineSim("vibration",()=>{
+  const cb=$("cv-tm-bode"), ct=$("cv-tm-step");
+  const c=controls("c-tm",[
+    {id:"sensor",type:"seg",label:"Velocity feedback from",value:"motor",options:[{label:"Motor (collocated)",value:"motor"},{label:"Load (non-collocated)",value:"load"}]},
+    {id:"fb",label:"Velocity-loop gain, as rigid-body crossover",min:5,max:300,value:30,log:true,fmt:v=>fx(v,0)+" Hz"},
+    {id:"ratio",label:"Inertia ratio J₂/J₁",min:0.3,max:20,value:3,log:true,fmt:v=>fx(v,1)+" : 1"},
+    {id:"far",label:"Anti-resonance f_ar",min:20,max:300,step:5,value:80,fmt:v=>v.toFixed(0)+" Hz"},
+    {id:"zeta",label:"Mechanical damping ζ",min:0.005,max:0.3,value:0.02,log:true,fmt:v=>fx(v,3)},
+    {id:"Td",label:"Loop delay",min:0,max:2,step:0.1,value:0.5,fmt:v=>fx(v,1)+" ms"},
+    {id:"notch",type:"seg",label:"Notch filter (−20 dB, ζ_p = 0.5)",value:"off",options:[{label:"Off",value:"off"},{label:"On",value:"on"}]},
+    {id:"mis",label:"Notch frequency error",min:-30,max:30,step:1,value:0,fmt:v=>(v>0?"+":"")+v.toFixed(0)+" % of f_r"}
+  ],render);
+  function render(){
+    const v=c.vals, o=twoMass(v), unstable=o.bad||o.ring>0.3, phc=o.ph.map(p=>clamp(p,-600,200));
+    const dist=x=>{ let d=((x.pm%360)+360)%360; return d>180?360-d:d; };   // phase distance to the nearest −180° ± 360°·n line
+    plot(cb,{x:[1,5000],logx:true,y:[-60,60],y2:[-540,180],xlabel:"Frequency (Hz)",ylabel:"|L| (dB)",y2label:"∠L (°)",ycolor:"--ch1",y2color:"--ch2",
+      series:[{x:o.fs,y:o.pmag,color:"--ch1",dash:[4,4],width:1.1,alpha:.6},{x:o.fs,y:o.mag,color:"--ch1"},{x:o.fs,y:phc,color:"--ch2",axis:2,width:1.6}],
+      hlines:[{y:0,color:"--scope-axis",dash:[]},{y:-180,axis:2,color:"--ch3",label:"−180°"}],
+      vlines:[{x:o.far,color:"--ch5",label:"f_ar"},{x:o.fr,color:"--ch4",label:"f_r"}],
+      markers:o.cross.map(x=>({x:x.f,y:0,color:dist(x)>=30?"--ch5":"--ch3",r:4.5}))});
+    const lo=Math.min(-0.2,...o.out.w1,...o.out.w2), hi=Math.max(1.6,...o.out.w1,...o.out.w2);
+    plot(ct,{x:[0,o.T],y:[Math.max(lo,-3),Math.min(hi,4)],xlabel:"Time (ms)",ylabel:"Speed (rad/s)",
+      series:[{x:o.out.t,y:o.out.w1,color:"--ch1",width:1.5},{x:o.out.t,y:o.out.w2,color:"--ch3",width:2}],hlines:[{y:1,color:"--ch5",label:"command",left:true}]});
+    const worst=o.cross.reduce((a,x)=>(!a||dist(x)<dist(a))?x:a,null);
+    readouts("ro-tm",[
+      ["Closed loop",unstable?(o.bad?"unstable":"ringing without decay"):"stable",unstable?["bad","unstable"]:["good","stable"]],
+      ["Anti-resonance / resonance",fx(o.far,0)+" / "+fx(o.fr,0)+" Hz"],
+      ["0 dB crossings (loop phase at each)",o.cross.length?o.cross.map(x=>fx(x.f,0)+" Hz ("+fx(x.pm-180,0)+"°)").join(" · "):"none in range",null,true],
+      ["Tightest crossing",worst?fx(worst.f,0)+" Hz, "+fx(dist(worst),0)+"° from −180°":"—",worst?chip(dist(worst)>=40,dist(worst)>=20,"comfortable","thin","almost none"):null],
+      ["Last crossover is above f_gain·(1 + J₂/J₁)",v.sensor==="motor"?fx(v.fb*(1+v.ratio),0)+" Hz":"not applicable (load side rolls off)"],
+      ["Gain K_v",eng(o.Kv,"N·m·s/rad")]
+    ]);
+  }
+  render(); return {render};
+});
+
 /* ================= init ================= */
 buildNav(); refreshProgress(); route();
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleRerender);
