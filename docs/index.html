@@ -366,7 +366,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   <h2>Projects</h2>
   <div style="display:flex;flex-direction:column;gap:10px">
     <div class="proj"><h3>1 · Characterize your motor</h3><p>Measure winding resistance with the meter (rotate the shaft and take the minimum to avoid brush contact error). Spin the motor with a drill, measure the open-circuit voltage and speed to get K<sub>e</sub>. Record no-load current at several voltages. Build the torque–speed line and compare with the Module 09 lab. Then log torque and speed during back-and-forth moves and fit inertia, viscous and Coulomb friction by least squares (Module 20).</p><span class="uses">Uses modules 01 · 09 · 19 · 20</span></div>
-    <div class="proj"><h3>2 · PWM and current ripple</h3><p>Drive the motor through the H-bridge at 1 kHz and 20 kHz with the same duty. Scope the current-sense signal, listen to the motor, and compare the ripple with the estimate V<sub>s</sub>D(1−D)/(Lf). Then add a flyback-free relay coil circuit (low voltage only) and look at the turn-off spike with and without a diode.</p><span class="uses">Uses modules 03 · 04 · 05</span></div>
+    <div class="proj"><h3>2 · PWM and current ripple</h3><p>Drive the motor through the H-bridge at 1 kHz and 20 kHz with the same duty. Scope the current-sense signal, listen to the motor, and compare the ripple with the estimate V<sub>s</sub>D(1−D)/(Lf). Then add an unprotected relay coil circuit (low voltage only, switched by an avalanche-rated MOSFET) and look at the turn-off spike with and without a diode.</p><span class="uses">Uses modules 03 · 04 · 05</span></div>
     <div class="proj"><h3>3 · Hardware encoder counting</h3><p>Configure a timer in encoder mode and print position. Compute velocity by differencing counts over 1 ms and 10 ms windows and compare the noise. Spin the shaft by hand fast and confirm no counts are lost, then try the same with GPIO interrupts.</p><span class="uses">Uses modules 06 · 07</span></div>
     <div class="proj"><h3>4 · A velocity loop</h3><p>Run a PI velocity loop in a 1 kHz timer interrupt. Log step responses to a serial plotter. Raise K<sub>p</sub> until it rings, add K<sub>i</sub> for zero steady-state error, then hold the shaft to saturate the output and watch integrator windup. Add the anti-windup clamp.</p><span class="uses">Uses modules 14 · 15 · 16</span></div>
     <div class="proj"><h3>5 · Position control with feedforward</h3><p>Generate a trapezoidal profile on the MCU. Close a P position loop around your velocity loop and add velocity feedforward. Plot following error with and without feedforward.</p><span class="uses">Uses modules 15 · 16 · 22</span></div>
@@ -506,7 +506,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>V<sub>out</sub> vs load</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Unloaded V<sub>out</sub></span><span class="lg"><i class="dash" style="--c:var(--ch4)"></i>R<sub>L</sub> = R<sub>th</sub></span></div>
     <div class="readouts" id="ro-circuits"></div>
     <div class="try"><strong>Try this</strong><ul>
-      <li>Set R1 = R2 = 100 kΩ and R<sub>L</sub> = 100 kΩ. The output drops 20%. That is a high-impedance sensor feeding a low-impedance input.</li>
+      <li>Set R1 = R2 = 100 kΩ and R<sub>L</sub> = 100 kΩ. The output drops 33%, because R<sub>th</sub> = 50 kΩ against a 100 kΩ load. That is a high-impedance sensor feeding a low-impedance input.</li>
       <li>Scale R1 and R2 down 10×. Error falls, but divider current and resistor heating rise 10×. That is the trade-off.</li>
       <li>Find the load where error is 1%. It sits about 100× R<sub>th</sub>.</li>
     </ul></div>
@@ -845,7 +845,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <div class="readouts" id="ro-dcmotor"></div>
     <div class="try"><strong>Try this</strong><ul>
       <li>Move the load to 50% of stall. Power peaks, but efficiency is below 50% and the winding is dissipating as much as you deliver.</li>
-      <li>Find the efficiency peak: it sits at low load, around 10–20% of stall for typical motors.</li>
+      <li>Find the efficiency peak: it sits at low load, around 5–20% of stall for typical motors.</li>
       <li>Double the voltage. Stall torque and no-load speed both double; maximum power quadruples.</li>
     </ul></div>
   </section>
@@ -861,7 +861,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   <h2>Brushless: six-step versus field-oriented control</h2>
   <p><strong>Six-step (trapezoidal)</strong> commutation uses three Hall sensors that divide each electrical revolution into six sectors. In each sector, two phases are energized, and the stator field jumps 60° at each sector boundary. The angle between fields swings between 60° and 120°, so torque varies between sin 60° = 0.87 and 1. That 13% ripple is acceptable for fans, pumps and drones, and the scheme is simple.</p>
   <p><strong>Field-oriented control (FOC)</strong> measures phase currents, transforms them into a frame rotating with the rotor (Clarke and Park transforms), and regulates two components: i<sub>q</sub>, which makes torque, and i<sub>d</sub>, which is held at zero. The stator field stays at exactly 90°, so torque is smooth and efficiency is best. It needs fine rotor position (an encoder or an observer) and fast current loops. Motors built for sinusoidal drive are usually called PMSMs.</p>
-  <p>Mechanical and electrical angles differ by the number of pole pairs p: θ<sub>e</sub> = p·θ<sub>m</sub>. A motor with 7 pole pairs commutates 7 times per mechanical revolution.</p>
+  <p>Mechanical and electrical angles differ by the number of pole pairs p: θ<sub>e</sub> = p·θ<sub>m</sub>. A motor with 7 pole pairs goes through 7 electrical cycles per mechanical revolution, which is 42 six-step commutations.</p>
 
   <h2>Steppers</h2>
   <p>A stepper advances a fixed angle per pulse, typically 200 steps per revolution (1.8°), so position can be controlled open-loop by counting pulses. Microstepping drives the two phases with sine-shaped current to subdivide steps. It smooths motion, but each microstep produces only a small restoring torque, so accuracy doesn't improve in proportion. Torque falls with speed, because the winding inductance limits how fast current can build within each step. High-voltage chopper drives (24–80 V) push that limit out. Overload a stepper and it silently loses steps, which closed-loop steppers detect. Steppers also have mid-speed resonance bands.</p>
@@ -911,7 +911,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   <p class="lead">The transmission links what the motor can do to what the load needs. One number, the ratio, sets torque, speed, reflected inertia and resolution all at once. This module treats the transmission as part of a dynamic system rather than as gear geometry.</p>
 
   <h2>What a ratio does</h2>
-  <p>With ratio N (motor turns per load turn) and efficiency η: load torque is N·η times motor torque, load speed is motor speed divided by N, and load inertia seen by the motor is divided by N². Encoder resolution at the load improves N times, and so does stiffness against disturbances felt at the motor.</p>
+  <p>With ratio N (motor turns per load turn) and efficiency η: load torque is N·η times motor torque, load speed is motor speed divided by N, and load inertia seen by the motor is divided by N². Encoder resolution at the load improves N times. A disturbance torque at the load reaches the motor divided by N, and the motor loop's stiffness appears N² times larger at the load.</p>
   <p>The inertia ratio, load inertia reflected to the motor divided by motor inertia, is the number servo engineers check first. Ratios up to about 5–10:1 tune easily with stiff couplings. Higher ratios work but make the axis more sensitive to compliance and resonance.</p>
   <p>For a pure-inertia load, load acceleration is greatest when the reflected load inertia equals the motor inertia: N* = √(J<sub>L</sub>/J<sub>m</sub>). In practice speed limits usually force a lower ratio, so pick N to cover the speed range first, then check torque and inertia ratio.</p>
 
@@ -1205,7 +1205,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <ul>
     <li>PWM edges change by tens of volts in nanoseconds and couple capacitively into nearby wiring. Route encoder and analog lines away from motor leads, or cross them at right angles.</li>
     <li>Use differential signaling over cable: RS-422 line-driver encoders, CAN, RS-485.</li>
-    <li>Shielded motor and encoder cables are usually grounded at the drive end. Follow the drive maker's instructions, since practice varies.</li>
+    <li>Bond motor-cable shields to the drive chassis with a 360° clamp, and usually at the motor end too. Low-level analog shields are often grounded at one end only. Follow the drive maker's instructions, since practice varies.</li>
     <li>Decouple every IC with 100 nF close to its supply pins, and add bulk capacitance where cables enter a board.</li>
   </ul>
 
@@ -1313,7 +1313,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <p>For steels, the rotating-beam endurance limit of a polished specimen is S′<sub>e</sub> ≈ 0.5·S<sub>ut</sub> up to S<sub>ut</sub> = 1400 MPa, and about 700 MPa above that. A real part is weaker, and the Marin factors scale it down: S<sub>e</sub> = k<sub>a</sub>·k<sub>b</sub>·k<sub>c</sub>·k<sub>d</sub>·k<sub>e</sub>·S′<sub>e</sub>.</p>
   <div class="tbl"><table>
     <tr><th>Factor</th><th>Accounts for</th><th>Values (SI)</th></tr>
-    <tr><td>k<sub>a</sub> surface</td><td>Surface roughness and decarburization</td><td>a·S<sub>ut</sub><sup>b</sup>: ground 1.58, −0.085; machined or cold-drawn 4.51, −0.265; hot-rolled 57.7, −0.718; as-forged 272, −0.995</td></tr>
+    <tr><td>k<sub>a</sub> surface</td><td>Surface roughness and decarburization</td><td>a·S<sub>ut</sub><sup>b</sup>: ground 1.58, −0.085; machined or cold-drawn 4.51, −0.265; hot-rolled 57.7, −0.718; as-forged 272, −0.995 (Shigley 8th–10th edition values; check your edition)</td></tr>
     <tr><td>k<sub>b</sub> size</td><td>Larger stressed volume, more flaws</td><td>1.24·d<sup>−0.107</sup> for 2.79–51 mm; 1.51·d<sup>−0.157</sup> for 51–254 mm; 1 for axial load</td></tr>
     <tr><td>k<sub>c</sub> load</td><td>Bending, axial or torsion test basis</td><td>1 when stresses are combined with von Mises</td></tr>
     <tr><td>k<sub>d</sub> temperature</td><td>Strength loss when hot</td><td>About 1 below 250 °C</td></tr>
@@ -1415,7 +1415,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
       <li>Switch torque from steady to reversing. The point jumps upward because torque now adds to the alternating stress, and the safety factor drops from about 1.7 to about 1.1.</li>
       <li>Change the feature from end-mill keyseat to well-rounded shoulder. The keyseat's high torsional K<sub>ts</sub> is why reversing torque hurts it most.</li>
       <li>With reversing torque, change the surface finish from machined to hot-rolled. S<sub>e</sub> falls, the Goodman line drops, and the safety factor falls below 1.</li>
-      <li>In 16b, set a beam coupling (about 300 N·m/rad). It dominates the series stiffness and the resonance falls to a few tens of hertz.</li>
+      <li>In 23b, switch from the bellows coupling to a beam coupling (about 300 N·m/rad). It dominates the series stiffness, and the resonance falls from about 2.5 kHz to under 700 Hz. Raise the load inertia and it drops further.</li>
     </ul></div>
   </section>
 </section>
@@ -1512,10 +1512,10 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
       <div class="readouts" id="ro-guide"></div>
     </div>
     <div class="try"><strong>Try this</strong><ul>
-      <li>Raise the axial load until F<sub>a</sub>/F<sub>r</sub> exceeds e. The equivalent load jumps because Y kicks in.</li>
+      <li>Raise the axial load until F<sub>a</sub>/F<sub>r</sub> exceeds e. The equivalent load starts to climb: X drops to 0.56 and Y brings the axial load in.</li>
       <li>Change reliability from 90% to 99%. Life drops to a quarter.</li>
       <li>Double the radial load and read the life: one eighth.</li>
-      <li>In 17b, switch the rating distance between 50 and 100 km for the same C and see why catalogs aren't directly comparable.</li>
+      <li>In 24b, switch the rating distance between 50 and 100 km for the same C and see why catalogs aren't directly comparable.</li>
     </ul></div>
   </section>
 </section>
@@ -1558,9 +1558,9 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <p>In SI, gear size is given by the module m = d/N (mm), so the pitch diameter is d = m·N and the circular pitch is p = π·m. Standard involute teeth use a 20° pressure angle. Below about 17 teeth, full-depth 20° pinions are undercut unless profile-shifted. The contact ratio should be at least 1.2, preferably 1.4 or more, for smooth running.</p>
   <p>The transmitted (tangential) load is W<sub>t</sub> = 2T/d. The separating (radial) force is W<sub>t</sub>·tan φ, and helical gears add an axial force W<sub>t</sub>·tan ψ. All of these load the shafts and bearings.</p>
   <h3>Bending: the Lewis equation</h3>
-  <p>Lewis treated the tooth as a cantilever: σ = K<sub>v</sub>·W<sub>t</sub>/(F·m·Y), with face width F, the Lewis form factor Y (0.245 at 12 teeth, 0.322 at 20, 0.389 at 40, about 0.485 for a rack) and a velocity factor for dynamic load: K<sub>v</sub> = (6.1 + V)/6.1 for cut teeth, (3.56 + √V)/3.56 for hobbed or shaped, and (5.56 + √V)/5.56 for ground teeth, with V in m/s. Face width is usually 3–5 circular pitches.</p>
+  <p>Lewis treated the tooth as a cantilever: σ = K<sub>v</sub>·W<sub>t</sub>/(F·m·Y), with face width F, the Lewis form factor Y (0.245 at 12 teeth, 0.322 at 20, 0.389 at 40, about 0.485 for a rack) and a velocity factor for dynamic load: K<sub>v</sub> = (6.1 + V)/6.1 for cut teeth, (3.56 + √V)/3.56 for hobbed or shaped, and √((5.56 + √V)/5.56) for shaved or ground teeth, with V in m/s. Face width is usually 3–5 circular pitches.</p>
   <h3>Pitting: Hertz contact stress</h3>
-  <p>Surface fatigue (pitting) is set by contact stress: σ<sub>c</sub> = C<sub>p</sub>·√(K<sub>v</sub>W<sub>t</sub>/(F·cos φ)·(1/r<sub>1</sub> + 1/r<sub>2</sub>)), with r<sub>i</sub> = d<sub>i</sub>·sin φ/2 and C<sub>p</sub> ≈ 191 √MPa for steel on steel. For hardened steel gears, pitting usually governs before bending.</p>
+  <p>Surface fatigue (pitting) is set by contact stress: σ<sub>c</sub> = C<sub>p</sub>·√(K<sub>v</sub>W<sub>t</sub>/(F·cos φ)·(1/r<sub>1</sub> + 1/r<sub>2</sub>)), with r<sub>i</sub> = d<sub>i</sub>·sin φ/2 and C<sub>p</sub> ≈ 191 √MPa for steel on steel. Through-hardened steel gears are usually limited by pitting before bending. Case-hardened (carburized) gears are often limited by bending instead, so check both.</p>
   <p>The full AGMA method adds factors for overload, size, load distribution, rim thickness, geometry, life cycles and reliability. For a first pass, compare with AGMA grade 1 through-hardened steel allowables: S<sub>t</sub> ≈ 0.533·HB + 88.3 MPa (bending) and S<sub>c</sub> ≈ 2.22·HB + 200 MPa (contact).</p>
 
   <div class="callout"><span class="tag">Best practices</span><ul>
@@ -1602,7 +1602,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     </div>
     <div class="try"><strong>Try this</strong><ul>
       <li>Lengthen the ball screw to 1500 mm at 3000 rpm. Whip limits it long before buckling; a larger diameter or fixed–fixed mounting fixes it.</li>
-      <li>Switch to an Acme screw and lower the friction. Watch the lowering torque change sign as the screw stops self-locking.</li>
+      <li>Switch to an Acme screw and cut the lead to 4 mm: the holding torque turns positive and the screw self-locks. Then lower the friction, or raise the lead again, and watch it change sign as the screw starts to back-drive.</li>
       <li>In the belt drive, raise the carriage mass and watch the mid-travel resonance fall.</li>
       <li>In the gear check, raise hardness. Contact safety improves more slowly than you'd hope, because S<sub>c</sub> grows only linearly with hardness. Then drop the pinion to 14 teeth to see the undercut warning.</li>
     </ul></div>
@@ -1913,7 +1913,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <div class="try"><strong>Try this</strong><ul>
       <li>Drag the target outside the workspace. The analytic solutions disappear; DLS stretches the arm toward the target and stops with a residual error.</li>
       <li>Set λ to its minimum and drag the target near the origin or the outer edge. Iterations jump wildly near singularities; raise λ and they settle.</li>
-      <li>In 22b, view acceleration. The cubic jumps at both ends; the quintic starts and ends at zero.</li>
+      <li>In 30b, view acceleration. The cubic jumps at both ends; the quintic starts and ends at zero.</li>
     </ul></div>
   </section>
 </section>
@@ -2023,7 +2023,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <div class="math"><div>τ = M(q)(q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e) + C(q,q̇)q̇ + g(q) &nbsp;⇒&nbsp; ë + K<sub>d</sub>ė + K<sub>p</sub>e = 0</div></div>
   <p>Each joint's error then behaves like an independent mass–spring–damper. Choose K<sub>p</sub> = ω<sub>n</sub>² and K<sub>d</sub> = 2ζω<sub>n</sub> (Module 14). The catch is that cancellation is only as good as the model. Payload errors and friction leave residual coupling, so practical versions add integral action, robust terms or online parameter adaptation using the linear-in-parameters form.</p>
   <details class="deriv"><summary>Show derivation: closed-loop error dynamics</summary><div class="d">
-    <p>Substitute the control law into Mq̈ + Cq̇ + g = τ. The Cq̇ and g terms cancel exactly when the model is perfect, leaving M(q)q̈ = M(q)(q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e). M is invertible, so q̈ = q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e. With ë = q̈<sub>d</sub> − q̈, this becomes ë + K<sub>d</sub>ė + K<sub>p</sub>e = 0. With model error, the right side becomes M̂⁻¹[(M̂ − M)q̈ + (Ĉ − C)q̇ + (ĝ − g)], a disturbance that grows with speed and payload mismatch.</p>
+    <p>Substitute the control law into Mq̈ + Cq̇ + g = τ. The Cq̇ and g terms cancel exactly when the model is perfect, leaving M(q)q̈ = M(q)(q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e). M is invertible, so q̈ = q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e. With ë = q̈<sub>d</sub> − q̈, this becomes ë + K<sub>d</sub>ė + K<sub>p</sub>e = 0. With model error, the right side becomes M̂⁻¹[(M − M̂)q̈ + (C − Ĉ)q̇ + (g − ĝ)], a disturbance that grows with speed and payload mismatch.</p>
   </div></details>
 
   <h2>Task-space control</h2>
@@ -2070,8 +2070,8 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     </div>
     <div class="try"><strong>Try this</strong><ul>
       <li>Start with PD only. Gravity pulls the path down and the error never vanishes. Add gravity compensation, then switch to computed torque.</li>
-      <li>With computed torque, raise the real payload to 4 kg. Model mismatch brings some error back; raising ω<sub>n</sub> shrinks it.</li>
-      <li>In 24b, compare stiff control with impedance against a 1 MN/m wall. The commanded 10 mm overshoot becomes a crushing force without compliance.</li>
+      <li>With computed torque, raise the real payload to 4 kg. Model mismatch brings back a large error, more than plain PD showed at the nominal payload. Raising ω<sub>n</sub> shrinks it.</li>
+      <li>In 32b, compare stiff control with impedance against a 1 MN/m wall. The commanded 10 mm overshoot becomes a crushing force without compliance.</li>
     </ul></div>
   </section>
 </section>
@@ -2355,7 +2355,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <p><strong>Lorentz force.</strong> A conductor of length ℓ carrying current i across a field B feels F = B·i·ℓ, perpendicular to both. The force is linear in current and reverses with it. Voice coils and permanent-magnet DC and brushless motors work this way. A motor's torque constant K<sub>t</sub> is this law summed over all the conductors and multiplied by the rotor radius.</p>
   <p><strong>Reluctance (Maxwell) force.</strong> Iron is pulled toward positions that reduce reluctance, closing gaps and aligning teeth. The force comes from the change of stored energy:</p>
   <div class="math"><div>F = ½·i²·dL/dx, &nbsp; or at an iron face, F = B²A/(2μ<sub>0</sub>)</div></div>
-  <p>This force is quadratic in current, so it is always attractive whichever way the current flows, and it rises sharply as the gap closes. Solenoids, relays, steppers, switched-reluctance motors and the cogging torque in PM motors all come from it.</p>
+  <p>This force is quadratic in current, so it is always attractive whichever way the current flows, and it rises sharply as the gap closes. Solenoids, relays, variable-reluctance steppers, switched-reluctance motors and the cogging torque in PM motors all come from it.</p>
   <details class="deriv"><summary>Show derivation: force from co-energy</summary><div class="d">
     <p>With current held constant, the energy the supply delivers during a small motion dx splits equally between the stored field energy and mechanical work. The force is the derivative of the co-energy W′ at constant current:</p>
     <div class="math"><div>W′ = ½L(x)i² &nbsp;⇒&nbsp; F = ∂W′/∂x|<sub>i</sub> = ½i²·dL/dx</div></div>
@@ -2427,7 +2427,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div></details>
 
   <h2>Linear-quadratic regulator (LQR)</h2>
-  <p>Instead of choosing poles directly, LQR chooses K to minimize J = ∫(x<sup>T</sup>Qx + u<sup>T</sup>Ru) dt, trading state error (weighted by Q) against control effort (weighted by R). The answer is K = R⁻¹B<sup>T</sup>P, where P solves the algebraic Riccati equation A<sup>T</sup>P + PA − PBR⁻¹B<sup>T</sup>P + Q = 0. Raising Q relative to R gives faster, more aggressive control. A continuous-time LQR with full state feedback also has guaranteed robustness for a single input: at least 60° of phase margin, and gain margin from ½ up to infinity.</p>
+  <p>Instead of choosing poles directly, LQR chooses K to minimize J = ∫(x<sup>T</sup>Qx + u<sup>T</sup>Ru) dt, trading state error (weighted by Q) against control effort (weighted by R). The answer is K = R⁻¹B<sup>T</sup>P, where P solves the algebraic Riccati equation A<sup>T</sup>P + PA − PBR⁻¹B<sup>T</sup>P + Q = 0. Raising Q relative to R gives faster, more aggressive control. A continuous-time LQR with full state feedback also has guaranteed robustness for a single input: at least 60° of phase margin, and gain margin from ½ up to infinity. That guarantee is lost once the state comes from an observer or Kalman filter, so check the margins of the combined design.</p>
   <details class="deriv"><summary>Show derivation: LQR for a double integrator</summary><div class="d">
     <p>Take ẍ = u (unit mass), Q = diag(q, 0), R = r, and P = [[p<sub>1</sub>, p<sub>2</sub>], [p<sub>2</sub>, p<sub>3</sub>]]. The Riccati equation splits into three scalar equations:</p>
     <div class="math">
@@ -2554,7 +2554,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <div class="try"><strong>Try this</strong><ul>
       <li>Compare unshaped with ZV at zero frequency error. Residual vibration nearly vanishes at the cost of half a period of delay.</li>
       <li>Set the frequency error to +20%. ZV loses much of its benefit; ZVD keeps most of it.</li>
-      <li>In 16b, widen the notch and watch the phase lag at one third of the notch frequency grow.</li>
+      <li>In 18b, widen the notch and watch the phase lag at one third of the notch frequency grow.</li>
     </ul></div>
   </section>
 </section>
@@ -2627,7 +2627,8 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <div class="try"><strong>Try this</strong><ul>
       <li>Raise the drive speed until stick-slip disappears: the Stribeck dip only matters near zero velocity.</li>
       <li>Increase spring stiffness at low speed. The jumps get smaller and more frequent.</li>
-      <li>In 17b, raise the integrator deadband from 0 to about 50 µm. Hunting stops and the slide rests within the deadband: a residual error traded for stillness.</li>
+      <li>At 1 mm/s, raise the damping. Stick-slip survives until the damping outweighs the falling Stribeck slope, near 3000 N·s/m here.</li>
+      <li>In 19b, raise the integrator deadband from 0 to about 50 µm. Hunting stops and the slide rests within the deadband: a residual error traded for stillness.</li>
     </ul></div>
   </section>
 </section>
@@ -2696,7 +2697,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <div class="try"><strong>Try this</strong><ul>
       <li>Raise the noise and see the measured points scatter most where the plant's gain is low, at high frequency, where the response is small relative to the noise.</li>
       <li>Increase cycles per point. Scatter shrinks roughly as one over the square root of the number of cycles, and test time grows.</li>
-      <li>In 18b, switch to one-direction motion. The condition number explodes and the friction estimates go wrong even though the fit residual stays small.</li>
+      <li>In 20b, switch to one-direction motion. The condition number explodes and the friction estimates go wrong even though the fit residual stays small.</li>
     </ul></div>
   </section>
 </section>
@@ -3124,7 +3125,7 @@ elements:[
  {q:"When is a power screw self-locking?", o:["When its efficiency is above 50%","When πf·d_m·sec α exceeds the lead l","Whenever it has an Acme thread","When it is preloaded"], a:1, why:"Then the lowering torque is positive: friction alone holds the load. Self-locking screws have efficiency below 50%."},
  {q:"A long ball screw is fixed at one end and supported at the other. Switching to fixed–fixed raises its buckling load by about:", o:["The same","1.2×","2×","4×"], a:2, why:"The buckling constant goes from 2 (fixed–supported) to 4 (fixed–fixed)."},
  {q:"A timing belt delivers 10 N·m from a 40 mm pitch-diameter pulley. What is the effective pull?", o:["250 N","500 N","400 N","50 N"], a:1, why:"T_e = 2T/d = 2 × 10 / 0.04 = 500 N."},
- {q:"For through-hardened steel spur gears, which failure usually governs a first-pass design?", o:["Tooth bending","Surface pitting from contact stress","Shaft torsion","Key shear"], a:1, why:"Contact stress grows with the square root of load but the allowable grows only linearly with hardness, so pitting usually limits hardened gears."}
+ {q:"For through-hardened steel spur gears, which failure usually governs a first-pass design?", o:["Tooth bending","Surface pitting from contact stress","Shaft torsion","Key shear"], a:1, why:"Through-hardened steels have a contact allowable that is low next to their bending strength, so pitting usually sets the size. Case-hardened gears are often bending-limited instead."}
 ],
 magnetics:[
  {q:"An iron circuit has a 1 mm air gap and 500 ampere-turns. Ignoring the iron's reluctance, what is the gap flux density?", o:["0.063 T","0.63 T","6.3 T","0.5 T"], a:1, why:"B = μ₀Ni/g = 4π×10⁻⁷ × 500 / 0.001 ≈ 0.63 T."},
@@ -3438,10 +3439,16 @@ MODULES.forEach((m,i)=>{
   renderQuiz(m.id);
 });
 
+function quizOrder(mod,i,n){ // fixed per-question shuffle so the correct option's position carries no pattern
+  let h=2166136261; const key=mod+":"+i; for(let k=0;k<key.length;k++){ h^=key.charCodeAt(k); h=Math.imul(h,16777619); }
+  const r=rng(h>>>0), o=[]; for(let j=0;j<n;j++) o.push(j);
+  for(let j=n-1;j>0;j--){ const k=Math.floor(r()*(j+1)); [o[j],o[k]]=[o[k],o[j]]; }
+  return o;
+}
 function renderQuiz(mod){
   const box=$("quiz-"+mod), Q=QUIZ[mod]; if(!box||!Q) return;
   box.innerHTML=`<div class="quiz-head"><h2>Check yourself</h2><span class="mono" style="color:var(--muted);font-size:.8rem" id="qs-${mod}"></span></div>`+
-    Q.map((q,i)=>`<div class="qcard" data-i="${i}"><span class="qn">QUESTION ${i+1} OF ${Q.length}</span><p class="q">${q.q}</p><div class="opts">${q.o.map((o,j)=>`<button class="opt" type="button" data-j="${j}">${o}</button>`).join("")}</div><p class="why" hidden></p></div>`).join("")+
+    Q.map((q,i)=>`<div class="qcard" data-i="${i}"><span class="qn">QUESTION ${i+1} OF ${Q.length}</span><p class="q">${q.q}</p><div class="opts">${quizOrder(mod,i,q.o.length).map(j=>`<button class="opt" type="button" data-j="${j}">${q.o[j]}</button>`).join("")}</div><p class="why" hidden></p></div>`).join("")+
     `<div><button class="btn small" type="button" data-reset="${mod}">Reset answers</button></div>`;
   box.querySelectorAll(".qcard").forEach(card=>{
     const i=+card.dataset.i;
@@ -4396,7 +4403,7 @@ defineSim("elements",()=>{
     {id:"Ca",label:"Ball nut dynamic rating C_a",min:1,max:100,value:9.8,log:true,sig:3,fmt:v=>fx(v,1)+" kN"}
   ],render);
   function screw(v,Lmm){
-    const ball=v.type==="ball", dr=(ball?0.8*v.d:v.d-v.l)/1000, I=Math.PI*dr**4/64, L=Lmm/1000, [Cb,lam]=FIX[v.fix];
+    const ball=v.type==="ball", pt=Math.min(v.l,v.d/4), dr=(ball?0.8*v.d:v.d-pt)/1000, I=Math.PI*dr**4/64, L=Lmm/1000, [Cb,lam]=FIX[v.fix];
     return {dr, Fcr:Cb*Math.PI**2*E*I/(L*L), nc:60*lam*lam/(TAU*L*L)*(dr/4)*Math.sqrt(E/rho)};
   }
   function render(){
@@ -4406,13 +4413,13 @@ defineSim("elements",()=>{
     plot(cv,{x:[100,3000],y:[0,ytop],y2:[0,y2top],xlabel:"Unsupported length (mm)",ylabel:"Allowable speed (rpm)",y2label:"Allowable load (kN)",ycolor:"--ch1",y2color:"--ch2",
       series:[{x:xs,y:ns,color:"--ch1"},{x:xs,y:Fs,color:"--ch2",axis:2}],vlines:[{x:v.L,color:"--ch3"}],
       markers:[{x:v.L,y:v.rpm,color:"--ch1",r:5,shape:"ring"},{x:v.L,y:v.F/1000,axis:2,color:"--ch2",r:5,shape:"ring"}]});
-    const lm=v.l/1000, dm=(v.d-v.l/2)/1000, sec=1/Math.cos(14.5*Math.PI/180);
+    const lm=v.l/1000, pt=Math.min(v.l,v.d/4), dm=(v.d-pt/2)/1000, sec=1/Math.cos(14.5*Math.PI/180);
     let TR,TL,eff;
     if(ball){ TR=v.F*lm/(TAU*0.9); TL=-v.F*lm*0.9/TAU; eff=0.9; }
     else { TR=v.F*dm/2*(lm+Math.PI*v.f*dm*sec)/(Math.PI*dm-v.f*lm*sec); TL=v.F*dm/2*(Math.PI*v.f*dm*sec-lm)/(Math.PI*dm+v.f*lm*sec); eff=v.F>0?v.F*lm/(TAU*TR):(lm/(lm+Math.PI*v.f*dm*sec)); }
     const nAllow=0.8*cur.nc, FAllow=0.5*cur.Fcr;
     const items=[
-      ["Root diameter (approx.)",fx(cur.dr*1000,1)+" mm"],["Allowable speed (80% critical)",fx(nAllow,0)+" rpm",chip(v.rpm<=nAllow,v.rpm<=cur.nc,"OK","above 80% of critical","whips")],
+      ["Root diameter (approx.)",fx(cur.dr*1000,1)+" mm"+(ball?"":", pitch "+fx(pt,1)+" mm"+(v.l>pt+1e-9?" (multi-start)":""))],["Allowable speed (80% critical)",fx(nAllow,0)+" rpm",chip(v.rpm<=nAllow,v.rpm<=cur.nc,"OK","above 80% of critical","whips")],
       ["Allowable load (50% buckling)",eng(FAllow,"N"),chip(v.F<=FAllow,v.F<=cur.Fcr,"OK","above 50% of Euler","buckles")],
       ["Drive torque (raising)",fx(TR,3)+" N·m"],["Efficiency",fx(eff*100,0)+" %"],
       ["Holding torque (lowering)",ball?fx(TL,3)+" N·m":fx(TL,3)+" N·m",TL>0?["good","self-locking"]:["warn","back-drives"]],
@@ -4452,7 +4459,7 @@ defineSim("elements",()=>{
   ],gro2);
   function gro2(){
     const v=gr.vals, phi=20*Math.PI/180, dp=v.m*v.Np, dg=v.m*v.Ng, Wt=2*v.T/(dp/1000), V=Math.PI*dp/1000*v.n/60;
-    const Kv=v.fin==="cut"?(6.1+V)/6.1:v.fin==="hob"?(3.56+Math.sqrt(V))/3.56:(5.56+Math.sqrt(V))/5.56;
+    const Kv=v.fin==="cut"?(6.1+V)/6.1:v.fin==="hob"?(3.56+Math.sqrt(V))/3.56:Math.sqrt((5.56+Math.sqrt(V))/5.56);
     const Y=lewisY(v.Np), sig=Kv*Wt/(v.F*v.m*Y), St=0.533*v.HB+88.3, Sc=2.22*v.HB+200;
     const r1=dp*Math.sin(phi)/2, r2=dg*Math.sin(phi)/2, sc=191*Math.sqrt(Kv*Wt/(v.F*Math.cos(phi))*(1/r1+1/r2));
     const p=Math.PI*v.m, fwr=v.F/p, nb=St/sig, nc=Sc/sc;
@@ -5097,7 +5104,7 @@ defineSim("friction",()=>{
     {id:"k",label:"Drive stiffness",min:0.5,max:100,value:5,log:true,fmt:v=>fx(v,v<1?2:1)+" N/mm"},
     {id:"Fs",label:"Static friction F_s",min:2,max:30,step:0.5,value:12,fmt:v=>fx(v,1)+" N"},
     {id:"Fc",label:"Coulomb friction F_c",min:1,max:30,step:0.5,value:8,fmt:v=>fx(v,1)+" N"},
-    {id:"b",label:"Viscous / damping b",min:1,max:200,value:20,log:true,fmt:v=>fx(v,0)+" N·s/m"}
+    {id:"b",label:"Viscous / damping b",min:1,max:5000,value:20,log:true,fmt:v=>fx(v,0)+" N·s/m"}
   ],render);
   function render(){
     const o=stickSlip(c.vals), vmax=Math.max(c.vals.V*1.5,...o.v)*1.1, fmax=Math.max(...o.f)*1.15, fmin=Math.min(0,...o.f);
