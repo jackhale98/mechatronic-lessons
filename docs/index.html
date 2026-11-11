@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive course on electromechanical systems and robotics: mechanics, electronics, sensors, motors, transmissions, control, machine elements, manipulators and robot mechanisms.">
+<meta name="description" content="Interactive course on electromechanical systems and robotics: mechanics, electronics, sensors, actuators, mechanisms, control, machine elements, precision design, manipulators and robot mechanisms.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Mechatronic Lessons</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -296,7 +296,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
     Modules
   </button>
-  <div class="t"><b id="tbTitle">Mechatronic Lessons</b><span id="tbSub">0 of 28 complete</span></div>
+  <div class="t"><b id="tbTitle">Mechatronic Lessons</b><span id="tbSub">0 of 36 complete</span></div>
 </header>
 <div class="scrim" id="scrim"></div>
 
@@ -306,7 +306,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <div class="brand">
       <a href="#start"><span class="name">Mechatronic Lessons</span></a>
       <span class="sub">Electromechanical systems, from the shaft outward</span>
-      <div class="prog"><div class="bar"><i id="progBar"></i></div><span class="lbl" id="progLbl">0 / 28 modules complete</span></div>
+      <div class="prog"><div class="bar"><i id="progBar"></i></div><span class="lbl" id="progLbl">0 / 36 modules complete</span></div>
     </div>
     <div id="navList"></div>
     <div class="nav-extra">
@@ -321,7 +321,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
 <!-- ======================= HOME ======================= -->
 <section class="view" id="view-start" data-title="Course map">
   <div class="hero">
-    <span class="eyebrow">Interactive course · 28 modules · 11 parts</span>
+    <span class="eyebrow">Interactive course · 36 modules · 11 parts</span>
     <h1>Mechatronic Lessons</h1>
     <p class="lead">An interactive course on electromechanical systems: mechanics, circuits and power electronics, embedded sensing, motors and transmissions, feedback control, motor sizing, machine-element design and robotics. Each module pairs the theory with a working lab you drive with sliders, followed by a short quiz.</p>
   </div>
@@ -365,15 +365,15 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </ul>
   <h2>Projects</h2>
   <div style="display:flex;flex-direction:column;gap:10px">
-    <div class="proj"><h3>1 · Characterize your motor</h3><p>Measure winding resistance with the meter (rotate the shaft and take the minimum to avoid brush contact error). Spin the motor with a drill, measure the open-circuit voltage and speed to get K<sub>e</sub>. Record no-load current at several voltages. Build the torque–speed line and compare with the Module 08 lab.</p><span class="uses">Uses modules 01 · 08</span></div>
+    <div class="proj"><h3>1 · Characterize your motor</h3><p>Measure winding resistance with the meter (rotate the shaft and take the minimum to avoid brush contact error). Spin the motor with a drill, measure the open-circuit voltage and speed to get K<sub>e</sub>. Record no-load current at several voltages. Build the torque–speed line and compare with the Module 09 lab. Then log torque and speed during back-and-forth moves and fit inertia, viscous and Coulomb friction by least squares (Module 20).</p><span class="uses">Uses modules 01 · 09 · 19 · 20</span></div>
     <div class="proj"><h3>2 · PWM and current ripple</h3><p>Drive the motor through the H-bridge at 1 kHz and 20 kHz with the same duty. Scope the current-sense signal, listen to the motor, and compare the ripple with the estimate V<sub>s</sub>D(1−D)/(Lf). Then add a flyback-free relay coil circuit (low voltage only) and look at the turn-off spike with and without a diode.</p><span class="uses">Uses modules 03 · 04 · 05</span></div>
     <div class="proj"><h3>3 · Hardware encoder counting</h3><p>Configure a timer in encoder mode and print position. Compute velocity by differencing counts over 1 ms and 10 ms windows and compare the noise. Spin the shaft by hand fast and confirm no counts are lost, then try the same with GPIO interrupts.</p><span class="uses">Uses modules 06 · 07</span></div>
-    <div class="proj"><h3>4 · A velocity loop</h3><p>Run a PI velocity loop in a 1 kHz timer interrupt. Log step responses to a serial plotter. Raise K<sub>p</sub> until it rings, add K<sub>i</sub> for zero steady-state error, then hold the shaft to saturate the output and watch integrator windup. Add the anti-windup clamp.</p><span class="uses">Uses modules 11 · 12 · 13</span></div>
-    <div class="proj"><h3>5 · Position control with feedforward</h3><p>Generate a trapezoidal profile on the MCU. Close a P position loop around your velocity loop and add velocity feedforward. Plot following error with and without feedforward.</p><span class="uses">Uses modules 12 · 13 · 15</span></div>
+    <div class="proj"><h3>4 · A velocity loop</h3><p>Run a PI velocity loop in a 1 kHz timer interrupt. Log step responses to a serial plotter. Raise K<sub>p</sub> until it rings, add K<sub>i</sub> for zero steady-state error, then hold the shaft to saturate the output and watch integrator windup. Add the anti-windup clamp.</p><span class="uses">Uses modules 14 · 15 · 16</span></div>
+    <div class="proj"><h3>5 · Position control with feedforward</h3><p>Generate a trapezoidal profile on the MCU. Close a P position loop around your velocity loop and add velocity feedforward. Plot following error with and without feedforward.</p><span class="uses">Uses modules 15 · 16 · 22</span></div>
     <div class="proj"><h3>6 · A load-cell scale</h3><p>Wire the load cell to the bridge amplifier, calibrate with two known masses, and add a first-order IIR filter. Measure noise in grams before and after filtering and note the added settling time.</p><span class="uses">Uses modules 02 · 06 · 07</span></div>
-    <div class="proj"><h3>7 · Stepper limits</h3><p>Ramp a stepper's speed until it stalls at 12 V and again at 24 V, with full steps and 16× microstepping. Plot pull-out speed against supply voltage and explain the result with L/R.</p><span class="uses">Uses modules 03 · 09</span></div>
+    <div class="proj"><h3>7 · Stepper limits</h3><p>Ramp a stepper's speed until it stalls at 12 V and again at 24 V, with full steps and 16× microstepping. Plot pull-out speed against supply voltage and explain the result with L/R.</p><span class="uses">Uses modules 03 · 10</span></div>
   </div>
-  <div class="callout"><span class="tag">Safety</span><p>Stay at or below 48 V DC on the bench, current-limit the supply, and keep fingers and hair away from spinning shafts. Read Module 14 before your first motor project.</p></div>
+  <div class="callout"><span class="tag">Safety</span><p>Stay at or below 48 V DC on the bench, current-limit the supply, and keep fingers and hair away from spinning shafts. Read Module 21 before your first motor project.</p></div>
 </section>
 
 <!-- ======================= 01 ROTATION ======================= -->
@@ -403,14 +403,14 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <li><strong>Linear mass on a belt or rack</strong> with pulley radius r: J = m·r², seen at the pulley shaft.</li>
     <li><strong>Linear mass on a screw</strong> with lead p (meters of travel per revolution): J = m·(p/2π)².</li>
   </ul>
-  <p>The last two convert a linear load into an equivalent rotary inertia at the shaft that drives it. Module 10 adds the gear ratio, which divides the load inertia seen by the motor by N².</p>
+  <p>The last two convert a linear load into an equivalent rotary inertia at the shaft that drives it. Module 11 adds the gear ratio, which divides the load inertia seen by the motor by N².</p>
   <div class="callout"><span class="tag">Rule of thumb</span><p>For a disk of fixed thickness, mass scales with r² and inertia with m·r², so J grows with r⁴. Doubling a pulley's diameter can multiply its inertia by 16. Hollow out or shrink rotating parts before you upsize the motor.</p></div>
 
   <h2>The torque budget</h2>
   <p>The motor has to supply every torque on the drive train at once: <code>T = J<sub>total</sub>·α + b·ω + T<sub>f</sub> + T<sub>load</sub></code>. Coulomb friction T<sub>f</sub> is roughly constant (bearings, seals, guide rails). Viscous friction b·ω grows with speed (lubricant shear, eddy-current losses). T<sub>load</sub> is the process itself: gravity on a vertical axis, a cutting force, a spring. Acceleration torque dominates fast indexing moves. Friction and gravity dominate slow, heavy ones.</p>
 
   <h2>Power and energy</h2>
-  <p>Mechanical power is P = T·ω. A gearbox trades torque for speed but never adds power, and every stage loses some. The kinetic energy ½·J·ω² stored in a moving system has to go somewhere when it stops: into friction, a mechanical brake, a brake resistor, or back into the power supply as regenerated energy. Modules 05 and 14 deal with that last case.</p>
+  <p>Mechanical power is P = T·ω. A gearbox trades torque for speed but never adds power, and every stage loses some. The kinetic energy ½·J·ω² stored in a moving system has to go somewhere when it stops: into friction, a mechanical brake, a brake resistor, or back into the power supply as regenerated energy. Modules 05 and 21 deal with that last case.</p>
 
   <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
     <div class="eq"><code>T = J·α + b·ω + T<sub>f</sub> + T<sub>load</sub></code><span>Torque balance on a shaft</span></div>
@@ -443,7 +443,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   <h2>The three quantities</h2>
   <ul>
     <li><strong>Voltage V</strong> is a potential difference between two points, the electrical “effort”. It is always measured between two nodes. Ground is simply the node you decide to call 0 V.</li>
-    <li><strong>Current I</strong> is the flow of charge, in amps. It always returns to its source, and the return path matters as much as the outgoing wire (Module 14).</li>
+    <li><strong>Current I</strong> is the flow of charge, in amps. It always returns to its source, and the return path matters as much as the outgoing wire (Module 21).</li>
     <li><strong>Resistance R</strong> relates them: V = I·R. Power dissipated is P = V·I = I²·R = V²/R. Small through-hole and SMD resistors are usually rated 0.1–0.25 W.</li>
   </ul>
 
@@ -531,7 +531,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   <h2>RC low-pass filters</h2>
   <p>A series R with a C to ground passes slow signals and attenuates fast ones. The corner frequency is f<sub>c</sub> = 1/(2πRC). At f<sub>c</sub> the output is 0.707 of the input (−3 dB) and lags by 45°. Above it, amplitude falls 20 dB per decade and the lag approaches 90°. Two stages in cascade fall 40 dB per decade.</p>
   <p>Use them to clean up a potentiometer or analog sensor and as an anti-aliasing filter ahead of an ADC (Module 06). Every filter also adds delay. Well below f<sub>c</sub>, an RC filter behaves roughly like a pure delay of RC seconds.</p>
-  <div class="callout"><span class="tag">Rule of thumb</span><p>Put a filter's corner at least 5–10× above the bandwidth of any control loop that uses the filtered signal, or its phase lag will eat into your phase margin (Module 13).</p></div>
+  <div class="callout"><span class="tag">Rule of thumb</span><p>Put a filter's corner at least 5–10× above the bandwidth of any control loop that uses the filtered signal, or its phase lag will eat into your phase margin (Module 16).</p></div>
 
   <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
     <div class="eq"><code>i = C·dv/dt &nbsp; v = L·di/dt</code><span>Capacitor and inductor laws</span></div>
@@ -641,7 +641,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
 
   <h2>Quadrants and regeneration</h2>
   <p>A single low-side switch with a freewheel diode drives one direction and can't actively brake (one quadrant). A half-bridge adds braking in one direction. A full H-bridge can drive and brake in both directions (four quadrants).</p>
-  <p>When a load decelerates, the motor becomes a generator and pushes current back into the supply. Bus capacitors charge up, and many bench supplies can't absorb current, so the bus voltage rises. Large bus capacitance, a brake resistor switched across the bus, or a clamp prevents an overvoltage trip. Module 14 has a calculator for this.</p>
+  <p>When a load decelerates, the motor becomes a generator and pushes current back into the supply. Bus capacitors charge up, and many bench supplies can't absorb current, so the bus voltage rises. Large bus capacitance, a brake resistor switched across the bus, or a clamp prevents an overvoltage trip. Module 21 has a calculator for this.</p>
   <p>The same PWM idea plus an LC filter is a buck converter, the DC-DC regulator found on nearly every motor-control board.</p>
 
   <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
@@ -742,12 +742,12 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <li><strong>Absolute encoders</strong> report position directly (single- or multi-turn) over SPI, SSI or BiSS, so no homing is needed at power-up.</li>
     <li><strong>Resolvers</strong> are rugged rotary transformers with analog outputs; they survive heat and shock.</li>
     <li><strong>Potentiometers</strong> are cheap and absolute but wear and are noisy.</li>
-    <li><strong>Hall sensors</strong> in BLDC motors give coarse rotor position for commutation (Module 09).</li>
+    <li><strong>Hall sensors</strong> in BLDC motors give coarse rotor position for commutation (Module 10).</li>
     <li><strong>LVDTs and linear scales</strong> measure linear position directly at the load, bypassing transmission errors.</li>
   </ul>
 
   <h2>Velocity from an encoder</h2>
-  <p>Differencing counts over a fixed time gives velocity, but at low speed only a few counts arrive per sample, so the estimate is coarse and noisy. Options: a longer window (adds delay), timing the interval between edges, or a filter or observer. This trade between noise and delay comes up again in Module 12.</p>
+  <p>Differencing counts over a fixed time gives velocity, but at low speed only a few counts arrive per sample, so the estimate is coarse and noisy. Options: a longer window (adds delay), timing the interval between edges, or a filter or observer. This trade between noise and delay comes up again in Module 15.</p>
 
   <h2>Force, torque and strain</h2>
   <p>A strain gauge's resistance changes by ΔR/R = GF·ε, where the gauge factor GF ≈ 2 and ε is strain. That change is tiny (0.1% at 500 µε), so gauges sit in a Wheatstone bridge, which outputs only the imbalance. A quarter bridge (one active gauge) outputs about V<sub>ex</sub>·GF·ε/4. A full bridge with four active gauges gives 4× the signal and cancels temperature drift. Load cells and torque transducers are full bridges rated in mV/V. The output, a few millivolts, needs an instrumentation amplifier before the ADC.</p>
@@ -820,12 +820,12 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <li><strong>Terminal resistance and inductance</strong> give stall current and τ<sub>e</sub> = L/R.</li>
     <li><strong>No-load current</strong> I<sub>0</sub> captures internal friction: T<sub>f</sub> ≈ K<sub>t</sub>·I<sub>0</sub>.</li>
     <li><strong>Rated (continuous) torque</strong> is a thermal limit: I²R heating the winding. <strong>Peak torque</strong> is limited by magnet demagnetization and the driver, and is allowed only briefly.</li>
-    <li><strong>Rotor inertia</strong> goes into every acceleration calculation (Module 15).</li>
+    <li><strong>Rotor inertia</strong> goes into every acceleration calculation (Module 22).</li>
   </ul>
   <div class="callout"><span class="tag">Rule of thumb</span><p>Copper resistance rises about 0.39% per °C. A winding at 100 °C has roughly 30% more resistance than at 25 °C, so stall torque and efficiency drop as the motor warms up.</p></div>
 
   <h2>Two time constants</h2>
-  <p>The electrical time constant τ<sub>e</sub> = L/R (typically 0.1–5 ms) sets how fast current and torque respond. The mechanical time constant τ<sub>m</sub> = J·R/(K<sub>t</sub>K<sub>e</sub>) (typically 5–100 ms) sets how fast an unloaded motor reaches speed after a voltage step. Usually τ<sub>m</sub> ≫ τ<sub>e</sub>, which is why cascaded control (Module 13) works so well.</p>
+  <p>The electrical time constant τ<sub>e</sub> = L/R (typically 0.1–5 ms) sets how fast current and torque respond. The mechanical time constant τ<sub>m</sub> = J·R/(K<sub>t</sub>K<sub>e</sub>) (typically 5–100 ms) sets how fast an unloaded motor reaches speed after a voltage step. Usually τ<sub>m</sub> ≫ τ<sub>e</sub>, which is why cascaded control (Module 16) works so well.</p>
 
   <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
     <div class="eq"><code>V = R·i + L·di/dt + K<sub>e</sub>·ω</code><span>Electrical equation</span></div>
@@ -837,7 +837,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </div>
 
   <section class="lab" data-lab="dcmotor">
-    <div class="lab-head"><span class="lab-tag">Lab 08</span><h3>Torque–speed explorer</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 09</span><h3>Torque–speed explorer</h3></div>
     <p class="lab-note">A permanent-magnet DC motor in steady state. Friction is set by the no-load current. Move the load torque to slide the operating point along the line.</p>
     <div class="controls" id="c-dcmotor"></div>
     <div class="screen"><canvas id="cv-dcmotor"></canvas></div>
@@ -887,7 +887,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </div>
 
   <section class="lab" data-lab="commutation">
-    <div class="lab-head"><span class="lab-tag">Lab 09</span><h3>Brushless commutation</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 10</span><h3>Brushless commutation</h3></div>
     <p class="lab-note">A one-pole-pair BLDC motor. The yellow arrow is the rotor magnet; the cyan arrow is the stator field the drive creates. Bars show the three phase currents. Torque follows the angle between the arrows.</p>
     <div class="btnrow"><button class="btn small" id="com-play" aria-pressed="true">Pause</button></div>
     <div class="controls" id="c-commutation"></div>
@@ -943,7 +943,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </div>
 
   <section class="lab" data-lab="transmission">
-    <div class="lab-head"><span class="lab-tag">Lab 10</span><h3>Choosing a gear ratio</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 11</span><h3>Choosing a gear ratio</h3></div>
     <p class="lab-note">Load acceleration across ratios from 1:1 to 200:1 for a given motor and pure-inertia load. The shaded region is where the motor can't reach the required load speed.</p>
     <div class="controls" id="c-transmission"></div>
     <div class="screen"><canvas id="cv-transmission"></canvas></div>
@@ -972,7 +972,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   <h2>First and second order</h2>
   <p>A first-order system τ·dy/dt + y = K·u has G(s) = K/(τs + 1). A DC motor's speed response to voltage looks like this when inductance is small: G(s) = (1/K<sub>e</sub>)/(τ<sub>m</sub>s + 1).</p>
   <p>A second-order system has G(s) = ω<sub>n</sub>²/(s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²). It is the familiar mass–spring–damper, m·ẍ + c·ẋ + k·x = F, with ω<sub>n</sub> = √(k/m) and ζ = c/(2√(km)). Its poles sit at −ζω<sub>n</sub> ± jω<sub>n</sub>√(1−ζ²). Many closed position loops behave this way.</p>
-  <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>A proportional position loop is a virtual spring and the derivative term is a virtual damper. Tuning PD gains is choosing k and c for a mass–spring–damper you build in software (Module 12).</p></div>
+  <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>A proportional position loop is a virtual spring and the derivative term is a virtual damper. Tuning PD gains is choosing k and c for a mass–spring–damper you build in software (Module 15).</p></div>
 
   <h2>Step response specs</h2>
   <ul>
@@ -983,7 +983,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </ul>
 
   <h2>Block diagrams</h2>
-  <p>Blocks in series multiply. A loop with forward path G and feedback H has closed-loop transfer function G/(1 + G·H). Here is the DC motor from Module 08 as a block diagram. Note the back-EMF path: it is a built-in feedback loop that gives the motor its natural damping.</p>
+  <p>Blocks in series multiply. A loop with forward path G and feedback H has closed-loop transfer function G/(1 + G·H). Here is the DC motor from Module 09 as a block diagram. Note the back-EMF path: it is a built-in feedback loop that gives the motor its natural damping.</p>
   <figure class="figure wide" style="margin:0">
     <svg viewBox="0 0 760 180" role="img" aria-label="DC motor block diagram: voltage minus back-EMF into 1 over Ls plus R gives current, times Kt gives torque, minus load torque into 1 over Js plus b gives speed, integrated gives angle; speed times Ke feeds back as back-EMF">
       <defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" style="fill:var(--ink)"/></marker></defs>
@@ -1022,7 +1022,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
   </div>
 
   <section class="lab" data-lab="dynamics">
-    <div class="lab-head"><span class="lab-tag">Lab 11</span><h3>Second-order step response and poles</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 14</span><h3>Second-order step response and poles</h3></div>
     <p class="lab-note">Set damping ratio and natural frequency. The step response and the pole locations update together.</p>
     <div class="controls" id="c-dynamics"></div>
     <div class="screen"><canvas id="cv-dynamics"></canvas></div>
@@ -1062,7 +1062,7 @@ details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:1
     <li>Start with K<sub>i</sub> = K<sub>d</sub> = 0. Raise K<sub>p</sub> until the response is quick with modest overshoot.</li>
     <li>Add K<sub>d</sub> to damp the overshoot. Then raise K<sub>p</sub> further and repeat until noise or ringing limits you.</li>
     <li>Add K<sub>i</sub> slowly until steady-state error clears in an acceptable time.</li>
-    <li>Add feedforward, test with large moves to check saturation behavior, and leave margin (Module 13).</li>
+    <li>Add feedforward, test with large moves to check saturation behavior, and leave margin (Module 16).</li>
   </ol>
 
   <h2>Digital implementation</h2>
@@ -1091,7 +1091,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="pid">
-    <div class="lab-head"><span class="lab-tag">Lab 12</span><h3>PID position control of a DC motor</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 15</span><h3>PID position control of a DC motor</h3></div>
     <p class="lab-note">A small 24 V motor (K<sub>t</sub> = 0.03 N·m/A, R = 1.5 Ω, J = 2×10⁻⁵ kg·m²) steps to a target angle at t = 0. A load torque switches on at t = 0.6 s. The controller runs at the loop rate you set, reads a quantized encoder, and its voltage output saturates at ±24 V.</p>
     <div class="btnrow" id="pid-presets"></div>
     <div class="controls" id="c-pid"></div>
@@ -1165,7 +1165,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="frequency">
-    <div class="lab-head"><span class="lab-tag">Lab 13</span><h3>Loop gain, phase margin and delay</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 16</span><h3>Loop gain, phase margin and delay</h3></div>
     <p class="lab-note">The loop is L(s) = K·e<sup>−sT<sub>d</sub></sup> / (s(τs + 1)): an integrating plant with one lag, like a motor's position under velocity command, plus a delay. Top: Bode magnitude. Middle: phase. Bottom: closed-loop step response.</p>
     <div class="controls" id="c-frequency"></div>
     <div class="screen short"><canvas id="cv-bode-mag"></canvas></div>
@@ -1228,7 +1228,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="wiring">
-    <div class="lab-head"><span class="lab-tag">Lab 14</span><h3>Wire drop and regeneration</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 21</span><h3>Wire drop and regeneration</h3></div>
     <p class="lab-note">Two quick checks you'll use on every build. Copper resistance values are for solid wire at 20 °C.</p>
     <h4 style="font-family:var(--font-display);font-size:1.05rem">Voltage drop in a cable run</h4>
     <div class="controls" id="c-wire"></div>
@@ -1259,7 +1259,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <li><strong>RMS torque</strong> over the whole cycle, dwell included, is what heats the motor. Compare it with the continuous rating: T<sub>rms</sub> = √(Σ T<sub>i</sub>²·t<sub>i</sub> / Σ t<sub>i</sub>).</li>
     <li><strong>Peak speed</strong> must be within the motor's rated range, and the torque available at that speed (from the torque–speed curve) must still cover the requirement.</li>
     <li><strong>Voltage</strong>: back-EMF at top speed plus R·I at peak current must fit under the bus voltage: V ≥ K<sub>e</sub>·ω<sub>max</sub> + R·I<sub>peak</sub>.</li>
-    <li><strong>Inertia ratio</strong>: check it against the drive maker's guidance (Module 10).</li>
+    <li><strong>Inertia ratio</strong>: check it against the drive maker's guidance (Module 11).</li>
   </ul>
 
   <h2>The sizing loop</h2>
@@ -1282,7 +1282,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="sizing">
-    <div class="lab-head"><span class="lab-tag">Lab 15</span><h3>Index table sizing</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 22</span><h3>Index table sizing</h3></div>
     <p class="lab-note">A rotary index table driven through a gearbox. Set the move and the mechanics, then choose a motor from an example catalog of generic servo sizes. The checks compare against 80% of each rating.</p>
     <div class="controls" id="c-sizing"></div>
     <div class="screen"><canvas id="cv-sizing"></canvas></div>
@@ -1304,8 +1304,8 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <h2>What the shaft actually sees</h2>
   <ul>
     <li><strong>Bending is fully reversed.</strong> A transverse load fixed in direction (belt pull, gear separating force, an overhung pulley's weight) is steady, but each point on a rotating shaft passes from tension to compression once per revolution. So for fatigue, M<sub>a</sub> = M and M<sub>m</sub> = 0.</li>
-    <li><strong>Torque depends on the duty.</strong> A conveyor or pump drive has mostly steady torque (T<sub>m</sub>). A servo axis that accelerates and brakes in both directions sees torque that reverses with every move, so it is mostly alternating (T<sub>a</sub>). Shigley's worked examples usually assume steady torque, so check the torque profile from your sizing (Module 15) before you copy their assumption.</li>
-    <li><strong>Axial loads</strong> from helical gears or screws are usually small in stress terms but matter for bearings (Module 17).</li>
+    <li><strong>Torque depends on the duty.</strong> A conveyor or pump drive has mostly steady torque (T<sub>m</sub>). A servo axis that accelerates and brakes in both directions sees torque that reverses with every move, so it is mostly alternating (T<sub>a</sub>). Shigley's worked examples usually assume steady torque, so check the torque profile from your sizing (Module 22) before you copy their assumption.</li>
+    <li><strong>Axial loads</strong> from helical gears or screws are usually small in stress terms but matter for bearings (Module 24).</li>
   </ul>
   <p>Nominal stresses on a solid round shaft are σ = 32M/(πd³) in bending and τ = 16T/(πd³) in torsion. The alternating and midrange components are each combined into a von Mises equivalent, σ′ = √(σ² + 3τ²), after applying stress-concentration factors.</p>
 
@@ -1350,9 +1350,9 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <tr><td>Tapered roller bearing</td><td>0.0005–0.0012 rad</td></tr>
     <tr><td>Uncrowned spur gear</td><td>below 0.0005 rad</td></tr>
   </table></div>
-  <p><strong>Torsional stiffness</strong> of a solid shaft is k = G·J/L with J = πd⁴/32. Shafts, couplings, keys and gear meshes act as springs in series, so 1/k<sub>total</sub> = Σ 1/k<sub>i</sub> and the softest element dominates. Together with the motor and load inertias, that stiffness sets the drive-train resonance from Module 10.</p>
+  <p><strong>Torsional stiffness</strong> of a solid shaft is k = G·J/L with J = πd⁴/32. Shafts, couplings, keys and gear meshes act as springs in series, so 1/k<sub>total</sub> = Σ 1/k<sub>i</sub> and the softest element dominates. Together with the motor and load inertias, that stiffness sets the drive-train resonance from Module 11.</p>
   <p><strong>Lateral critical speed</strong>: a rotating shaft whirls violently near its first bending natural frequency. Keep the first critical speed at least twice the maximum operating speed. A uniform, simply supported shaft has ω<sub>1</sub> = (π/L)²·√(EI/(ρA)). Shafts carrying disks need Rayleigh's method (ω<sub>1</sub>² ≈ g·Σw<sub>i</sub>y<sub>i</sub>/Σw<sub>i</sub>y<sub>i</sub>²) or Dunkerley's lower bound.</p>
-  <div class="callout bridge"><span class="tag">Controls bridge</span><p>The torsional resonance is what limits servo bandwidth (Module 13). A shaft that passes fatigue easily can still be the reason an axis rings, so check stiffness with the same care as strength.</p></div>
+  <div class="callout bridge"><span class="tag">Controls bridge</span><p>The torsional resonance is what limits servo bandwidth (Module 16). A shaft that passes fatigue easily can still be the reason an axis rings, so check stiffness with the same care as strength.</p></div>
 
   <h2>Shaft–hub connections</h2>
   <div class="tbl"><table>
@@ -1399,14 +1399,14 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="shafts">
-    <div class="lab-head"><span class="lab-tag">Lab 16a</span><h3>Shaft fatigue on the Goodman diagram</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 23a</span><h3>Shaft fatigue on the Goodman diagram</h3></div>
     <p class="lab-note">A solid steel shaft at one critical feature. Bending from a fixed-direction load is fully reversed. Choose how the torque behaves, and the point moves on the diagram. Inside both lines is safe; the safety factor is how far the load line can extend before it crosses the Goodman line.</p>
     <div class="controls" id="c-shafts"></div>
     <div class="screen"><canvas id="cv-shafts"></canvas></div>
     <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Goodman line</span><span class="lg"><i style="--c:var(--ch3)"></i>Langer (first-cycle yield) line</span><span class="lg"><i class="dash" style="--c:var(--ch2)"></i>Load line</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Gerber (for comparison)</span></div>
     <div class="readouts" id="ro-shafts"></div>
     <div class="sublab">
-      <h4>Lab 16b · Drive-train stiffness and critical speed</h4>
+      <h4>Lab 23b · Drive-train stiffness and critical speed</h4>
       <p class="lab-note">A motor drives a load inertia through a steel shaft and a coupling in series. G = 79.3 GPa, E = 207 GPa, ρ = 7850 kg/m³.</p>
       <div class="controls" id="c-stiff"></div>
       <div class="readouts" id="ro-stiff"></div>
@@ -1500,14 +1500,14 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="bearings">
-    <div class="lab-head"><span class="lab-tag">Lab 17a</span><h3>Deep-groove ball bearing life</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 24a</span><h3>Deep-groove ball bearing life</h3></div>
     <p class="lab-note">Defaults are typical of a 20 mm bore deep-groove ball bearing. The plot shows life against equivalent load on log scales. The slope is the life exponent.</p>
     <div class="controls" id="c-bearings"></div>
     <div class="screen"><canvas id="cv-bearings"></canvas></div>
     <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Life vs. equivalent load</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Target life</span><span class="lg"><i style="--c:var(--ch3)"></i>Your operating point</span></div>
     <div class="readouts" id="ro-bearings"></div>
     <div class="sublab">
-      <h4>Lab 17b · Linear guide life</h4>
+      <h4>Lab 24b · Linear guide life</h4>
       <div class="controls" id="c-guide"></div>
       <div class="readouts" id="ro-guide"></div>
     </div>
@@ -1522,7 +1522,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
 
 <!-- ======================= 18 SCREWS / BELTS / GEARS ======================= -->
 <section class="view module" id="view-elements">
-  <p class="lead">Module 10 treated screws, belts and gears as ratios and inertias. This module covers what limits them physically: thread friction and self-locking, screw buckling and whip, belt tension and stiffness, and gear tooth bending and pitting.</p>
+  <p class="lead">Module 11 treated screws, belts and gears as ratios and inertias. This module covers what limits them physically: thread friction and self-locking, screw buckling and whip, belt tension and stiffness, and gear tooth bending and pitting.</p>
 
   <h2>Power screws</h2>
   <p>Square, Acme (29° included angle) and metric trapezoidal (30°) threads convert torque to thrust by sliding friction. With major diameter d and pitch p, the mean diameter is d<sub>m</sub> ≈ d − p/2 and the root diameter d<sub>r</sub> ≈ d − p. The lead is l = n<sub>starts</sub>·p and the lead angle is tan λ = l/(π·d<sub>m</sub>).</p>
@@ -1583,19 +1583,19 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="elements">
-    <div class="lab-head"><span class="lab-tag">Lab 18a</span><h3>Lead screw or ball screw selection</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 25a</span><h3>Lead screw or ball screw selection</h3></div>
     <p class="lab-note">Allowable speed (80% of critical) and allowable compressive load (50% of Euler buckling) against unsupported length, with your operating point. Steel screw, E = 207 GPa.</p>
     <div class="controls" id="c-screw2"></div>
     <div class="screen"><canvas id="cv-screw2"></canvas></div>
     <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Allowable speed (left axis)</span><span class="lg"><i style="--c:var(--ch2)"></i>Allowable load (right axis)</span><span class="lg"><i class="dash" style="--c:var(--ch3)"></i>Your length</span></div>
     <div class="readouts" id="ro-screw2"></div>
     <div class="sublab">
-      <h4>Lab 18b · Timing belt drive</h4>
+      <h4>Lab 25b · Timing belt drive</h4>
       <div class="controls" id="c-belt"></div>
       <div class="readouts" id="ro-belt"></div>
     </div>
     <div class="sublab">
-      <h4>Lab 18c · Spur gear first-pass check</h4>
+      <h4>Lab 25c · Spur gear first-pass check</h4>
       <p class="lab-note">Lewis bending and Hertz contact on a steel pinion, compared with AGMA grade 1 through-hardened allowables. A screening check, not a full AGMA rating.</p>
       <div class="controls" id="c-gear"></div>
       <div class="readouts" id="ro-gear"></div>
@@ -1641,7 +1641,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <h2>Axis–angle and Rodrigues' formula</h2>
   <p>Euler's rotation theorem says any rotation is a single rotation by angle θ about some unit axis ω̂. Rodrigues' formula builds the matrix directly:</p>
   <div class="math"><div>R = I + sin θ·[ω̂] + (1 − cos θ)·[ω̂]²</div></div>
-  <p>Here [ω̂] is the skew-symmetric matrix with [ω̂]v = ω̂ × v. Going back: θ = acos((tr R − 1)/2), and the axis is (r<sub>32</sub> − r<sub>23</sub>, r<sub>13</sub> − r<sub>31</sub>, r<sub>21</sub> − r<sub>12</sub>)/(2 sin θ). This representation is the basis of the exponential coordinates used in Module 20 and in many controllers.</p>
+  <p>Here [ω̂] is the skew-symmetric matrix with [ω̂]v = ω̂ × v. Going back: θ = acos((tr R − 1)/2), and the axis is (r<sub>32</sub> − r<sub>23</sub>, r<sub>13</sub> − r<sub>31</sub>, r<sub>21</sub> − r<sub>12</sub>)/(2 sin θ). This representation is the basis of the exponential coordinates used in Module 28 and in many controllers.</p>
   <details class="deriv"><summary>Show derivation: Rodrigues' formula</summary><div class="d">
     <p>Split a vector v into a part along the axis and a part perpendicular to it:</p>
     <div class="math"><div>v<sub>∥</sub> = ω̂(ω̂·v), &nbsp; v<sub>⊥</sub> = v − v<sub>∥</sub></div></div>
@@ -1689,7 +1689,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="rigid">
-    <div class="lab-head"><span class="lab-tag">Lab 19</span><h3>Orientation explorer</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 27</span><h3>Orientation explorer</h3></div>
     <p class="lab-note">Set three angles and choose the multiplication order. The faint axes are the fixed frame; the bright axes and plate are the rotated body. Drag on the view to orbit the camera. Readouts show the same orientation as a matrix, an axis–angle pair and a quaternion.</p>
     <div class="controls" id="c-rigid"></div>
     <div class="screen tall drag"><canvas id="cv-rigid"></canvas></div>
@@ -1710,7 +1710,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <h2>Links, joints and the kinematic chain</h2>
   <p>A serial manipulator is a chain of rigid links connected by revolute (rotary) or prismatic (sliding) joints, each with one variable q<sub>i</sub>. Attach a frame to each link. The transform from link i−1 to link i depends only on q<sub>i</sub>, so the tool pose is</p>
   <div class="math"><div>T<sub>0n</sub>(q) = A<sub>1</sub>(q<sub>1</sub>)·A<sub>2</sub>(q<sub>2</sub>)···A<sub>n</sub>(q<sub>n</sub>)</div></div>
-  <p>Six joints are needed to reach an arbitrary position and orientation in space. Fewer joints restrict the reachable poses; more give redundancy (Module 22).</p>
+  <p>Six joints are needed to reach an arbitrary position and orientation in space. Fewer joints restrict the reachable poses; more give redundancy (Module 30).</p>
 
   <h2>Denavit–Hartenberg parameters</h2>
   <p>The DH convention reduces each A<sub>i</sub> to four parameters by placing frames under two rules: z<sub>i−1</sub> lies along the axis of joint i, and x<sub>i</sub> lies along the common normal between z<sub>i−1</sub> and z<sub>i</sub>. The four parameters are:</p>
@@ -1753,7 +1753,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <h2>Product of exponentials</h2>
   <p>The product-of-exponentials (PoE) formulation skips the frame-placement rules. Choose a base frame and a tool frame, record the tool pose M with all joints at zero, and describe each joint by its screw axis S<sub>i</sub> = (ω<sub>i</sub>, v<sub>i</sub>) in the base frame. For a revolute joint, ω<sub>i</sub> is the unit axis and v<sub>i</sub> = −ω<sub>i</sub> × q<sub>i</sub> for any point q<sub>i</sub> on the axis; for a prismatic joint, ω<sub>i</sub> = 0 and v<sub>i</sub> is the sliding direction. Then</p>
   <div class="math"><div>T(θ) = e<sup>[S<sub>1</sub>]θ<sub>1</sub></sup>·e<sup>[S<sub>2</sub>]θ<sub>2</sub></sup>···e<sup>[S<sub>n</sub>]θ<sub>n</sub></sup>·M</div></div>
-  <p>Axes come straight from the CAD model, there are no special cases for parallel axes, and the same screw axes give the Jacobian directly in Module 21.</p>
+  <p>Axes come straight from the CAD model, there are no special cases for parallel axes, and the same screw axes give the Jacobian directly in Module 29.</p>
   <details class="deriv"><summary>Show derivation: exponential of a revolute screw</summary><div class="d">
     <p>Rotating a body by θ about an axis with direction ω through point q moves a point p to R(p − q) + q, where R = e<sup>[ω]θ</sup> from Rodrigues' formula. As a transform:</p>
     <div class="math"><div>e<sup>[S]θ</sup> = <span class="mat" style="--c:2"><span>e<sup>[ω]θ</sup></span><span>(I − e<sup>[ω]θ</sup>)q</span><span>0</span><span>1</span></span></div></div>
@@ -1769,7 +1769,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="fk">
-    <div class="lab-head"><span class="lab-tag">Lab 20</span><h3>Planar 3R forward kinematics</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 28</span><h3>Planar 3R forward kinematics</h3></div>
     <p class="lab-note">Set the joint angles and link lengths. Each joint shows its frame, and the readouts give the DH table and the resulting tool transform.</p>
     <div class="controls" id="c-fk"></div>
     <div class="screen tall"><canvas id="cv-fk"></canvas></div>
@@ -1809,7 +1809,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <p>A configuration is singular where J loses rank. For the 2R arm, det J = L<sub>1</sub>L<sub>2</sub>·sin θ<sub>2</sub>, which vanishes when the arm is fully stretched or folded (θ<sub>2</sub> = 0 or π). Near a singularity:</p>
   <ul>
     <li>Some tool directions need very large joint speeds, because q̇ = J<sup>−1</sup>ẋ blows up.</li>
-    <li>Inverse kinematics becomes ill-conditioned (Module 22).</li>
+    <li>Inverse kinematics becomes ill-conditioned (Module 30).</li>
     <li>In the lost direction the arm resists force without any joint torque, which is useful for carrying loads and dangerous for control.</li>
   </ul>
   <p>Singularities on the workspace boundary (arm stretched) are unavoidable. Internal ones, such as a 6-axis wrist with its first and last axes aligned, appear in the middle of the workspace and are what path planners have to avoid.</p>
@@ -1830,7 +1830,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="jacobian">
-    <div class="lab-head"><span class="lab-tag">Lab 21</span><h3>Manipulability ellipse</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 29</span><h3>Manipulability ellipse</h3></div>
     <p class="lab-note">A 2-link planar arm. The ellipse at the tool shows the tool velocities reachable with unit joint speed, or switch to see the tool forces available with unit joint torque.</p>
     <div class="controls" id="c-jacobian"></div>
     <div class="screen tall"><canvas id="cv-jacobian"></canvas></div>
@@ -1881,7 +1881,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     <li><strong>Cubic</strong> (position and velocity specified at both ends): q = q<sub>0</sub> + Δ(3s² − 2s³). Peak velocity 1.5Δ/T, peak acceleration 6Δ/T². The acceleration jumps at the start and end, which means infinite jerk.</li>
     <li><strong>Quintic</strong> (position, velocity and acceleration specified): q = q<sub>0</sub> + Δ(10s³ − 15s⁴ + 6s⁵). Peak velocity 1.875Δ/T, peak acceleration about 5.77Δ/T², with smooth acceleration that excites resonances far less.</li>
   </ul>
-  <p>Joint-space interpolation is simple and avoids singularities, but the tool path is curved. Straight-line Cartesian motion needs IK at every control step and can pass near singularities. The trapezoidal profiles from Module 15 apply to either.</p>
+  <p>Joint-space interpolation is simple and avoids singularities, but the tool path is curved. Straight-line Cartesian motion needs IK at every control step and can pass near singularities. The trapezoidal profiles from Module 22 apply to either.</p>
   <details class="deriv"><summary>Show derivation: cubic and quintic coefficients</summary><div class="d">
     <p><strong>Cubic</strong> q = a<sub>0</sub> + a<sub>1</sub>t + a<sub>2</sub>t² + a<sub>3</sub>t³ with q(0) = q<sub>0</sub>, q̇(0) = 0, q(T) = q<sub>f</sub>, q̇(T) = 0. The conditions at t = 0 give a<sub>0</sub> = q<sub>0</sub> and a<sub>1</sub> = 0. The conditions at T give a<sub>2</sub>T² + a<sub>3</sub>T³ = Δ and 2a<sub>2</sub>T + 3a<sub>3</sub>T² = 0, so a<sub>2</sub> = 3Δ/T² and a<sub>3</sub> = −2Δ/T³. Then q̈(0) = 6Δ/T², nonzero at the start.</p>
     <p><strong>Quintic</strong>, in normalized time with six conditions: zero velocity and acceleration at both ends. Write q = q<sub>0</sub> + Δ·h(s) with h = b<sub>3</sub>s³ + b<sub>4</sub>s⁴ + b<sub>5</sub>s⁵, since h(0) = h′(0) = h″(0) = 0 force the lower terms to zero. Then h(1) = 1, h′(1) = 0 and h″(1) = 0 give b<sub>3</sub> + b<sub>4</sub> + b<sub>5</sub> = 1, 3b<sub>3</sub> + 4b<sub>4</sub> + 5b<sub>5</sub> = 0 and 6b<sub>3</sub> + 12b<sub>4</sub> + 20b<sub>5</sub> = 0. The solution is (10, −15, 6). Peak velocity is h′(½) = 30/16 = 1.875. Peak acceleration comes from h‴ = 0 at s = ½ − √3/6, where h″ = 10/√3 ≈ 5.77.</p>
@@ -1897,14 +1897,14 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="ik">
-    <div class="lab-head"><span class="lab-tag">Lab 22a</span><h3>Analytic and numerical IK</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 30a</span><h3>Analytic and numerical IK</h3></div>
     <p class="lab-note">Drag the target on the view, or use the sliders. The faint arms are the two analytic solutions. The bright arm runs damped least squares from its current pose and shows its iteration path.</p>
     <div class="controls" id="c-ik"></div>
     <div class="screen tall drag"><canvas id="cv-ik"></canvas></div>
     <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Numerical (DLS) solution</span><span class="lg"><i style="--c:var(--ch2)"></i>Analytic, θ₂ &gt; 0</span><span class="lg"><i style="--c:var(--ch3)"></i>Analytic, θ₂ &lt; 0</span><span class="lg"><i style="--c:var(--ch5)"></i>Iteration path</span></div>
     <div class="readouts" id="ro-ik"></div>
     <div class="sublab">
-      <h4>Lab 22b · Cubic versus quintic trajectories</h4>
+      <h4>Lab 30b · Cubic versus quintic trajectories</h4>
       <div class="controls" id="c-traj"></div>
       <div class="screen"><canvas id="cv-traj"></canvas></div>
       <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Cubic</span><span class="lg"><i style="--c:var(--ch2)"></i>Quintic</span></div>
@@ -1957,7 +1957,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <h2>Structural properties</h2>
   <ul>
     <li><strong>M(q) is symmetric and positive definite</strong>, and bounded above and below. It can always be inverted for simulation and control.</li>
-    <li><strong>Ṁ − 2C is skew-symmetric</strong> when C is built from Christoffel symbols, c<sub>kj</sub> = Σ<sub>i</sub> ½(∂m<sub>kj</sub>/∂q<sub>i</sub> + ∂m<sub>ki</sub>/∂q<sub>j</sub> − ∂m<sub>ij</sub>/∂q<sub>k</sub>)q̇<sub>i</sub>. This expresses energy conservation and is the key step in many stability proofs (Module 24).</li>
+    <li><strong>Ṁ − 2C is skew-symmetric</strong> when C is built from Christoffel symbols, c<sub>kj</sub> = Σ<sub>i</sub> ½(∂m<sub>kj</sub>/∂q<sub>i</sub> + ∂m<sub>ki</sub>/∂q<sub>j</sub> − ∂m<sub>ij</sub>/∂q<sub>k</sub>)q̇<sub>i</sub>. This expresses energy conservation and is the key step in many stability proofs (Module 32).</li>
     <li><strong>The equations are linear in the parameters:</strong> τ = Y(q, q̇, q̈)·π, where π collects masses, first moments and inertias. That is the basis of parameter identification and adaptive control.</li>
   </ul>
   <details class="deriv"><summary>Show derivation: why Ṁ − 2C is skew-symmetric</summary><div class="d">
@@ -1980,7 +1980,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="robodyn">
-    <div class="lab-head"><span class="lab-tag">Lab 23</span><h3>A 2-link arm falling under gravity</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 31</span><h3>A 2-link arm falling under gravity</h3></div>
     <p class="lab-note">Uniform links released from rest with no motor torque, integrated with RK4 from the equations above. With zero damping, total energy should stay constant, which checks the derivation. Press Reset after changing parameters.</p>
     <div class="btnrow"><button class="btn small" id="dyn-play" type="button">Pause</button><button class="btn small" id="dyn-reset" type="button">Reset</button></div>
     <div class="controls" id="c-robodyn"></div>
@@ -2000,7 +2000,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <p class="lead">With the dynamics in hand, controllers can do more than one PID per joint. This module derives the main model-based laws, proves the simplest one stable, and covers how robots control contact forces instead of only positions.</p>
 
   <h2>Independent joint control</h2>
-  <p>Treat each joint as a motor (Module 08) and put everything else, coupling, gravity and Coriolis terms, into a disturbance that the PID rejects. With high gear ratios the reflected motor inertia dominates (Module 23) and this works well. It degrades at high speeds, with heavy payloads, and on low-ratio or direct-drive arms.</p>
+  <p>Treat each joint as a motor (Module 09) and put everything else, coupling, gravity and Coriolis terms, into a disturbance that the PID rejects. With high gear ratios the reflected motor inertia dominates (Module 31) and this works well. It degrades at high speeds, with heavy payloads, and on low-ratio or direct-drive arms.</p>
 
   <h2>PD with gravity compensation</h2>
   <p>To hold a constant target q<sub>d</sub>, add the model's gravity torque to a PD law:</p>
@@ -2021,7 +2021,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <h2>Computed torque (inverse dynamics control)</h2>
   <p>To track a trajectory q<sub>d</sub>(t), cancel the nonlinear dynamics and impose linear error dynamics:</p>
   <div class="math"><div>τ = M(q)(q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e) + C(q,q̇)q̇ + g(q) &nbsp;⇒&nbsp; ë + K<sub>d</sub>ė + K<sub>p</sub>e = 0</div></div>
-  <p>Each joint's error then behaves like an independent mass–spring–damper. Choose K<sub>p</sub> = ω<sub>n</sub>² and K<sub>d</sub> = 2ζω<sub>n</sub> (Module 11). The catch is that cancellation is only as good as the model. Payload errors and friction leave residual coupling, so practical versions add integral action, robust terms or online parameter adaptation using the linear-in-parameters form.</p>
+  <p>Each joint's error then behaves like an independent mass–spring–damper. Choose K<sub>p</sub> = ω<sub>n</sub>² and K<sub>d</sub> = 2ζω<sub>n</sub> (Module 14). The catch is that cancellation is only as good as the model. Payload errors and friction leave residual coupling, so practical versions add integral action, robust terms or online parameter adaptation using the linear-in-parameters form.</p>
   <details class="deriv"><summary>Show derivation: closed-loop error dynamics</summary><div class="d">
     <p>Substitute the control law into Mq̈ + Cq̇ + g = τ. The Cq̇ and g terms cancel exactly when the model is perfect, leaving M(q)q̈ = M(q)(q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e). M is invertible, so q̈ = q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e. With ë = q̈<sub>d</sub> − q̈, this becomes ë + K<sub>d</sub>ė + K<sub>p</sub>e = 0. With model error, the right side becomes M̂⁻¹[(M̂ − M)q̈ + (Ĉ − C)q̇ + (ĝ − g)], a disturbance that grows with speed and payload mismatch.</p>
   </div></details>
@@ -2054,14 +2054,14 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="robocontrol">
-    <div class="lab-head"><span class="lab-tag">Lab 24a</span><h3>Tracking a circle with three controllers</h3></div>
-    <p class="lab-note">The 2-link arm from Lab 23 (1 m and 0.8 m links, 3 kg and 2 kg plus payload) follows a 0.3 m circle once per second. The controller's model has the nominal payload; set the real payload to test robustness. Torque is limited to 200 N·m per joint, and the controller runs at 1 kHz.</p>
+    <div class="lab-head"><span class="lab-tag">Lab 32a</span><h3>Tracking a circle with three controllers</h3></div>
+    <p class="lab-note">The 2-link arm from Lab 31 (1 m and 0.8 m links, 3 kg and 2 kg plus payload) follows a 0.3 m circle once per second. The controller's model has the nominal payload; set the real payload to test robustness. Torque is limited to 200 N·m per joint, and the controller runs at 1 kHz.</p>
     <div class="controls" id="c-robocontrol"></div>
     <div class="screen tall"><canvas id="cv-robocontrol"></canvas></div>
     <div class="legend"><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Desired path</span><span class="lg"><i style="--c:var(--ch1)"></i>Actual tool path</span><span class="lg"><i style="--c:var(--ch2)"></i>Tracking error (lower panel)</span></div>
     <div class="readouts" id="ro-robocontrol"></div>
     <div class="sublab">
-      <h4>Lab 24b · Pressing on a wall: impedance versus stiff position control</h4>
+      <h4>Lab 32b · Pressing on a wall: impedance versus stiff position control</h4>
       <p class="lab-note">A 2 kg robot axis is commanded 10 mm past a wall that starts at 50 mm. Compare a stiff position controller with impedance control at your chosen stiffness and damping ratio.</p>
       <div class="controls" id="c-imp"></div>
       <div class="screen"><canvas id="cv-imp"></canvas></div>
@@ -2086,7 +2086,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   <h2>Capstan friction</h2>
   <p>A cable sliding over a curved surface with friction coefficient μ and total wrap angle θ loses tension exponentially:</p>
   <div class="math"><div>T<sub>tight</sub> = T<sub>slack</sub>·e<sup>μθ</sup></div></div>
-  <p>This is the same Euler–Eytelwein relation as the friction belt in Module 18. What counts is the total angle of sliding contact, not the radius. A Bowden sheath with 360° of accumulated bends and μ = 0.1 delivers only e<sup>−0.63</sup> ≈ 53% of the input tension. Pulleys on bearings convert sliding into rolling and nearly eliminate the loss, which is why serious cable drives use them wherever space allows.</p>
+  <p>This is the same Euler–Eytelwein relation as the friction belt in Module 25. What counts is the total angle of sliding contact, not the radius. A Bowden sheath with 360° of accumulated bends and μ = 0.1 delivers only e<sup>−0.63</sup> ≈ 53% of the input tension. Pulleys on bearings convert sliding into rolling and nearly eliminate the loss, which is why serious cable drives use them wherever space allows.</p>
   <details class="deriv"><summary>Show derivation: the capstan equation</summary><div class="d">
     <p>Take a cable element subtending dθ on a drum, at the slip limit, with tension T on one side and T + dT on the other. The two tensions both have components toward the drum center, which press the cable on with normal force dN = T·dθ (to first order, using sin(dθ/2) ≈ dθ/2 on each side). Friction opposes slip with at most μ·dN, and that is what the tension difference must overcome:</p>
     <div class="math"><div>dT = μ·T·dθ &nbsp;⇒&nbsp; ∫dT/T = μ∫dθ &nbsp;⇒&nbsp; ln(T<sub>tight</sub>/T<sub>slack</sub>) = μθ</div></div>
@@ -2131,7 +2131,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="tendons">
-    <div class="lab-head"><span class="lab-tag">Lab 25</span><h3>Cable routing loss, stiffness and pretension</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 33</span><h3>Cable routing loss, stiffness and pretension</h3></div>
     <p class="lab-note">An antagonistic cable pair drives a joint pulley through a route with some total sliding wrap. The plot shows tension along the route when the motor drives the load and when the load back-drives the motor. The gap between them is the source of hysteresis.</p>
     <div class="controls" id="c-tendons"></div>
     <div class="screen"><canvas id="cv-tendons"></canvas></div>
@@ -2192,7 +2192,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="compliant">
-    <div class="lab-head"><span class="lab-tag">Lab 26</span><h3>Rigid versus series elastic output impedance</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 34</span><h3>Rigid versus series elastic output impedance</h3></div>
     <p class="lab-note">Output impedance magnitude across frequency for a rigid geared drive and the same drive with a series spring, plus the peak force if the output hits a stiff object. Log scales on both axes.</p>
     <div class="controls" id="c-compliant"></div>
     <div class="screen"><canvas id="cv-compliant"></canvas></div>
@@ -2251,7 +2251,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="teleop">
-    <div class="lab-head"><span class="lab-tag">Lab 27</span><h3>Bilateral teleoperation with delay</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 35</span><h3>Bilateral teleoperation with delay</h3></div>
     <p class="lab-note">A one-axis position–position teleoperator. The operator's hand (a stiff spring) moves the leader forward 80 mm, holds, and pulls back. The follower meets a wall at 50 mm. Each side receives the other's position after a one-way delay.</p>
     <div class="controls" id="c-teleop"></div>
     <div class="screen"><canvas id="cv-teleop"></canvas></div>
@@ -2313,7 +2313,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
   </div>
 
   <section class="lab" data-lab="parallel">
-    <div class="lab-head"><span class="lab-tag">Lab 28</span><h3>Five-bar parallel mechanism</h3></div>
+    <div class="lab-head"><span class="lab-tag">Lab 36</span><h3>Five-bar parallel mechanism</h3></div>
     <p class="lab-note">Two motors at the base drive a shared tool point through two legs. Drag the tool point and the inverse kinematics positions each leg. Choose each leg's working mode, and watch the singularity indicators.</p>
     <div class="controls" id="c-parallel"></div>
     <div class="screen tall drag"><canvas id="cv-parallel"></canvas></div>
@@ -2323,6 +2323,634 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
       <li>Drag the tool point toward the outer edge of a leg's reach. det B heads to zero: a Type I singularity.</li>
       <li>Drag the point until the two distal links line up. det A heads to zero: a Type II singularity, inside the workspace.</li>
       <li>Flip one leg's working mode. The motor angles change completely for the same tool position.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 08 MAGNETICS ======================= -->
+<section class="view module" id="view-magnetics">
+  <p class="lead">Every motor, solenoid, relay and voice coil turns current into force through a magnetic field. This module covers the magnetic-circuit model that sizes them, the two different force laws they rely on, and the two simplest actuators built on those laws.</p>
+
+  <h2>Fields and materials</h2>
+  <p>Current in a winding produces a magnetic field strength H (A/m). The material responds with a flux density B (tesla), related by B = μ<sub>0</sub>μ<sub>r</sub>H, where μ<sub>0</sub> = 4π × 10⁻⁷ H/m is the permeability of free space and μ<sub>r</sub> is the relative permeability.</p>
+  <ul>
+    <li><strong>Soft magnetic materials</strong> (electrical steel, soft iron, ferrite cores) have μ<sub>r</sub> in the thousands, so they carry flux easily, until they <strong>saturate</strong>. Electrical steels saturate around 1.5–2 T, beyond which extra current adds little flux.</li>
+    <li><strong>Permanent magnets</strong> are described by their remanence B<sub>r</sub> (about 1.2–1.45 T for NdFeB and about 0.4 T for ferrite) and their coercivity, the opposing field they withstand before demagnetizing. Heat lowers both. Large opposing currents can permanently demagnetize a motor's magnets, which is one reason motors have a peak current limit (Module 09).</li>
+  </ul>
+
+  <h2>Magnetic circuits</h2>
+  <p>Ampère's law says the line integral of H around a closed path equals the current enclosed: ∮H·dl = N·i, the magnetomotive force (MMF). If flux Φ follows a well-defined path of cross-section A and length l, each segment has a <strong>reluctance</strong> ℛ = l/(μA), and</p>
+  <div class="math"><div>Φ = N·i / Σℛ, &nbsp; B = Φ/A, &nbsp; L = N²/Σℛ</div></div>
+  <p>This is Ohm's law for magnetism: MMF plays the role of voltage, flux of current, and reluctance of resistance. Because iron's μ<sub>r</sub> is so large, a small air gap usually dominates the total reluctance. With only a gap g in the path, B ≈ μ<sub>0</sub>Ni/g.</p>
+  <details class="deriv"><summary>Show derivation: magnetic circuit with an air gap</summary><div class="d">
+    <p>Take a core of path length l<sub>c</sub> and permeability μ<sub>0</sub>μ<sub>r</sub>, with a gap of length g, both of area A. With flux continuous around the loop, B is the same in core and gap (ignoring fringing), so H<sub>core</sub> = B/(μ<sub>0</sub>μ<sub>r</sub>) and H<sub>gap</sub> = B/μ<sub>0</sub>. Ampère's law:</p>
+    <div class="math">
+      <div>N·i = H<sub>core</sub>l<sub>c</sub> + H<sub>gap</sub>g = (B/μ<sub>0</sub>)(l<sub>c</sub>/μ<sub>r</sub> + g)</div>
+      <div>B = μ<sub>0</sub>N·i/(g + l<sub>c</sub>/μ<sub>r</sub>) ≈ μ<sub>0</sub>N·i/g when g ≫ l<sub>c</sub>/μ<sub>r</sub></div>
+    </div>
+    <p>A 1 mm gap matches the reluctance of about 1 m of core with μ<sub>r</sub> = 1000. Flux linkage is λ = NΦ = NBA, so L = λ/i = μ<sub>0</sub>N²A/(g + l<sub>c</sub>/μ<sub>r</sub>) = N²/Σℛ.</p>
+  </div></details>
+
+  <h2>Two ways to make force</h2>
+  <p><strong>Lorentz force.</strong> A conductor of length ℓ carrying current i across a field B feels F = B·i·ℓ, perpendicular to both. The force is linear in current and reverses with it. Voice coils and permanent-magnet DC and brushless motors work this way. A motor's torque constant K<sub>t</sub> is this law summed over all the conductors and multiplied by the rotor radius.</p>
+  <p><strong>Reluctance (Maxwell) force.</strong> Iron is pulled toward positions that reduce reluctance, closing gaps and aligning teeth. The force comes from the change of stored energy:</p>
+  <div class="math"><div>F = ½·i²·dL/dx, &nbsp; or at an iron face, F = B²A/(2μ<sub>0</sub>)</div></div>
+  <p>This force is quadratic in current, so it is always attractive whichever way the current flows, and it rises sharply as the gap closes. Solenoids, relays, steppers, switched-reluctance motors and the cogging torque in PM motors all come from it.</p>
+  <details class="deriv"><summary>Show derivation: force from co-energy</summary><div class="d">
+    <p>With current held constant, the energy the supply delivers during a small motion dx splits equally between the stored field energy and mechanical work. The force is the derivative of the co-energy W′ at constant current:</p>
+    <div class="math"><div>W′ = ½L(x)i² &nbsp;⇒&nbsp; F = ∂W′/∂x|<sub>i</sub> = ½i²·dL/dx</div></div>
+    <p>For a gap-dominated circuit, L = μ<sub>0</sub>N²A/g. Taking x as the gap opening:</p>
+    <div class="math"><div>dL/dg = −μ<sub>0</sub>N²A/g² &nbsp;⇒&nbsp; F = −½i²μ<sub>0</sub>N²A/g²</div></div>
+    <p>The minus sign means the force acts to close the gap. Substituting B = μ<sub>0</sub>Ni/g gives |F| = B²A/(2μ<sub>0</sub>). At 1 T this is about 40 N per cm² of pole face, which is why small gaps produce large forces.</p>
+  </div></details>
+
+  <h2>Solenoids</h2>
+  <p>A solenoid pulls an iron plunger into a coil. Its force-stroke curve is steep: weak at full stroke, very strong near closure, until the iron saturates. Practical consequences:</p>
+  <ul>
+    <li><strong>Peak-and-hold drive.</strong> Pull in with full current, then drop to a much lower holding current, since the closed gap needs far less. That cuts I²R heating several-fold. Drivers often do this with PWM.</li>
+    <li><strong>Response time grows as the plunger closes,</strong> because inductance rises. Plunger motion also induces a back-EMF (i·dL/dt) that makes the current dip briefly. That dip is a common way to detect that the armature actually moved.</li>
+    <li><strong>Flyback</strong> protection and release time are set by the clamp (Module 04).</li>
+  </ul>
+
+  <h2>Voice-coil actuators</h2>
+  <p>A voice coil puts a moving coil in the gap of a permanent-magnet circuit. Force is F = K<sub>f</sub>·i, with force constant K<sub>f</sub> = Bℓ (N/A). It is linear, bidirectional, free of cogging and hysteresis, with no contact between coil and magnet, so it suits short-stroke (millimeters to a few centimeters), high-bandwidth precision motion: focusing, fast-steering mirrors, haptic devices, active vibration isolation. Electrically it is the DC motor model in linear form: V = Ri + L·di/dt + K<sub>f</sub>·v.</p>
+  <p>The figure of merit is the <strong>motor constant</strong> K<sub>m</sub> = K<sub>f</sub>/√R (N/√W): force per square root of heat. Continuous force at a dissipation limit P is F = K<sub>m</sub>√P, and the heat for a force is P = (F/K<sub>m</sub>)². The same constant exists for rotary motors (N·m/√W) and is the fairest way to compare them for thermal sizing.</p>
+  <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>A voice coil is a force source that is nearly free of friction and backlash. Its dynamics are just the moving mass and whatever flexure guides it, which is why precision stages pair voice coils with flexure bearings.</p></div>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>B = μ<sub>0</sub>μ<sub>r</sub>H, &nbsp; μ<sub>0</sub> = 4π×10⁻⁷ H/m</code><span>Flux density and field strength</span></div>
+    <div class="eq"><code>ℛ = l/(μA), &nbsp; Φ = Ni/Σℛ, &nbsp; L = N²/Σℛ</code><span>Magnetic circuit</span></div>
+    <div class="eq"><code>B ≈ μ<sub>0</sub>Ni/g</code><span>Gap-dominated circuit</span></div>
+    <div class="eq"><code>F = B·i·ℓ</code><span>Lorentz force on a conductor</span></div>
+    <div class="eq"><code>F = ½i²·dL/dx = B²A/(2μ<sub>0</sub>)</code><span>Reluctance force</span></div>
+    <div class="eq"><code>K<sub>m</sub> = K<sub>f</sub>/√R, &nbsp; P = (F/K<sub>m</sub>)²</code><span>Motor constant and heat for a force</span></div>
+  </div>
+
+  <section class="lab" data-lab="magnetics">
+    <div class="lab-head"><span class="lab-tag">Lab 08</span><h3>Solenoid versus voice-coil force</h3></div>
+    <p class="lab-note">A gap-dominated solenoid (iron reluctance and fringing ignored, flux capped at saturation) compared with a voice coil at the same current. The gap axis is logarithmic.</p>
+    <div class="controls" id="c-magnetics"></div>
+    <div class="screen"><canvas id="cv-magnetics"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Solenoid force</span><span class="lg"><i style="--c:var(--ch2)"></i>Voice-coil force</span><span class="lg"><i class="dash" style="--c:var(--ch3)"></i>Selected gap</span></div>
+    <div class="readouts" id="ro-magnetics"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Halve the gap. Below saturation the solenoid force quadruples; the voice coil doesn't care.</li>
+      <li>Double the current. The solenoid force quadruples; the voice-coil force doubles.</li>
+      <li>Close the gap until the saturation chip appears. Beyond that point, more current barely helps.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 15 STATE SPACE ======================= -->
+<section class="view module" id="view-statespace">
+  <p class="lead">Transfer functions describe one input and one output. State-space models describe everything inside the system at once, which is what multi-variable control, estimation and sensor fusion need. This module builds the model, places closed-loop poles with state feedback, and estimates unmeasured states with observers and Kalman filters.</p>
+
+  <h2>State-space models</h2>
+  <p>The <strong>state</strong> x is the smallest set of variables that, with the future inputs, determines the system's future: typically positions, velocities and currents. A linear system is</p>
+  <div class="math"><div>ẋ = A·x + B·u, &nbsp; y = C·x + D·u</div></div>
+  <p>For the DC motor of Module 09, with state x = (θ, ω, i) and voltage input u:</p>
+  <div class="math"><div>A = <span class="mat" style="--c:3"><span>0</span><span>1</span><span>0</span><span>0</span><span>−b/J</span><span>K<sub>t</sub>/J</span><span>0</span><span>−K<sub>e</sub>/L</span><span>−R/L</span></span>, &nbsp; B = <span class="mat" style="--c:1"><span>0</span><span>0</span><span>1/L</span></span>, &nbsp; C = [1 0 0]</div></div>
+  <p>The eigenvalues of A are the system's poles, and the transfer function is G(s) = C(sI − A)⁻¹B + D. For a digital controller, the model is discretized with a zero-order hold over sample period T: x[k+1] = Φx[k] + Γu[k], with Φ = e<sup>AT</sup> and Γ = (∫<sub>0</sub><sup>T</sup> e<sup>Aτ</sup>dτ)·B.</p>
+  <details class="deriv"><summary>Show derivation: from state space to transfer function</summary><div class="d">
+    <p>Take Laplace transforms with zero initial state: sX(s) = AX(s) + BU(s), so (sI − A)X = BU and X = (sI − A)⁻¹BU. Then Y = CX + DU = [C(sI − A)⁻¹B + D]U. Since (sI − A)⁻¹ = adj(sI − A)/det(sI − A), every element of G(s) shares the denominator det(sI − A), whose roots are the eigenvalues of A. Those are the poles, unless a zero cancels one, which signals an uncontrollable or unobservable mode.</p>
+  </div></details>
+
+  <h2>Controllability and observability</h2>
+  <p>A system is <strong>controllable</strong> if the input can steer the state anywhere. That holds when the matrix [B AB A²B … A<sup>n−1</sup>B] has full rank n. It is <strong>observable</strong> if the outputs reveal the whole state, which holds when [C; CA; …; CA<sup>n−1</sup>] has full rank. A mode that fails either test can't be fixed by feedback or seen by a sensor. Physically, these are an actuator with no lever arm on that motion, or a sensor at a node of a vibration mode.</p>
+
+  <h2>State feedback and pole placement</h2>
+  <p>With every state available, the control law u = −K·x + k<sub>r</sub>·r makes the closed-loop matrix A − BK. If the system is controllable, K can place the closed-loop poles anywhere (Ackermann's formula computes it). For a mass m driven by force, with x = (position, velocity), choosing K = (mω<sub>n</sub>², 2ζω<sub>n</sub>m) gives exactly the characteristic polynomial s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>². That is PD control, recovered as state feedback.</p>
+  <details class="deriv"><summary>Show derivation: pole placement for a mass</summary><div class="d">
+    <p>With ẋ<sub>1</sub> = x<sub>2</sub> and ẋ<sub>2</sub> = u/m, we have A = [[0, 1], [0, 0]] and B = [0, 1/m]<sup>T</sup>. With u = −k<sub>1</sub>x<sub>1</sub> − k<sub>2</sub>x<sub>2</sub>:</p>
+    <div class="math"><div>A − BK = <span class="mat" style="--c:2"><span>0</span><span>1</span><span>−k<sub>1</sub>/m</span><span>−k<sub>2</sub>/m</span></span> &nbsp;⇒&nbsp; det(sI − A + BK) = s² + (k<sub>2</sub>/m)s + k<sub>1</sub>/m</div></div>
+    <p>Matching s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>² term by term gives k<sub>1</sub> = mω<sub>n</sub>² and k<sub>2</sub> = 2ζω<sub>n</sub>m.</p>
+  </div></details>
+
+  <h2>Linear-quadratic regulator (LQR)</h2>
+  <p>Instead of choosing poles directly, LQR chooses K to minimize J = ∫(x<sup>T</sup>Qx + u<sup>T</sup>Ru) dt, trading state error (weighted by Q) against control effort (weighted by R). The answer is K = R⁻¹B<sup>T</sup>P, where P solves the algebraic Riccati equation A<sup>T</sup>P + PA − PBR⁻¹B<sup>T</sup>P + Q = 0. Raising Q relative to R gives faster, more aggressive control. A continuous-time LQR with full state feedback also has guaranteed robustness for a single input: at least 60° of phase margin, and gain margin from ½ up to infinity.</p>
+  <details class="deriv"><summary>Show derivation: LQR for a double integrator</summary><div class="d">
+    <p>Take ẍ = u (unit mass), Q = diag(q, 0), R = r, and P = [[p<sub>1</sub>, p<sub>2</sub>], [p<sub>2</sub>, p<sub>3</sub>]]. The Riccati equation splits into three scalar equations:</p>
+    <div class="math">
+      <div>(1,1): −p<sub>2</sub>²/r + q = 0 &nbsp;⇒&nbsp; p<sub>2</sub> = √(qr)</div>
+      <div>(2,2): 2p<sub>2</sub> − p<sub>3</sub>²/r = 0 &nbsp;⇒&nbsp; p<sub>3</sub> = √(2r·p<sub>2</sub>)</div>
+      <div>K = B<sup>T</sup>P/r = (p<sub>2</sub>/r, p<sub>3</sub>/r) = (√(q/r), √(2√(q/r)))</div>
+    </div>
+    <p>The closed loop is s² + k<sub>2</sub>s + k<sub>1</sub>, so ω<sub>n</sub> = (q/r)<sup>¼</sup> and 2ζω<sub>n</sub> = √2·ω<sub>n</sub>, giving ζ = 1/√2 ≈ 0.707 for every choice of q/r. The weights set the speed; this problem's optimal damping is always the same.</p>
+  </div></details>
+
+  <h2>Observers</h2>
+  <p>Usually only some states are measured. An <strong>observer</strong> runs a copy of the model and corrects it with the measurement error:</p>
+  <div class="math"><div>x̂̇ = A·x̂ + B·u + L·(y − C·x̂)</div></div>
+  <p>The estimation error e = x − x̂ obeys ė = (A − LC)e, so L places the observer poles, usually 2–5× faster than the control poles. By the <strong>separation principle</strong>, a linear system can use state feedback on the estimate (u = −Kx̂) with K and L designed independently: the closed-loop poles are those of A − BK together with those of A − LC.</p>
+  <details class="deriv"><summary>Show derivation: observer error and separation</summary><div class="d">
+    <p>Subtract the observer from the plant: ẋ − x̂̇ = Ax + Bu − Ax̂ − Bu − L(Cx − Cx̂) = (A − LC)(x − x̂). With u = −Kx̂ = −K(x − e), the plant becomes ẋ = (A − BK)x + BKe. Stacking (x, e), the system matrix is block upper-triangular, [[A − BK, BK], [0, A − LC]], so its eigenvalues are those of the two diagonal blocks.</p>
+  </div></details>
+
+  <h2>Kalman filtering</h2>
+  <p>The Kalman filter is the observer with optimal L when the model is disturbed by process noise (covariance Q) and the sensor by measurement noise (covariance R), both white and Gaussian. Each sample it predicts, then corrects:</p>
+  <div class="math">
+    <div>predict: &nbsp; x̂⁻ = Φx̂ + Γu, &nbsp; P⁻ = ΦPΦ<sup>T</sup> + Q</div>
+    <div>gain: &nbsp; K = P⁻C<sup>T</sup>(CP⁻C<sup>T</sup> + R)⁻¹</div>
+    <div>update: &nbsp; x̂ = x̂⁻ + K(y − Cx̂⁻), &nbsp; P = (I − KC)P⁻</div>
+  </div>
+  <p>P is the filter's own estimate of its error covariance. The ratio of Q to R sets how much it trusts the model versus the sensor. For a time-invariant system the gain settles to a constant, giving a fixed observer gain designed from noise statistics. The <strong>extended Kalman filter</strong> (EKF) linearizes a nonlinear model about the current estimate and is standard for robot localization and attitude estimation.</p>
+  <details class="deriv"><summary>Show derivation: the scalar Kalman update</summary><div class="d">
+    <p>You have a prediction x̂⁻ with variance P⁻ and a measurement y = x + v with variance R. Blend them as x̂ = x̂⁻ + K(y − x̂⁻) = (1 − K)x̂⁻ + Ky. With the two errors independent, the blended variance is</p>
+    <div class="math"><div>P = (1 − K)²P⁻ + K²R</div></div>
+    <p>Set dP/dK = −2(1 − K)P⁻ + 2KR = 0, which gives K = P⁻/(P⁻ + R) and P = (1 − K)P⁻. A precise sensor (small R) gives K → 1 and you trust y; a noisy sensor gives K → 0 and you trust the model. The matrix equations are the same argument in vector form.</p>
+  </div></details>
+
+  <h2>Complementary filters</h2>
+  <p>Tilt estimation from an IMU is the classic case. A gyro gives smooth, fast angular rate but drifts when integrated, because of bias. An accelerometer gives an absolute tilt from gravity but is noisy and corrupted by acceleration. A complementary filter blends them, θ̂ ← α(θ̂ + ω<sub>gyro</sub>·Δt) + (1 − α)θ<sub>acc</sub> with α = τ/(τ + Δt): the gyro path is high-passed and the accelerometer path low-passed, crossing over near 1/(2πτ). It is the steady-state Kalman filter of a simple model. A two-state Kalman filter that also estimates the gyro bias removes the drift entirely.</p>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>ẋ = Ax + Bu, &nbsp; y = Cx + Du</code><span>State-space model</span></div>
+    <div class="eq"><code>G(s) = C(sI − A)⁻¹B + D</code><span>Transfer function from state space</span></div>
+    <div class="eq"><code>Φ = e<sup>AT</sup>, &nbsp; Γ = ∫<sub>0</sub><sup>T</sup>e<sup>Aτ</sup>dτ·B</code><span>Zero-order-hold discretization</span></div>
+    <div class="eq"><code>rank[B AB … A<sup>n−1</sup>B] = n</code><span>Controllability</span></div>
+    <div class="eq"><code>u = −Kx, &nbsp; poles of A − BK</code><span>State feedback</span></div>
+    <div class="eq"><code>K = R⁻¹B<sup>T</sup>P, &nbsp; A<sup>T</sup>P + PA − PBR⁻¹B<sup>T</sup>P + Q = 0</code><span>LQR gain and Riccati equation</span></div>
+    <div class="eq"><code>x̂̇ = Ax̂ + Bu + L(y − Cx̂), &nbsp; ė = (A − LC)e</code><span>Observer</span></div>
+    <div class="eq"><code>K = P⁻C<sup>T</sup>(CP⁻C<sup>T</sup> + R)⁻¹</code><span>Kalman gain</span></div>
+  </div>
+
+  <section class="lab" data-lab="statespace">
+    <div class="lab-head"><span class="lab-tag">Lab 17</span><h3>Estimating tilt from a gyro and an accelerometer</h3></div>
+    <p class="lab-note">A simulated IMU tilts back and forth. The gyro has a constant bias and noise; the accelerometer has noise and occasional vibration spikes. Compare four estimates over 20 seconds. The noise is a fixed pseudo-random sequence, so results are repeatable.</p>
+    <div class="controls" id="c-statespace"></div>
+    <div class="screen"><canvas id="cv-statespace"></canvas></div>
+    <div class="legend"><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>True tilt</span><span class="lg"><i style="--c:var(--ch3)"></i>Gyro integrated</span><span class="lg"><i style="--c:var(--ch4)"></i>Accelerometer</span><span class="lg"><i style="--c:var(--ch2)"></i>Complementary</span><span class="lg"><i style="--c:var(--ch1)"></i>Kalman (estimates bias)</span></div>
+    <div class="readouts" id="ro-statespace"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Raise the gyro bias. Integration drifts without limit; the complementary filter shows a steady offset; the Kalman filter learns the bias and stays on track.</li>
+      <li>Lengthen the complementary time constant. Noise falls, but the bias offset grows, since it scales with τ.</li>
+      <li>Lower the Kalman filter's trust in the accelerometer. Its output gets smoother but slower to reject drift.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 16 VIBRATION ======================= -->
+<section class="view module" id="view-vibration">
+  <p class="lead">Compliance between motor and load (belts, couplings, shafts, the machine frame) turns a positioning axis into a two-mass system with a resonance. That resonance limits how fast the axis can move and settle. This module covers where resonances come from, how they show up in the loop, and the main tools for suppressing them.</p>
+
+  <h2>The two-mass system</h2>
+  <p>A motor inertia J<sub>1</sub> drives a load inertia J<sub>2</sub> through a spring k with damping c. From motor torque to motor velocity:</p>
+  <div class="math"><div>G(s) = (J<sub>2</sub>s² + cs + k) / (s·[J<sub>1</sub>J<sub>2</sub>s² + c(J<sub>1</sub>+J<sub>2</sub>)s + k(J<sub>1</sub>+J<sub>2</sub>)])</div></div>
+  <ul>
+    <li><strong>Anti-resonance</strong> at ω<sub>ar</sub> = √(k/J<sub>2</sub>): the load oscillates on the spring while the motor barely moves, so a motor-side sensor sees almost nothing.</li>
+    <li><strong>Resonance</strong> at ω<sub>r</sub> = √(k(J<sub>1</sub> + J<sub>2</sub>)/(J<sub>1</sub>J<sub>2</sub>)) = ω<sub>ar</sub>·√(1 + J<sub>2</sub>/J<sub>1</sub>): the two masses swing against each other.</li>
+  </ul>
+  <p>The larger the inertia ratio J<sub>2</sub>/J<sub>1</sub>, the farther apart the two frequencies and the taller the resonant peak in the loop, which is the dynamic reason behind the inertia-ratio guideline in Module 11. With the sensor on the motor (<strong>collocated</strong>), phase swings up at the anti-resonance before falling at the resonance, which is relatively benign. With the sensor on the load (<strong>non-collocated</strong>), phase drops by 180° past the resonance, which is much harder to stabilize.</p>
+  <details class="deriv"><summary>Show derivation: two-mass transfer function</summary><div class="d">
+    <p>The equations of motion are J<sub>1</sub>θ̈<sub>1</sub> = T − k(θ<sub>1</sub> − θ<sub>2</sub>) − c(θ̇<sub>1</sub> − θ̇<sub>2</sub>) and J<sub>2</sub>θ̈<sub>2</sub> = k(θ<sub>1</sub> − θ<sub>2</sub>) + c(θ̇<sub>1</sub> − θ̇<sub>2</sub>). In Laplace form, with Z = cs + k, the second gives θ<sub>2</sub> = Zθ<sub>1</sub>/(J<sub>2</sub>s² + Z). Substituting into the first:</p>
+    <div class="math"><div>T = θ<sub>1</sub>[J<sub>1</sub>s² + Z − Z²/(J<sub>2</sub>s² + Z)] = θ<sub>1</sub>·s²[J<sub>1</sub>J<sub>2</sub>s² + Z(J<sub>1</sub> + J<sub>2</sub>)]/(J<sub>2</sub>s² + Z)</div></div>
+    <p>So motor velocity sθ<sub>1</sub> over T is the expression above. Its numerator J<sub>2</sub>s² + cs + k vanishes near √(k/J<sub>2</sub>), the anti-resonance. The bracket in its denominator vanishes near √(k(J<sub>1</sub>+J<sub>2</sub>)/(J<sub>1</sub>J<sub>2</sub>)), the resonance.</p>
+  </div></details>
+
+  <h2>Strategies</h2>
+  <ol>
+    <li><strong>Fix the mechanics first.</strong> Raise stiffness, cut the moving mass and add damping; nothing in software beats a higher resonance.</li>
+    <li><strong>Keep the loop bandwidth below the resonance,</strong> roughly one third to one fifth of it, as in Module 16.</li>
+    <li><strong>Filter the loop.</strong> A notch filter cuts the loop gain at the resonance.</li>
+    <li><strong>Shape the command.</strong> Input shaping and jerk-limited profiles avoid exciting the resonance in the first place.</li>
+    <li><strong>Add active damping</strong> by feeding back load acceleration or estimating the load state with an observer (Module 17).</li>
+  </ol>
+
+  <h2>Notch filters</h2>
+  <p>A notch filter N(s) = (s² + 2ζ<sub>z</sub>ω<sub>n</sub>s + ω<sub>n</sub>²)/(s² + 2ζ<sub>p</sub>ω<sub>n</sub>s + ω<sub>n</sub>²) with ζ<sub>z</sub> &lt; ζ<sub>p</sub> leaves gain near 1 away from ω<sub>n</sub> and dips to ζ<sub>z</sub>/ζ<sub>p</sub> at ω<sub>n</sub>. Its cost is phase lag below the notch frequency, which eats into phase margin at crossover. It also has to sit on the actual resonance, which moves with payload and position. A wider notch (larger ζ<sub>p</sub>) is more robust to that shift but costs more phase.</p>
+
+  <h2>Input shaping</h2>
+  <p>Input shaping convolves the motion command with a short train of impulses timed so that the vibrations they excite cancel. The <strong>zero-vibration (ZV)</strong> shaper uses two impulses:</p>
+  <div class="math"><div>A<sub>1</sub> = 1/(1 + K), &nbsp; A<sub>2</sub> = K/(1 + K) at t = π/ω<sub>d</sub>, &nbsp; K = e<sup>−ζπ/√(1−ζ²)</sup></div></div>
+  <p>It adds a delay of half a damped period. The <strong>ZVD</strong> shaper uses three impulses, [1, 2K, K²]/(1 + K)², at 0, π/ω<sub>d</sub> and 2π/ω<sub>d</sub>. It tolerates much larger errors in the assumed frequency, at the cost of a full period of delay. Jerk-limited (S-curve) and quintic profiles (Module 30) reduce excitation more broadly without targeting one frequency.</p>
+  <details class="deriv"><summary>Show derivation: the ZV shaper</summary><div class="d">
+    <p>The response of a damped oscillator to an impulse A<sub>i</sub> at t<sub>i</sub> is proportional to A<sub>i</sub>e<sup>−ζω<sub>n</sub>(t−t<sub>i</sub>)</sup>sin(ω<sub>d</sub>(t − t<sub>i</sub>)). After the last impulse, the combined response is a single decaying sinusoid whose amplitude is proportional to √(C² + S²), with</p>
+    <div class="math"><div>C = Σ A<sub>i</sub>e<sup>ζω<sub>n</sub>t<sub>i</sub></sup>cos(ω<sub>d</sub>t<sub>i</sub>), &nbsp; S = Σ A<sub>i</sub>e<sup>ζω<sub>n</sub>t<sub>i</sub></sup>sin(ω<sub>d</sub>t<sub>i</sub>)</div></div>
+    <p>For two impulses with t<sub>1</sub> = 0, S = 0 needs sin(ω<sub>d</sub>t<sub>2</sub>) = 0, and the earliest choice is t<sub>2</sub> = π/ω<sub>d</sub>. Then C = A<sub>1</sub> − A<sub>2</sub>e<sup>ζω<sub>n</sub>π/ω<sub>d</sub></sup> = 0 gives A<sub>2</sub>/A<sub>1</sub> = e<sup>−ζπ/√(1−ζ²)</sup> = K. Normalizing A<sub>1</sub> + A<sub>2</sub> = 1 keeps the final position unchanged. ZVD adds the condition that ∂(C, S)/∂ω also vanishes, which flattens the vibration-versus-frequency-error curve near zero.</p>
+  </div></details>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>ω<sub>ar</sub> = √(k/J<sub>2</sub>), &nbsp; ω<sub>r</sub> = ω<sub>ar</sub>√(1 + J<sub>2</sub>/J<sub>1</sub>)</code><span>Two-mass anti-resonance and resonance</span></div>
+    <div class="eq"><code>N(s) = (s²+2ζ<sub>z</sub>ω<sub>n</sub>s+ω<sub>n</sub>²)/(s²+2ζ<sub>p</sub>ω<sub>n</sub>s+ω<sub>n</sub>²)</code><span>Notch filter; depth ζ<sub>z</sub>/ζ<sub>p</sub></span></div>
+    <div class="eq"><code>K = e<sup>−ζπ/√(1−ζ²)</sup></code><span>Shaper amplitude ratio</span></div>
+    <div class="eq"><code>ZV: [1, K]/(1+K) at [0, π/ω<sub>d</sub>]</code><span>Zero-vibration shaper</span></div>
+    <div class="eq"><code>ZVD: [1, 2K, K²]/(1+K)² at [0, π/ω<sub>d</sub>, 2π/ω<sub>d</sub>]</code><span>Robust shaper</span></div>
+  </div>
+
+  <section class="lab" data-lab="vibration">
+    <div class="lab-head"><span class="lab-tag">Lab 18a</span><h3>Input shaping on a flexible axis</h3></div>
+    <p class="lab-note">A carriage moves 100 mm in 0.3 s with a trapezoidal profile. A payload rides on it through a spring, with the natural frequency and damping you set. The shaper is designed for the estimated frequency; the frequency-error slider makes the real resonance differ from that estimate. The plot shows how far the payload lags or leads the carriage; after the move ends, that is the residual vibration.</p>
+    <div class="controls" id="c-vibration"></div>
+    <div class="screen"><canvas id="cv-vibration"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Payload deflection relative to the carriage (mm)</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>End of commanded move</span></div>
+    <div class="readouts" id="ro-vibration"></div>
+    <div class="sublab">
+      <h4>Lab 18b · Notch filter shape and phase cost</h4>
+      <div class="controls" id="c-notch"></div>
+      <div class="screen short"><canvas id="cv-notch"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Gain (dB, left)</span><span class="lg"><i style="--c:var(--ch2)"></i>Phase (°, right)</span></div>
+      <div class="readouts" id="ro-notch"></div>
+    </div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Compare unshaped with ZV at zero frequency error. Residual vibration nearly vanishes at the cost of half a period of delay.</li>
+      <li>Set the frequency error to +20%. ZV loses much of its benefit; ZVD keeps most of it.</li>
+      <li>In 16b, widen the notch and watch the phase lag at one third of the notch frequency grow.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 17 FRICTION ======================= -->
+<section class="view module" id="view-friction">
+  <p class="lead">Friction is the main reason a well-tuned simulation misbehaves on real hardware. It is nonlinear, depends on direction and velocity, and changes with temperature, lubrication and wear. This module covers the models, the problems friction causes in control loops, and the standard compensation methods, along with backlash and other common nonlinearities.</p>
+
+  <h2>Friction models</h2>
+  <ul>
+    <li><strong>Coulomb:</strong> F = F<sub>c</sub>·sign(v), constant magnitude opposing motion.</li>
+    <li><strong>Viscous:</strong> F = b·v, proportional to speed (lubricant shear).</li>
+    <li><strong>Static (stiction):</strong> breakaway force F<sub>s</sub> &gt; F<sub>c</sub> holds a part at rest.</li>
+    <li><strong>Stribeck effect:</strong> in lubricated contacts, friction falls from F<sub>s</sub> toward F<sub>c</sub> as speed rises from zero, before viscous friction takes over: F(v) = [F<sub>c</sub> + (F<sub>s</sub> − F<sub>c</sub>)e<sup>−(v/v<sub>s</sub>)²</sup>]·sign(v) + b·v.</li>
+    <li><strong>Pre-sliding:</strong> before gross sliding, contacts deform elastically like a stiff spring over micrometers. The <strong>LuGre</strong> model captures this with an internal bristle state z: ż = v − σ<sub>0</sub>|v|z/g(v) and F = σ<sub>0</sub>z + σ<sub>1</sub>ż + σ<sub>2</sub>v, where g(v) is the Stribeck curve.</li>
+  </ul>
+  <p>The falling part of the Stribeck curve has a negative slope, which acts as <strong>negative damping</strong> at low speed. That is the root of stick-slip.</p>
+
+  <h2>Stick-slip</h2>
+  <p>Drive a mass through a compliance (a long screw, a belt, a flexible structure) at low speed. The mass sticks while the spring winds up, breaks free at F<sub>s</sub>, lurches forward as friction drops, and sticks again: a sawtooth instead of smooth motion. Stick-slip is worse with low drive stiffness, low speed, a large static-to-kinetic gap and low damping. Remedies: stiffer drives, rolling-element guides, way oils and slideway coatings (often PTFE-based) whose friction doesn't fall with speed, added damping, and higher speed where the process allows.</p>
+  <details class="deriv"><summary>Show derivation: stick-slip cycle estimate</summary><div class="d">
+    <p>A mass m is pulled through a spring k whose far end moves at constant speed V, with static friction F<sub>s</sub> and kinetic friction F<sub>k</sub>. While stuck, the spring force grows at rate kV. Slip starts when it reaches F<sub>s</sub>. During slip, if V is small compared with the slip velocity, the mass oscillates about the point where the spring force equals F<sub>k</sub>, with natural frequency √(k/m), starting from a force offset of F<sub>s</sub> − F<sub>k</sub>. After half a cycle, lasting π√(m/k), its velocity returns to zero and it sticks, with the spring force overshot to F<sub>k</sub> − (F<sub>s</sub> − F<sub>k</sub>). Reloading to F<sub>s</sub> takes</p>
+    <div class="math"><div>t<sub>stick</sub> = 2(F<sub>s</sub> − F<sub>k</sub>)/(kV), &nbsp; slip distance ≈ 2(F<sub>s</sub> − F<sub>k</sub>)/k</div></div>
+    <p>Stiffer springs and a smaller static-to-kinetic gap shrink the jumps. Damping during the slip phase stops the overshoot, which is why enough damping removes stick-slip altogether.</p>
+  </div></details>
+
+  <h2>Friction inside a control loop</h2>
+  <ul>
+    <li><strong>Proportional control</strong> leaves a dead band: the controller must build up F<sub>c</sub> before anything moves, so the steady error can be anywhere within ±F<sub>c</sub>/K<sub>p</sub>.</li>
+    <li><strong>Integral action</strong> removes that error but can cause <strong>hunting</strong>: the integrator winds up while the part is stuck, the part breaks free with the higher stiction force, overshoots, sticks on the other side, and repeats as a limit cycle.</li>
+    <li><strong>Velocity reversals</strong> cause quadrant glitches: when one axis of a circular move reverses, friction flips sign and the path shows a bump at each quadrant.</li>
+  </ul>
+
+  <h2>Compensation</h2>
+  <ul>
+    <li><strong>Friction feedforward:</strong> add F̂<sub>c</sub>·sign(v<sub>ref</sub>) + b̂·v<sub>ref</sub> to the output. Using the <em>reference</em> velocity avoids the chattering that comes from switching on a noisy measured velocity near zero. Smooth the sign function, for example with tanh(v/ε), to avoid exciting resonances.</li>
+    <li><strong>Integrator deadband or reset</strong> stops hunting by not integrating tiny errors, at the cost of a small residual error.</li>
+    <li><strong>Disturbance observers</strong> estimate the total disturbance torque, friction included, from the model and the measured motion, and cancel it.</li>
+    <li><strong>Dither:</strong> a small high-frequency signal keeps contacts in the sliding regime. It is effective in hydraulic valves but adds wear and noise.</li>
+    <li><strong>Mechanical fixes</strong> often beat software ones: rolling elements, flexures, preloaded bearings and lower-friction seals.</li>
+  </ul>
+
+  <h2>Backlash and other nonlinearities</h2>
+  <p><strong>Backlash</strong> is a dead zone between motor and load. With position feedback on the load, it causes limit cycles: the loop drives through the gap, overshoots, reverses and crosses the gap again. Standard remedies are preloaded or anti-backlash gearing and <strong>dual-loop control</strong>, which closes velocity on the motor encoder and position on the load encoder with lower bandwidth. Backlash-inverse compensation, which jumps the motor across the gap on reversal, works only when the gap is known and stable.</p>
+  <p>Other common nonlinearities: actuator <strong>saturation</strong> (windup, Module 15), <strong>dead zones</strong> in drives and valves, <strong>quantization</strong> from encoders and ADCs (Modules 06–07), and <strong>hysteresis</strong> in cable drives (Module 33) and piezo actuators.</p>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>F = [F<sub>c</sub> + (F<sub>s</sub>−F<sub>c</sub>)e<sup>−(v/v<sub>s</sub>)²</sup>]sign(v) + bv</code><span>Stribeck friction curve</span></div>
+    <div class="eq"><code>ż = v − σ<sub>0</sub>|v|z/g(v), &nbsp; F = σ<sub>0</sub>z + σ<sub>1</sub>ż + σ<sub>2</sub>v</code><span>LuGre model</span></div>
+    <div class="eq"><code>t<sub>stick</sub> ≈ 2(F<sub>s</sub> − F<sub>k</sub>)/(kV)</code><span>Stick phase of a stick-slip cycle</span></div>
+    <div class="eq"><code>|e<sub>ss</sub>| ≤ F<sub>c</sub>/K<sub>p</sub></code><span>Dead band under P control with Coulomb friction</span></div>
+    <div class="eq"><code>u<sub>ff</sub> = F̂<sub>c</sub>tanh(v<sub>ref</sub>/ε) + b̂v<sub>ref</sub></code><span>Smoothed friction feedforward</span></div>
+  </div>
+
+  <section class="lab" data-lab="friction">
+    <div class="lab-head"><span class="lab-tag">Lab 19a</span><h3>Stick-slip</h3></div>
+    <p class="lab-note">A 1 kg slide is pulled through a spring at constant speed, with Stribeck friction (Stribeck velocity 1 mm/s) and the viscous coefficient you set. Watch the slide's velocity and the spring force.</p>
+    <div class="controls" id="c-friction"></div>
+    <div class="screen"><canvas id="cv-friction"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Slide velocity (left)</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Drive speed</span><span class="lg"><i style="--c:var(--ch2)"></i>Spring force (right)</span></div>
+    <div class="readouts" id="ro-friction"></div>
+    <div class="sublab">
+      <h4>Lab 19b · PI position control and hunting</h4>
+      <p class="lab-note">The same slide (F<sub>s</sub> = 12 N, F<sub>c</sub> = 8 N), now positioned by a PI controller with fixed velocity damping to a 1 mm step. Watch for repeated breakaways around the target.</p>
+      <div class="controls" id="c-hunt"></div>
+      <div class="screen short"><canvas id="cv-hunt"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Position (µm)</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Target</span></div>
+      <div class="readouts" id="ro-hunt"></div>
+    </div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Raise the drive speed until stick-slip disappears: the Stribeck dip only matters near zero velocity.</li>
+      <li>Increase spring stiffness at low speed. The jumps get smaller and more frequent.</li>
+      <li>In 17b, raise the integrator deadband from 0 to about 50 µm. Hunting stops and the slide rests within the deadband: a residual error traded for stillness.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 18 SYSTEM ID ======================= -->
+<section class="view module" id="view-sysid">
+  <p class="lead">Datasheet models are approximate. The real assembly has more inertia, friction you can't look up, resonances in the frame, and delays in the electronics. System identification measures the actual plant so controllers can be designed and tuned on facts. This module covers simple time-domain tests, frequency-response measurement, and least-squares parameter fitting.</p>
+
+  <h2>Time-domain tests</h2>
+  <ul>
+    <li><strong>First order:</strong> a step input gives the gain K (final value over step size), the time constant τ (time to 63% of the change) and any dead time before the response starts.</li>
+    <li><strong>Second order:</strong> overshoot gives ζ (Module 14) and the ringing period gives ω<sub>d</sub>. For a lightly damped free decay, the <strong>logarithmic decrement</strong> between successive peaks, δ = ln(x<sub>n</sub>/x<sub>n+1</sub>), gives ζ = δ/√(4π² + δ²). Measuring over m cycles, δ = (1/m)ln(x<sub>0</sub>/x<sub>m</sub>), averages out noise.</li>
+    <li><strong>Tap test:</strong> strike the structure with an instrumented hammer and record the response to find resonances quickly. It is the standard modal-testing starting point.</li>
+  </ul>
+  <details class="deriv"><summary>Show derivation: logarithmic decrement</summary><div class="d">
+    <p>A free decay is x(t) = Xe<sup>−ζω<sub>n</sub>t</sup>cos(ω<sub>d</sub>t + φ). Successive peaks are one damped period T<sub>d</sub> = 2π/ω<sub>d</sub> apart, so their ratio is</p>
+    <div class="math"><div>x<sub>n</sub>/x<sub>n+1</sub> = e<sup>ζω<sub>n</sub>T<sub>d</sub></sup> &nbsp;⇒&nbsp; δ = ζω<sub>n</sub>·2π/(ω<sub>n</sub>√(1−ζ²)) = 2πζ/√(1−ζ²)</div></div>
+    <p>Solving for ζ gives ζ = δ/√(4π² + δ²), and for small damping ζ ≈ δ/(2π).</p>
+  </div></details>
+
+  <h2>Measuring frequency response</h2>
+  <p>A frequency response function (FRF) is measured by exciting the input and comparing input and output across frequency. Excitation choices:</p>
+  <ul>
+    <li><strong>Stepped sine:</strong> one frequency at a time, waiting for steady state, then extracting amplitude and phase by correlating with sine and cosine. It has the best signal-to-noise ratio and handles nonlinearity cleanly, but it is slow.</li>
+    <li><strong>Chirp (swept sine):</strong> a continuous sweep that is fast and has a controlled spectrum. It is the default on most servo drives' tuning tools.</li>
+    <li><strong>Random noise or PRBS</strong> (pseudo-random binary sequence): broadband and fast; needs averaging.</li>
+  </ul>
+  <p>With broadband excitation, estimate the FRF from averaged spectra: Ĥ<sub>1</sub>(ω) = S<sub>uy</sub>/S<sub>uu</sub>, the cross-spectrum of input and output divided by the input's auto-spectrum. Averaging over many records (Welch's method) suppresses output noise, which is uncorrelated with the input. The <strong>coherence</strong> γ² = |S<sub>uy</sub>|²/(S<sub>uu</sub>S<sub>yy</sub>), between 0 and 1, shows how much of the output is linearly explained by the input at each frequency. Values well below about 0.8–0.9 mean noise, nonlinearity (friction, backlash) or too little excitation there, so don't trust those points.</p>
+  <p><strong>Closed-loop measurement.</strong> Many plants can't run open loop. Inside a loop, the input u and output y are correlated through feedback, so the naive estimate from u to y is biased toward the inverse of the controller. Instead, inject the excitation at the reference r (or add it to u) and compute G = S<sub>ry</sub>/S<sub>ru</sub>, the ratio of the two cross-spectra with the known excitation.</p>
+  <details class="deriv"><summary>Show derivation: why the H₁ estimator rejects output noise</summary><div class="d">
+    <p>Let y = Gu + n, with noise n uncorrelated with u. Cross-spectra are linear, so</p>
+    <div class="math"><div>S<sub>uy</sub> = G·S<sub>uu</sub> + S<sub>un</sub></div></div>
+    <p>With averaging, S<sub>un</sub> → 0 because u and n are uncorrelated, leaving S<sub>uy</sub>/S<sub>uu</sub> → G. Noise on the output adds to S<sub>yy</sub> but not to the cross-spectrum, which is exactly what lowers the coherence γ² = |G|²S<sub>uu</sub>/(|G|²S<sub>uu</sub> + S<sub>nn</sub>). Noise on the measured input instead biases H<sub>1</sub> low, which is why the H<sub>2</sub> estimator S<sub>yy</sub>/S<sub>yu</sub> exists for that case.</p>
+  </div></details>
+  <div class="callout"><span class="tag">Rule of thumb</span><p>Excite hard enough to rise well above noise and friction, but stay in the linear range and inside safe travel and current. Sample at least 10× the highest frequency of interest, use an anti-alias filter, and confirm repeatability by measuring twice.</p></div>
+
+  <h2>Least-squares parameter fitting</h2>
+  <p>Many models are linear in their unknown parameters. A motor axis obeys τ = J·α + b·ω + F<sub>c</sub>·sign(ω). Each sample gives one row of a regression y = Φθ, with y = τ, row (α, ω, sign ω), and θ = (J, b, F<sub>c</sub>). The least-squares estimate is</p>
+  <div class="math"><div>θ̂ = (Φ<sup>T</sup>Φ)⁻¹Φ<sup>T</sup>y</div></div>
+  <p>This works only if the data excite every parameter independently, a property called <strong>persistent excitation</strong>. Data from motion in one direction at nearly constant speed make the columns ω and sign(ω) almost proportional, so viscous and Coulomb friction can't be separated. The condition number of Φ<sup>T</sup>Φ is a quick check. Use velocity reversals and a range of speeds and accelerations, filter before differentiating to get α, and validate on a separate data set. The same formulation identifies robot inertial parameters from τ = Y(q, q̇, q̈)π (Module 31) and kinematic calibration errors (Module 26).</p>
+  <details class="deriv"><summary>Show derivation: normal equations</summary><div class="d">
+    <p>Minimize the squared residual V(θ) = ‖y − Φθ‖² = y<sup>T</sup>y − 2θ<sup>T</sup>Φ<sup>T</sup>y + θ<sup>T</sup>Φ<sup>T</sup>Φθ. Setting the gradient to zero gives −2Φ<sup>T</sup>y + 2Φ<sup>T</sup>Φθ = 0, which are the normal equations Φ<sup>T</sup>Φθ̂ = Φ<sup>T</sup>y. They have a unique solution when Φ<sup>T</sup>Φ is invertible, which is the persistent-excitation condition. In practice, solve with a QR decomposition rather than forming Φ<sup>T</sup>Φ, which squares the condition number.</p>
+  </div></details>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>δ = ln(x<sub>n</sub>/x<sub>n+1</sub>), &nbsp; ζ = δ/√(4π² + δ²)</code><span>Logarithmic decrement</span></div>
+    <div class="eq"><code>Ĥ<sub>1</sub> = S<sub>uy</sub>/S<sub>uu</sub></code><span>FRF estimate from averaged spectra</span></div>
+    <div class="eq"><code>γ² = |S<sub>uy</sub>|²/(S<sub>uu</sub>S<sub>yy</sub>)</code><span>Coherence</span></div>
+    <div class="eq"><code>G = S<sub>ry</sub>/S<sub>ru</sub></code><span>Plant estimate in closed loop</span></div>
+    <div class="eq"><code>θ̂ = (Φ<sup>T</sup>Φ)⁻¹Φ<sup>T</sup>y</code><span>Least-squares parameter estimate</span></div>
+  </div>
+
+  <section class="lab" data-lab="sysid">
+    <div class="lab-head"><span class="lab-tag">Lab 20a</span><h3>Stepped-sine frequency response</h3></div>
+    <p class="lab-note">Measure a resonant plant at 30 frequencies with a stepped sine. At each frequency the output is correlated over a number of cycles with measurement noise added. Dots are measurements; lines are the true response.</p>
+    <div class="controls" id="c-sysid"></div>
+    <div class="screen"><canvas id="cv-sysid"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>True gain (dB, left)</span><span class="lg"><i style="--c:var(--ch1)"></i>● Measured gain</span><span class="lg"><i style="--c:var(--ch2)"></i>True phase (°, right)</span><span class="lg"><i style="--c:var(--ch2)"></i>● Measured phase</span></div>
+    <div class="readouts" id="ro-sysid"></div>
+    <div class="sublab">
+      <h4>Lab 20b · Fitting inertia and friction by least squares</h4>
+      <p class="lab-note">Torque, velocity and acceleration are logged from a motor with true J = 2.0 × 10⁻⁴ kg·m², b = 1.0 × 10⁻³ N·m·s/rad and F<sub>c</sub> = 0.05 N·m, with torque-measurement noise. Choose the test motion and fit.</p>
+      <div class="controls" id="c-lsq"></div>
+      <div class="readouts" id="ro-lsq"></div>
+    </div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Raise the noise and see the measured points scatter most where the plant's gain is low, at high frequency, where the response is small relative to the noise.</li>
+      <li>Increase cycles per point. Scatter shrinks roughly as one over the square root of the number of cycles, and test time grows.</li>
+      <li>In 18b, switch to one-direction motion. The condition number explodes and the friction estimates go wrong even though the fit residual stays small.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 24 PRECISION ======================= -->
+<section class="view module" id="view-precision">
+  <p class="lead">Precision engineering asks where every micrometer of error comes from and how to design it out, measure it or compensate it. This module covers the principles that dominate precision machines and robots: Abbe offsets, thermal growth, exact constraint, structural loops, error budgets and calibration.</p>
+
+  <h2>Accuracy, repeatability and resolution, revisited</h2>
+  <p>At the system level, <strong>repeatability</strong> is how closely a machine returns to the same commanded position; <strong>accuracy</strong> is how close it gets to the true position; <strong>resolution</strong> is the smallest step it can make. Standards such as ISO 230-2 define positioning accuracy and repeatability statistically from repeated bidirectional runs, so check a datasheet's test method before comparing numbers.</p>
+  <p>Errors are either <strong>systematic</strong> (the same every time: lead error, Abbe error, known deflections), which can be measured and compensated, or <strong>random</strong> (different each time: noise, thermal drift, stick-slip), which can only be reduced or averaged. Industrial robots illustrate the difference: repeatability is often a few hundredths of a millimeter, while uncalibrated absolute accuracy is commonly an order of magnitude or more worse.</p>
+
+  <h2>The Abbe principle</h2>
+  <p>A measuring scale should be in line with the point being measured. If it is offset by a distance d, any angular error ε of the carriage (pitch or yaw) produces an Abbe error</p>
+  <div class="math"><div>e<sub>Abbe</sub> = d·tan ε ≈ d·ε</div></div>
+  <p>A 50 mm offset with 20 µrad of pitch gives 1 µm of error that the scale never sees. Minimize offsets, put the encoder near the tool or workpiece, or measure the angles and correct for them. Bryan's extension applies the same idea to straightness measurement.</p>
+
+  <h2>Error motions of an axis</h2>
+  <p>A linear axis is meant to move in one direction, but its carriage has six error motions: positioning error along the axis, two straightness errors across it, and three angular errors (pitch, yaw, roll). A three-axis Cartesian machine therefore has 18 component errors plus 3 squareness errors between axes, 21 geometric errors in all. Each propagates to the tool through the machine's geometry, the same transform chain as robot kinematics (Module 28).</p>
+
+  <h2>Thermal errors</h2>
+  <p>Length changes by ΔL = α·L·ΔT. Steel expands about 11–12 µm per meter per °C, aluminum about 23, and Invar about 1.2. A 300 mm steel screw warming by 1 °C grows about 3.5 µm. In many precision machines thermal error is the largest single source.</p>
+  <ul>
+    <li>Reference temperature is 20 °C (ISO 1); measurements elsewhere need correction.</li>
+    <li>Use symmetric designs so expansion doesn't tilt or bend the structure.</li>
+    <li>Match expansion coefficients across joined parts, or use low-expansion materials in the metrology loop.</li>
+    <li>Keep heat sources (motors, screws, bearings) out of the measuring path. Warm up before precise work; cool or compensate if needed.</li>
+  </ul>
+
+  <h2>Exact constraint and kinematic couplings</h2>
+  <p>A rigid body has six degrees of freedom. <strong>Exact-constraint</strong> design removes exactly the ones you want removed, each with one well-defined contact. Over-constraint, with more constraints than needed, forces parts to deform to fit, so the result depends on tolerances, preload and temperature.</p>
+  <p>A <strong>kinematic coupling</strong> applies this to repeatable location. Three balls in three radial V-grooves (Maxwell) or in a cone, a V-groove and a flat (Kelvin) provide exactly six contacts, and can relocate a part to sub-micrometer repeatability. <strong>Elastic averaging</strong> is the opposite strategy: many compliant contacts (fine splines, curvic couplings) average out individual errors, giving high stiffness and load capacity with good but less deterministic repeatability.</p>
+  <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>The ball-and-groove locating features in fixtures and the 3-2-1 datum scheme in GD&amp;T are the same principle: constrain each freedom once, at a known place.</p></div>
+
+  <h2>Structural loops and stiffness</h2>
+  <p>The <strong>structural loop</strong> is the chain of parts that connects the tool to the workpiece: tool, spindle, bearings, slides, frame, fixture. Under process force F, it deflects by F/k<sub>loop</sub>, where 1/k<sub>loop</sub> is the sum of every element's compliance, joints and contact interfaces included. Keep loops short, stiff and symmetric. The same applies to the <strong>metrology loop</strong>, the chain from sensor to the measured point, which should carry no load and see no heat.</p>
+
+  <h2>Error budgets</h2>
+  <p>An error budget lists every error source, converts each to its effect at the functional point using sensitivities (Abbe arms, lever ratios, Jacobians), classifies it, and combines them:</p>
+  <ul>
+    <li><strong>Worst case:</strong> add the magnitudes. Conservative, and appropriate for systematic errors that can align.</li>
+    <li><strong>Root sum of squares (RSS):</strong> √(Σe<sub>i</sub>²), for independent random errors.</li>
+    <li>A common combination adds systematic terms linearly and random terms by RSS. Monte Carlo simulation handles correlated or non-normal errors.</li>
+  </ul>
+  <p>The budget's main value is ranking: it shows which two or three sources dominate, and therefore where design effort pays off.</p>
+  <details class="deriv"><summary>Show derivation: why independent errors add in quadrature</summary><div class="d">
+    <p>For e = Σ e<sub>i</sub>, the variance is Var(e) = Σ Var(e<sub>i</sub>) + 2Σ<sub>i&lt;j</sub>Cov(e<sub>i</sub>, e<sub>j</sub>). Independent errors have zero covariance, so σ<sub>e</sub> = √(Σσ<sub>i</sub>²). With fully correlated errors (correlation coefficient 1), the cross terms make σ<sub>e</sub> = Σσ<sub>i</sub>, the worst-case sum. Real budgets lie between these bounds. A uniformly distributed error of width q, such as encoder quantization, has σ = q/√12.</p>
+  </div></details>
+
+  <h2>Calibration and compensation</h2>
+  <p>Systematic errors can be measured and removed in software: laser interferometers for positioning and straightness, ballbars for contouring and squareness, artifacts and probes for whole-machine checks. Controllers store corrections as lookup tables (pitch-error and straightness compensation). Robots use <strong>kinematic calibration</strong>: measure the tool at many poses and fit corrections to the kinematic parameters by least squares (Module 20). The residual after calibration is bounded by the measurement uncertainty, the model's completeness, and the random errors, which calibration can't touch.</p>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>e<sub>Abbe</sub> ≈ d·ε</code><span>Abbe error from offset d and angular error ε</span></div>
+    <div class="eq"><code>ΔL = α·L·ΔT</code><span>Thermal expansion (steel α ≈ 11.5 µm/m·°C)</span></div>
+    <div class="eq"><code>1/k<sub>loop</sub> = Σ 1/k<sub>i</sub>, &nbsp; δ = F/k<sub>loop</sub></code><span>Structural loop deflection</span></div>
+    <div class="eq"><code>e<sub>RSS</sub> = √(Σe<sub>i</sub>²), &nbsp; e<sub>WC</sub> = Σ|e<sub>i</sub>|</code><span>Combining errors</span></div>
+    <div class="eq"><code>σ<sub>quant</sub> = q/√12</code><span>Quantization error of step q</span></div>
+  </div>
+
+  <section class="lab" data-lab="precision">
+    <div class="lab-head"><span class="lab-tag">Lab 26</span><h3>Error budget for a ball-screw axis</h3></div>
+    <p class="lab-note">A carriage on a ball screw with a motor-mounted encoder. Each source is expressed as a ± bound at the tool. Calibration removes a chosen fraction of the systematic terms. Random terms are unaffected by calibration.</p>
+    <div class="controls" id="c-precision"></div>
+    <div class="screen tall"><canvas id="cv-precision"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Systematic (as built)</span><span class="lg"><i style="--c:var(--ch5)"></i>Systematic (after calibration)</span><span class="lg"><i style="--c:var(--ch2)"></i>Random</span></div>
+    <div class="readouts" id="ro-precision"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Find the largest bar. Then reduce the Abbe offset or temperature change and watch the ranking change.</li>
+      <li>Set calibration to remove 90% of systematic error. The random terms now dominate, and further calibration buys nothing.</li>
+      <li>Compare worst-case and RSS totals: RSS is smaller, but it's only valid for independent sources.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 12 LINKAGES ======================= -->
+<section class="view module" id="view-linkages">
+  <p class="lead">Linkages turn one motion into another with nothing but pinned links: rotation into oscillation, rotation into a straight line, a small input into a large clamping force. They are cheap, rugged and fast, and they still drive a large share of production machinery, grippers, suspensions and lifting mechanisms. This module covers mobility, the four-bar's behavior, position and velocity analysis, force transmission and basic synthesis.</p>
+
+  <h2>Mobility</h2>
+  <p>A planar mechanism with n links (including the frame), j<sub>1</sub> full joints (pins, sliders: one degree of freedom each) and j<sub>2</sub> half joints (rolling-with-slipping contacts: two degrees of freedom) has mobility</p>
+  <div class="math"><div>M = 3(n − 1) − 2j<sub>1</sub> − j<sub>2</sub></div></div>
+  <p>A four-bar has M = 3(3) − 2(4) = 1: one input drives everything. A slider-crank is also a four-bar, with one pin replaced by a slider. This is the planar form of the Grübler–Kutzbach count used for parallel mechanisms in Module 36, and like that count it can be fooled by special geometry.</p>
+
+  <h2>The four-bar and Grashof's condition</h2>
+  <p>Label the link lengths s (shortest), l (longest), p and q (the other two). <strong>Grashof's condition</strong>, s + l ≤ p + q, guarantees that at least one link can rotate fully relative to the others. Which link is grounded then decides the type:</p>
+  <div class="tbl narrow"><table>
+    <tr><th>Condition</th><th>Shortest link is</th><th>Mechanism</th></tr>
+    <tr><td>s + l &lt; p + q</td><td>Adjacent to ground (the crank)</td><td>Crank-rocker: full input rotation, oscillating output</td></tr>
+    <tr><td>s + l &lt; p + q</td><td>The ground</td><td>Double-crank (drag link): both side links rotate fully</td></tr>
+    <tr><td>s + l &lt; p + q</td><td>The coupler</td><td>Grashof double-rocker: the coupler rotates fully, both side links rock</td></tr>
+    <tr><td>s + l &gt; p + q</td><td>Any</td><td>Non-Grashof triple-rocker: no link rotates fully</td></tr>
+    <tr><td>s + l = p + q</td><td>Any</td><td>Change point: links can become collinear and the mechanism can switch branches unpredictably</td></tr>
+  </table></div>
+  <details class="deriv"><summary>Show derivation: why s + l ≤ p + q</summary><div class="d">
+    <p>Take a crank-rocker with crank a, coupler b, rocker c and ground d, the crank being the shortest link. As the crank turns, the distance z from the crank pin to the rocker pivot ranges from d − a (crank pointing at the rocker pivot) to d + a (crank pointing away). The coupler and rocker must close a triangle with side z for every z in that range:</p>
+    <div class="math">
+      <div>d + a ≤ b + c &nbsp; and &nbsp; d − a ≥ |b − c|</div>
+    </div>
+    <p>Whichever of b, c, d is longest, these inequalities reduce to a + l ≤ (sum of the other two), with a = s, which is Grashof's condition. The same triangle argument, applied with a different link as the frame, shows which links can rotate fully. Their relative motions don't depend on which link is grounded, which is why grounding a different link of the same chain changes the type in the table.</p>
+  </div></details>
+
+  <h2>Position analysis</h2>
+  <p>Write the closed loop as vectors in the complex plane, with crank a at angle θ<sub>2</sub>, coupler b at θ<sub>3</sub>, rocker c at θ<sub>4</sub> and ground d along the x-axis:</p>
+  <div class="math"><div>a·e<sup>jθ<sub>2</sub></sup> + b·e<sup>jθ<sub>3</sub></sup> − c·e<sup>jθ<sub>4</sub></sup> − d = 0</div></div>
+  <p>Eliminating θ<sub>3</sub> gives <strong>Freudenstein's equation</strong>, relating input and output angles directly:</p>
+  <div class="math"><div>K<sub>1</sub>cos θ<sub>4</sub> − K<sub>2</sub>cos θ<sub>2</sub> + K<sub>3</sub> = cos(θ<sub>2</sub> − θ<sub>4</sub>), &nbsp; K<sub>1</sub> = d/a, K<sub>2</sub> = d/c, K<sub>3</sub> = (a² − b² + c² + d²)/(2ac)</div></div>
+  <p>Each input angle has two solutions for θ<sub>4</sub>, called the <strong>open</strong> and <strong>crossed</strong> configurations or branches. A real mechanism stays on one branch unless it passes through a change point. In software, the equivalent geometric method intersects two circles: one of radius b around the crank pin and one of radius c around the rocker pivot.</p>
+  <details class="deriv"><summary>Show derivation: Freudenstein's equation</summary><div class="d">
+    <p>Take the real and imaginary parts of the loop equation and move the coupler terms to one side:</p>
+    <div class="math">
+      <div>b·cos θ<sub>3</sub> = −a·cos θ<sub>2</sub> + c·cos θ<sub>4</sub> + d</div>
+      <div>b·sin θ<sub>3</sub> = −a·sin θ<sub>2</sub> + c·sin θ<sub>4</sub></div>
+    </div>
+    <p>Square both and add, so θ<sub>3</sub> disappears through cos² + sin² = 1:</p>
+    <div class="math"><div>b² = a² + c² + d² − 2ac·cos(θ<sub>2</sub> − θ<sub>4</sub>) − 2ad·cos θ<sub>2</sub> + 2cd·cos θ<sub>4</sub></div></div>
+    <p>Dividing by 2ac and rearranging gives the equation above. Substituting the half-angle tangent t = tan(θ<sub>4</sub>/2) turns it into a quadratic in t, whose two roots are the open and crossed branches.</p>
+  </div></details>
+
+  <h2>Transmission angle and toggle</h2>
+  <p>The <strong>transmission angle</strong> μ is the angle between the coupler and the output link. The coupler can only push along its own axis, so the useful torque on the output is proportional to sin μ. Ideally μ stays near 90°. A common design limit keeps μ above about 40° (and below 140°); below that, friction and small errors cause binding and poor force transmission. By the law of cosines, cos μ = (b² + c² − z²)/(2bc), where z is the distance from the crank pin to the output pivot.</p>
+  <p>At a <strong>toggle</strong> position, two links line up. When the crank and coupler are collinear, the output reaches an extreme of its swing and the mechanical advantage becomes very large: a small input torque resists a huge output load. Toggle clamps, presses and over-center latches exploit this. When the coupler and output link line up (μ = 0° or 180°), the input can't drive the output at all: a dead point to avoid.</p>
+
+  <h2>Velocity analysis and mechanical advantage</h2>
+  <p>An <strong>instant center</strong> is a point where two links have the same velocity. A mechanism with n links has n(n − 1)/2 of them. <strong>Kennedy's theorem</strong> says the three instant centers shared by any three links lie on a straight line, which locates the ones that aren't obvious pin joints.</p>
+  <p>For a four-bar with frame 1, crank 2 and output 4, the velocity ratio is ω<sub>4</sub>/ω<sub>2</sub> = (I<sub>12</sub>I<sub>24</sub>)/(I<sub>14</sub>I<sub>24</sub>), using distances along the line of centers. If losses are ignored, power in equals power out, so the torque ratio is the inverse: T<sub>4</sub>/T<sub>2</sub> = ω<sub>2</sub>/ω<sub>4</sub>. Mechanical advantage is large where the output moves slowly.</p>
+  <details class="deriv"><summary>Show derivation: velocity ratio from instant centers</summary><div class="d">
+    <p>I<sub>24</sub> is the point that belongs to both link 2 and link 4 with the same velocity. Link 2 rotates about I<sub>12</sub> (its ground pivot), so that point's speed is ω<sub>2</sub>·|I<sub>12</sub>I<sub>24</sub>|. Link 4 rotates about I<sub>14</sub>, so the same point's speed is ω<sub>4</sub>·|I<sub>14</sub>I<sub>24</sub>|. Setting them equal gives the ratio. If I<sub>24</sub> lies between the two ground pivots, the links turn in opposite directions; outside them, the same direction.</p>
+    <p>Equivalently, differentiate the loop equation in time. Taking imaginary parts after multiplying by e<sup>−jθ<sub>3</sub></sup> eliminates ω<sub>3</sub> and gives ω<sub>4</sub> = a·ω<sub>2</sub>·sin(θ<sub>2</sub> − θ<sub>3</sub>)/(c·sin(θ<sub>4</sub> − θ<sub>3</sub>)). The denominator vanishes when the coupler and output are collinear, the dead point.</p>
+  </div></details>
+
+  <h2>The slider-crank</h2>
+  <p>With crank radius r and connecting rod length l, the slider position is x = r·cos θ + √(l² − r²sin²θ). For l several times r, the expansion x ≈ l − r²/(4l) + r·cos θ + (r²/(4l))·cos 2θ shows the motion is nearly harmonic with a second-harmonic correction. Acceleration is then a ≈ −rω²(cos θ + (r/l)·cos 2θ), the basis of engine and compressor balancing.</p>
+
+  <h2>Synthesis</h2>
+  <p>Synthesis designs a linkage for a task. The classic graphical methods are worth knowing because they make the geometry obvious:</p>
+  <ul>
+    <li><strong>Two-position motion generation:</strong> a body must move between two poses. Pick two points on the body as moving pivots. Each fixed pivot can lie anywhere on the perpendicular bisector of the line joining that point's two positions.</li>
+    <li><strong>Three-position motion generation:</strong> each fixed pivot is the center of the circle through a moving pivot's three positions, the intersection of two perpendicular bisectors.</li>
+    <li><strong>Function generation:</strong> make the output angle follow a function of the input angle at chosen precision points. Three points give three linear equations in K<sub>1</sub>, K<sub>2</sub>, K<sub>3</sub> from Freudenstein's equation. Chebyshev spacing of the points minimizes the error between them.</li>
+    <li><strong>Path generation:</strong> a point on the coupler traces a <strong>coupler curve</strong>, a sixth-order curve with a rich variety of shapes, including near-straight lines (Watt, Chebyshev, Hoeckens linkages). By the Roberts–Chebyshev theorem, three different four-bars, called cognates, trace the same coupler curve.</li>
+  </ul>
+  <div class="callout"><span class="tag">Best practices</span><ul>
+    <li>Check the transmission angle over the whole range of motion, not only at the design positions.</li>
+    <li>Verify that every design position lies on the same branch; a solution that needs the mechanism to switch branches can't be built.</li>
+    <li>Use toggle positions deliberately for force, and stay away from dead points under load.</li>
+    <li>Pin-joint clearance adds lost motion at every joint. Preload or use rolling-element or flexure joints where precision matters.</li>
+  </ul></div>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>M = 3(n − 1) − 2j<sub>1</sub> − j<sub>2</sub></code><span>Planar mobility (Grübler)</span></div>
+    <div class="eq"><code>s + l ≤ p + q</code><span>Grashof condition</span></div>
+    <div class="eq"><code>K<sub>1</sub>cos θ<sub>4</sub> − K<sub>2</sub>cos θ<sub>2</sub> + K<sub>3</sub> = cos(θ<sub>2</sub> − θ<sub>4</sub>)</code><span>Freudenstein's equation</span></div>
+    <div class="eq"><code>cos μ = (b² + c² − z²)/(2bc)</code><span>Transmission angle</span></div>
+    <div class="eq"><code>ω<sub>4</sub>/ω<sub>2</sub> = I<sub>12</sub>I<sub>24</sub>/I<sub>14</sub>I<sub>24</sub>, &nbsp; T<sub>4</sub>/T<sub>2</sub> = ω<sub>2</sub>/ω<sub>4</sub></code><span>Velocity and torque ratios</span></div>
+    <div class="eq"><code>a ≈ −rω²(cos θ + (r/l)cos 2θ)</code><span>Slider-crank acceleration</span></div>
+  </div>
+
+  <section class="lab" data-lab="linkages">
+    <div class="lab-head"><span class="lab-tag">Lab 12</span><h3>Four-bar explorer</h3></div>
+    <p class="lab-note">Set the link lengths and a coupler point. The upper view shows the mechanism at the chosen crank angle and the full coupler curve. The lower plot shows the transmission angle over a full crank turn (gaps mean the linkage can't assemble there).</p>
+    <div class="btnrow"><button class="btn small" id="lk-play" type="button">Play</button></div>
+    <div class="controls" id="c-linkages"></div>
+    <div class="screen tall"><canvas id="cv-linkages"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Links</span><span class="lg"><i style="--c:var(--ch3)"></i>Coupler curve</span><span class="lg"><i style="--c:var(--ch2)"></i>Transmission angle (lower)</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>40° and 140° limits</span></div>
+    <div class="readouts" id="ro-linkages"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Make the crank the shortest link and keep s + l &lt; p + q: a crank-rocker. Then lengthen the crank until the Grashof chip flips and full rotation becomes impossible.</li>
+      <li>Find the crank angles where the output link reverses. There the crank and coupler are collinear, ω<sub>4</sub> passes through zero and the torque ratio spikes: a toggle.</li>
+      <li>Move the coupler point off the coupler line and watch the curve change shape; some settings give nearly straight segments.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 13 CAMS ======================= -->
+<section class="view module" id="view-cams">
+  <p class="lead">A cam converts rotation into a precisely timed follower motion: rise, hold, return, hold. Mechanical cams still drive packaging lines, engine valves and indexing mechanisms because they are simple, synchronous and fast. Servo drives now implement the same motion as electronic cams. Either way, the choice of motion law decides vibration, wear and noise.</p>
+
+  <h2>Terminology</h2>
+  <ul>
+    <li><strong>Followers</strong> translate or oscillate, and touch the cam with a knife edge, a roller or a flat face. Roller followers dominate in machinery because they roll instead of sliding.</li>
+    <li>The <strong>base circle</strong> is the smallest circle tangent to the cam surface. For a roller follower, the <strong>prime circle</strong> (base radius plus roller radius) and the <strong>pitch curve</strong> (the path of the roller center) are the working geometry.</li>
+    <li>A <strong>displacement diagram</strong> plots follower position s against cam angle θ: typically rise h over angle β, dwell, return, dwell.</li>
+  </ul>
+
+  <h2>SVAJ and the fundamental law of cam design</h2>
+  <p>Differentiate s(θ) to get velocity, acceleration and jerk (the SVAJ diagrams). With the cam turning at ω, time derivatives scale as v = ω·ds/dθ, a = ω²·d²s/dθ² and j = ω³·d³s/dθ³, so acceleration grows with the square of speed. The <strong>fundamental law of cam design</strong>: across the whole cycle, dwells included, displacement, velocity and acceleration must be continuous, and jerk must be finite. A jump in acceleration is an impulse of jerk, which excites vibration, noise and wear.</p>
+  <div class="tbl"><table>
+    <tr><th>Motion law (rise of h over β, x = θ/β)</th><th>s(x)/h</th><th>Peak v (×hω/β)</th><th>Peak a (×hω²/β²)</th><th>Next to a dwell</th></tr>
+    <tr><td>Constant velocity</td><td>x</td><td>1</td><td>infinite at the ends</td><td>Unusable alone</td></tr>
+    <tr><td>Simple harmonic</td><td>½(1 − cos πx)</td><td>1.57</td><td>4.93</td><td>Acceleration jumps at the ends: violates the law</td></tr>
+    <tr><td>Cycloidal</td><td>x − sin(2πx)/(2π)</td><td>2.00</td><td>6.28</td><td>Smooth acceleration; finite jerk step</td></tr>
+    <tr><td>3-4-5 polynomial</td><td>10x³ − 15x⁴ + 6x⁵</td><td>1.88</td><td>5.77</td><td>Smooth acceleration; finite jerk step</td></tr>
+    <tr><td>4-5-6-7 polynomial</td><td>35x⁴ − 84x⁵ + 70x⁶ − 20x⁷</td><td>2.19</td><td>7.51</td><td>Zero jerk at the ends; highest acceleration</td></tr>
+  </table></div>
+  <p>The trade is clear: smoother endings cost higher peak acceleration. Modified-trapezoid and modified-sine laws, built from piecewise sinusoids and constant-acceleration segments, lower peak acceleration further while keeping the endings continuous. They are common in indexing drives.</p>
+  <details class="deriv"><summary>Show derivation: 3-4-5 polynomial and its peak values</summary><div class="d">
+    <p>Require s(0) = 0, s(1) = h, and zero velocity and acceleration at both ends: six conditions, so a fifth-order polynomial. The conditions at x = 0 remove the constant, linear and quadratic terms, leaving s = h(c<sub>3</sub>x³ + c<sub>4</sub>x⁴ + c<sub>5</sub>x⁵). The conditions at x = 1 give c<sub>3</sub> + c<sub>4</sub> + c<sub>5</sub> = 1, 3c<sub>3</sub> + 4c<sub>4</sub> + 5c<sub>5</sub> = 0 and 6c<sub>3</sub> + 12c<sub>4</sub> + 20c<sub>5</sub> = 0, so (c<sub>3</sub>, c<sub>4</sub>, c<sub>5</sub>) = (10, −15, 6). This is the same quintic as the robot trajectory in Module 30.</p>
+    <p>Velocity s′ = h(30x² − 60x³ + 30x⁴) peaks at x = ½ with 1.875h. Acceleration s″ = h(60x − 180x² + 120x³) peaks where s‴ = h(60 − 360x + 360x²) = 0, at x = ½ − √3/6, with value 10/√3·h ≈ 5.77h. Dividing by β and β² converts these to derivatives with respect to cam angle.</p>
+  </div></details>
+
+  <h2>Pressure angle and base circle size</h2>
+  <p>The <strong>pressure angle</strong> φ is the angle between the follower's direction of motion and the common normal at the contact. Only cos φ of the contact force drives the follower; the sin φ part pushes it sideways into its guide. For an in-line translating roller follower,</p>
+  <div class="math"><div>tan φ = (ds/dθ)/(R<sub>p</sub> + s)</div></div>
+  <p>Keep φ below about 30° for translating followers (about 35° for oscillating ones). The main lever is the prime circle radius R<sub>p</sub>: a bigger cam lowers φ, at the cost of size and inertia. A longer rise angle β also helps, since it lowers ds/dθ.</p>
+  <details class="deriv"><summary>Show derivation: pressure angle of a translating roller follower</summary><div class="d">
+    <p>The roller center follows the pitch curve, which in polar form is r(θ) = R<sub>p</sub> + s(θ). For any polar curve, the angle ψ between the radius vector and the curve's normal satisfies tan ψ = (dr/dθ)/r. The force between cam and roller acts along the normal, and an in-line follower moves along the radius, so the pressure angle is φ = ψ, giving tan φ = (ds/dθ)/(R<sub>p</sub> + s). With an offset follower, the offset ε adds terms: tan φ = (ds/dθ − ε)/(s + √(R<sub>p</sub>² − ε²)). A small offset in the right direction reduces φ during the rise.</p>
+  </div></details>
+
+  <h2>Radius of curvature and undercutting</h2>
+  <p>The cam surface can't have a sharper convex curvature than the follower can follow. For the pitch curve r = R<sub>p</sub> + s,</p>
+  <div class="math"><div>ρ = [r² + (dr/dθ)²]<sup>3/2</sup> / [r² + 2(dr/dθ)² − r·d²r/dθ²]</div></div>
+  <p>Where the pitch curve is convex (ρ &gt; 0), the cam surface radius is ρ − R<sub>r</sub>. If ρ approaches the roller radius R<sub>r</sub>, the cam profile develops a cusp, and below it the profile is <strong>undercut</strong>: the follower no longer reproduces the intended motion. Keep the minimum positive ρ at two to three times R<sub>r</sub>, or use a larger cam or smaller roller. For flat-faced followers, the condition is R<sub>b</sub> + s + d²s/dθ² &gt; 0 everywhere.</p>
+
+  <h2>Keeping contact: springs and jump</h2>
+  <p>In a <strong>force-closed</strong> cam, a spring holds the follower against the cam. During deceleration the follower's inertia tries to lift it off. The cam contact force is N = F<sub>spring</sub> + m·a, which must stay positive throughout the cycle, with margin. If it doesn't, the follower <strong>jumps</strong>, then lands with an impact. Raising speed raises a with ω², so a cam that runs cleanly at one speed can jump at a higher one. Also keep the follower system's natural frequency well above the cam's main harmonics. <strong>Form-closed</strong> cams (grooved or conjugate pairs) trap the follower and need no spring, but need tight clearances.</p>
+  <details class="deriv"><summary>Show derivation: contact force and the jump condition</summary><div class="d">
+    <p>Take the follower mass m, with s positive away from the cam. The cam pushes with contact force N ≥ 0; the spring pushes back with F<sub>sp</sub> = F<sub>0</sub> + k·s. Newton's law along the motion:</p>
+    <div class="math"><div>m·s̈ = N − F<sub>sp</sub> &nbsp;⇒&nbsp; N = F<sub>0</sub> + k·s + m·s̈</div></div>
+    <p>N becomes zero, and contact is lost, when s̈ is negative and m|s̈| exceeds F<sub>0</sub> + ks. Since s̈ = ω²·d²s/dθ², the minimum contact force falls with the square of cam speed. That is why jump appears suddenly as speed rises.</p>
+  </div></details>
+
+  <h2>Electronic cams</h2>
+  <p>A servo drive can follow a cam table: follower position as a function of a master axis position (a virtual shaft or another axis's encoder). The table can be changed in software, profiles can switch on the fly, and the same law choices apply. The motor must supply the follower's peak acceleration torque and RMS torque (Module 22), and the loop bandwidth must comfortably exceed the profile's main harmonics. Mechanical cams remain simpler, stiffer and cheaper at very high speeds; electronic cams win when products and profiles change often.</p>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>v = ω·ds/dθ, &nbsp; a = ω²·d²s/dθ², &nbsp; j = ω³·d³s/dθ³</code><span>Time derivatives from cam-angle derivatives</span></div>
+    <div class="eq"><code>s = h(x − sin(2πx)/2π)</code><span>Cycloidal rise, x = θ/β</span></div>
+    <div class="eq"><code>s = h(10x³ − 15x⁴ + 6x⁵)</code><span>3-4-5 polynomial rise</span></div>
+    <div class="eq"><code>tan φ = (ds/dθ)/(R<sub>p</sub> + s)</code><span>Pressure angle, in-line translating roller follower</span></div>
+    <div class="eq"><code>ρ = (r² + r′²)<sup>3/2</sup>/(r² + 2r′² − r·r″)</code><span>Pitch-curve radius of curvature</span></div>
+    <div class="eq"><code>N = F<sub>0</sub> + k·s + m·s̈ &gt; 0</code><span>Follower stays in contact</span></div>
+  </div>
+
+  <section class="lab" data-lab="cams">
+    <div class="lab-head"><span class="lab-tag">Lab 13a</span><h3>Motion laws compared</h3></div>
+    <p class="lab-note">A rise-dwell-return-dwell cycle with equal rise and return angles. Choose a motion law and which derivative to view; time units come from the cam speed.</p>
+    <div class="controls" id="c-cams"></div>
+    <div class="screen"><canvas id="cv-cams"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Selected law</span><span class="lg"><i class="dash" style="--c:var(--scope-text)"></i>Cycloidal reference</span></div>
+    <div class="readouts" id="ro-cams"></div>
+    <div class="sublab">
+      <h4>Lab 13b · Sizing the cam and the follower spring</h4>
+      <p class="lab-note">Uses the law, rise, angle and speed from 13a, with an in-line translating roller follower.</p>
+      <div class="controls" id="c-camsize"></div>
+      <div class="screen short"><canvas id="cv-camsize"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Pressure angle (°, left)</span><span class="lg"><i style="--c:var(--ch2)"></i>Contact force (N, right)</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>30° limit</span></div>
+      <div class="readouts" id="ro-camsize"></div>
+    </div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>View acceleration with simple harmonic motion. It jumps at each end of the rise; switch to cycloidal or 3-4-5 and the jumps vanish.</li>
+      <li>View jerk with 4-5-6-7. Jerk starts and ends at zero, but peak acceleration is the highest of the four.</li>
+      <li>In 13b, raise the cam speed until the contact force touches zero: that's jump. Then raise the preload or stiffness until it clears.</li>
+      <li>Shrink the base circle until the pressure angle exceeds 30° and the curvature chip warns of undercutting.</li>
     </ul></div>
   </section>
 </section>
@@ -2339,32 +2967,40 @@ const PARTS = {
 const MODULES = [
   {id:"rotation", part:"I", title:"Rotational dynamics & power", mins:20, builds:[], desc:"Rotary forms of Newton, inertia, the torque budget, power and stored energy."},
   {id:"circuits", part:"II", title:"Circuit fundamentals", mins:25, builds:[], desc:"Ohm and Kirchhoff, the mechanical analogy, loading, and op-amps in two rules."},
-  {id:"transients", part:"II", title:"Capacitors, inductors & filters", mins:25, builds:[2], desc:"Time constants, coils, decoupling and RC filters."},
-  {id:"switching", part:"II", title:"Diodes, transistors & H-bridges", mins:30, builds:[2,3], desc:"MOSFET switches, flyback protection and the four-switch bridge."},
-  {id:"pwm", part:"II", title:"PWM & power electronics", mins:20, builds:[3,4], desc:"Duty cycle, current ripple, switching frequency and regeneration."},
-  {id:"sampling", part:"III", title:"Microcontrollers, ADCs & sampling", mins:30, builds:[2,3], desc:"Peripherals, ADC resolution, aliasing, digital filters and buses."},
-  {id:"sensors", part:"IV", title:"Sensors: encoders, bridges & more", mins:30, builds:[2,6], desc:"Quadrature encoders, strain bridges, current sensing and specs."},
-  {id:"dcmotor", part:"V", title:"The DC motor model", mins:30, builds:[1,3], desc:"Two coupled equations, the torque–speed line, datasheets and time constants."},
-  {id:"motortypes", part:"V", title:"Brushless, steppers & servos", mins:25, builds:[7,8], desc:"Commutation, six-step vs FOC, steppers, servos and induction motors."},
-  {id:"transmission", part:"VI", title:"Gears, belts & screws", mins:25, builds:[1,8], desc:"Ratios, reflected inertia, transmission types, backlash and resonance."},
-  {id:"dynamics", part:"VII", title:"System models & step response", mins:30, builds:[1,8], desc:"Transfer functions, poles, second-order specs and block diagrams."},
-  {id:"pid", part:"VII", title:"Feedback & PID", mins:35, builds:[8,11], desc:"P, I and D as springs and dampers, windup, feedforward and code."},
-  {id:"frequency", part:"VII", title:"Frequency response & cascaded loops", mins:30, builds:[11,12], desc:"Bode plots, crossover, phase margin, delay and loop nesting."},
-  {id:"wiring", part:"VIII", title:"Power, wiring & safety", mins:20, builds:[4,5], desc:"Supplies, grounding, noise, wire drop, regeneration and e-stops."},
-  {id:"sizing", part:"VIII", title:"Motion profiles & motor sizing", mins:35, builds:[1,8,10], desc:"Trapezoidal moves, peak and RMS torque, and the selection loop."},
-  {id:"shafts", part:"IX", title:"Shafts, keys & couplings", mins:45, builds:[1,10,13], desc:"Marin factors, notch sensitivity, DE-Goodman, stiffness, critical speed and hub connections."},
-  {id:"bearings", part:"IX", title:"Bearings & linear guides", mins:40, builds:[1,15,16], desc:"L10 life, equivalent and cubic-mean loads, fits, location, preload and profile rails."},
-  {id:"elements", part:"IX", title:"Screws, belts & gear strength", mins:45, builds:[10,15,16], desc:"Thread torque and self-locking, buckling and whip, belt tension, Lewis and Hertz."},
-  {id:"rigid", part:"X", title:"Rigid-body motion", mins:45, builds:[1], desc:"Rotation matrices, Euler angles, Rodrigues' formula, quaternions and homogeneous transforms."},
-  {id:"fk", part:"X", title:"Forward kinematics", mins:40, builds:[19], desc:"Kinematic chains, Denavit–Hartenberg parameters and the product of exponentials."},
-  {id:"jacobian", part:"X", title:"Jacobians & singularities", mins:45, builds:[20], desc:"Velocity kinematics, τ = JᵀF, singularities and the manipulability ellipsoid."},
-  {id:"ik", part:"X", title:"Inverse kinematics & trajectories", mins:45, builds:[20,21], desc:"Analytic and numerical IK, damped least squares, redundancy, cubic and quintic paths."},
-  {id:"robodyn", part:"X", title:"Manipulator dynamics", mins:50, builds:[1,21], desc:"Lagrangian derivation, M(q), Coriolis and gravity terms, and their structural properties."},
-  {id:"robocontrol", part:"X", title:"Robot control", mins:50, builds:[12,23], desc:"PD with gravity compensation, computed torque, task-space and impedance control."},
-  {id:"tendons", part:"XI", title:"Cable & tendon transmissions", mins:35, builds:[18,21], desc:"Capstan friction, cable stiffness and pretension, routing matrices and hysteresis."},
-  {id:"compliant", part:"XI", title:"Series-elastic & compliant actuation", mins:35, builds:[8,13,24], desc:"Mechanical impedance, impact force, SEAs, quasi-direct drive and flexures."},
-  {id:"teleop", part:"XI", title:"Teleoperation & haptics", mins:40, builds:[13,24], desc:"Bilateral architectures, transparency, passivity, wave variables and virtual walls."},
-  {id:"parallel", part:"XI", title:"Parallel mechanisms", mins:40, builds:[20,21], desc:"Mobility, reversed kinematics, Type I and Type II singularities, five-bars and hexapods."}
+  {id:"transients", part:"II", title:"Capacitors, inductors & filters", mins:25, builds:["circuits"], desc:"Time constants, coils, decoupling and RC filters."},
+  {id:"switching", part:"II", title:"Diodes, transistors & H-bridges", mins:30, builds:["circuits","transients"], desc:"MOSFET switches, flyback protection and the four-switch bridge."},
+  {id:"pwm", part:"II", title:"PWM & power electronics", mins:20, builds:["transients","switching"], desc:"Duty cycle, current ripple, switching frequency and regeneration."},
+  {id:"sampling", part:"III", title:"Microcontrollers, ADCs & sampling", mins:30, builds:["circuits","transients"], desc:"Peripherals, ADC resolution, aliasing, digital filters and buses."},
+  {id:"sensors", part:"IV", title:"Sensors: encoders, bridges & more", mins:30, builds:["circuits","sampling"], desc:"Quadrature encoders, strain bridges, current sensing and specs."},
+  {id:"magnetics", part:"V", title:"Magnetics & electromagnetic actuators", mins:40, builds:["circuits","transients"], desc:"Magnetic circuits, Lorentz and reluctance force, solenoids and voice-coil actuators."},
+  {id:"dcmotor", part:"V", title:"The DC motor model", mins:30, builds:["rotation","transients","magnetics"], desc:"Two coupled equations, the torque–speed line, datasheets and time constants."},
+  {id:"motortypes", part:"V", title:"Brushless, steppers & servos", mins:25, builds:["sensors","dcmotor"], desc:"Commutation, six-step vs FOC, steppers, servos and induction motors."},
+  {id:"transmission", part:"VI", title:"Gears, belts & screws", mins:25, builds:["rotation","dcmotor"], desc:"Ratios, reflected inertia, transmission types, backlash and resonance."},
+  {id:"linkages", part:"VI", title:"Linkages", mins:50, builds:["rotation","transmission"], desc:"Mobility, Grashof, vector-loop position analysis, transmission angle, instant centers and synthesis."},
+  {id:"cams", part:"VI", title:"Cams", mins:45, builds:["rotation","linkages"], desc:"Follower motion laws, SVAJ, pressure angle, curvature, follower springs and electronic cams."},
+  {id:"dynamics", part:"VII", title:"System models & step response", mins:30, builds:["rotation","dcmotor"], desc:"Transfer functions, poles, second-order specs and block diagrams."},
+  {id:"pid", part:"VII", title:"Feedback & PID", mins:35, builds:["dcmotor","dynamics"], desc:"P, I and D as springs and dampers, windup, feedforward and code."},
+  {id:"frequency", part:"VII", title:"Frequency response & cascaded loops", mins:30, builds:["dynamics","pid"], desc:"Bode plots, crossover, phase margin, delay and loop nesting."},
+  {id:"statespace", part:"VII", title:"State space, observers & Kalman filters", mins:55, builds:["dynamics","pid","frequency"], desc:"State models, pole placement, LQR, observers, and Kalman and complementary filters."},
+  {id:"vibration", part:"VII", title:"Resonance & vibration suppression", mins:45, builds:["transmission","dynamics","frequency"], desc:"Two-mass systems, notch filters, input shaping and jerk-limited commands."},
+  {id:"friction", part:"VII", title:"Friction & nonlinearities", mins:40, builds:["rotation","pid"], desc:"Stribeck and LuGre models, stick-slip, hunting, backlash and compensation."},
+  {id:"sysid", part:"VII", title:"System identification & testing", mins:45, builds:["dynamics","frequency"], desc:"Step tests, stepped-sine and chirp FRFs, coherence and least-squares fitting."},
+  {id:"wiring", part:"VIII", title:"Power, wiring & safety", mins:20, builds:["switching","pwm"], desc:"Supplies, grounding, noise, wire drop, regeneration and e-stops."},
+  {id:"sizing", part:"VIII", title:"Motion profiles & motor sizing", mins:35, builds:["rotation","dcmotor","transmission"], desc:"Trapezoidal moves, peak and RMS torque, and the selection loop."},
+  {id:"shafts", part:"IX", title:"Shafts, keys & couplings", mins:45, builds:["rotation","transmission","frequency"], desc:"Marin factors, notch sensitivity, DE-Goodman, stiffness, critical speed and hub connections."},
+  {id:"bearings", part:"IX", title:"Bearings & linear guides", mins:40, builds:["rotation","sizing","shafts"], desc:"L10 life, equivalent and cubic-mean loads, fits, location, preload and profile rails."},
+  {id:"elements", part:"IX", title:"Screws, belts & gear strength", mins:45, builds:["transmission","sizing","shafts"], desc:"Thread torque and self-locking, buckling and whip, belt tension, Lewis and Hertz."},
+  {id:"precision", part:"IX", title:"Precision design & error budgets", mins:45, builds:["sensors","bearings","elements"], desc:"Abbe and thermal errors, exact constraint, structural loops, budgets and calibration."},
+  {id:"rigid", part:"X", title:"Rigid-body motion", mins:45, builds:["rotation"], desc:"Rotation matrices, Euler angles, Rodrigues' formula, quaternions and homogeneous transforms."},
+  {id:"fk", part:"X", title:"Forward kinematics", mins:40, builds:["rigid"], desc:"Kinematic chains, Denavit–Hartenberg parameters and the product of exponentials."},
+  {id:"jacobian", part:"X", title:"Jacobians & singularities", mins:45, builds:["fk"], desc:"Velocity kinematics, τ = JᵀF, singularities and the manipulability ellipsoid."},
+  {id:"ik", part:"X", title:"Inverse kinematics & trajectories", mins:45, builds:["fk","jacobian"], desc:"Analytic and numerical IK, damped least squares, redundancy, cubic and quintic paths."},
+  {id:"robodyn", part:"X", title:"Manipulator dynamics", mins:50, builds:["rotation","jacobian"], desc:"Lagrangian derivation, M(q), Coriolis and gravity terms, and their structural properties."},
+  {id:"robocontrol", part:"X", title:"Robot control", mins:50, builds:["pid","robodyn"], desc:"PD with gravity compensation, computed torque, task-space and impedance control."},
+  {id:"tendons", part:"XI", title:"Cable & tendon transmissions", mins:35, builds:["elements","jacobian"], desc:"Capstan friction, cable stiffness and pretension, routing matrices and hysteresis."},
+  {id:"compliant", part:"XI", title:"Series-elastic & compliant actuation", mins:35, builds:["dcmotor","frequency","robocontrol"], desc:"Mechanical impedance, impact force, SEAs, quasi-direct drive and flexures."},
+  {id:"teleop", part:"XI", title:"Teleoperation & haptics", mins:40, builds:["frequency","robocontrol"], desc:"Bilateral architectures, transparency, passivity, wave variables and virtual walls."},
+  {id:"parallel", part:"XI", title:"Parallel mechanisms", mins:40, builds:["fk","jacobian"], desc:"Mobility, reversed kinematics, Type I and Type II singularities, five-bars and hexapods."}
 ];
 MODULES.forEach((m,i)=>{ m.n=i+1; });
 const pad = n => String(n).padStart(2,"0");
@@ -2430,6 +3066,18 @@ transmission:[
  {q:"A ball screw with a 10 mm lead and 90% efficiency must push 500 N. What torque does it need?", o:["0.88 N·m","0.80 N·m","5.6 N·m","8.8 N·m"], a:0, why:"T = F·L/(2πη) = 500 × 0.01/(2π × 0.9) ≈ 0.88 N·m."},
  {q:"A position loop with its encoder on the load hunts back and forth around the target. The most likely mechanical cause is:", o:["Too much load inertia","Backlash in the gearing","High gearbox efficiency","A stiff coupling"], a:1, why:"Backlash is a dead zone inside the loop. The controller pushes through it, overshoots and reverses: a limit cycle."}
 ],
+linkages:[
+ {q:"A four-bar has links of 40, 100, 120 and 140 mm. The 40 mm link is the crank, pinned to the 140 mm ground. What kind of mechanism is it?", o:["Double-crank","Crank-rocker","Grashof double-rocker","Non-Grashof triple-rocker"], a:1, why:"s + l = 180 < p + q = 220, so it is Grashof, and the shortest link is adjacent to ground: crank-rocker."},
+ {q:"What minimum transmission angle is a common design guideline for linkages?", o:["About 5°","About 40°","Exactly 90°","About 170°"], a:1, why:"Below roughly 40° (or above 140°) the coupler pushes mostly sideways on the output, so friction and binding dominate."},
+ {q:"At a toggle position, where the crank and coupler are collinear, the mechanical advantage is:", o:["Zero","Very large","Exactly 1","Negative"], a:1, why:"The output is momentarily stationary (ω₄ → 0), so the lossless torque ratio ω₂/ω₄ becomes very large. Toggle clamps use this."},
+ {q:"A planar linkage has 6 links (including ground) and 7 pin joints. What is its mobility?", o:["0","1","2","3"], a:1, why:"M = 3(6 − 1) − 2(7) = 1, a single-degree-of-freedom six-bar (Watt or Stephenson type)."}
+],
+cams:[
+ {q:"Why is simple harmonic motion a poor choice for a rise that starts and ends at a dwell?", o:["Its peak velocity is too high","Acceleration jumps at the dwell boundaries, giving infinite jerk","It doesn't reach the full rise","It needs a larger base circle"], a:1, why:"SHM's acceleration is hπ²ω²/(2β²) at the start of the rise but zero in the dwell. That violates the fundamental law of cam design."},
+ {q:"Cam speed doubles with the same profile. Peak follower acceleration:", o:["Doubles","Quadruples","Stays the same","Halves"], a:1, why:"a = ω²·d²s/dθ², so it scales with speed squared."},
+ {q:"The pressure angle on a translating roller follower exceeds 30°. What's the most direct fix?", o:["Use a smaller roller","Increase the base circle radius, or spread the rise over a larger angle","Increase the spring preload","Raise the speed"], a:1, why:"tan φ = (ds/dθ)/(R_p + s): a larger R_p or a smaller ds/dθ (longer β) lowers φ."},
+ {q:"When does a spring-loaded follower jump?", o:["When the spring force exceeds the cam force","When the required deceleration force m|a| exceeds the spring force F₀ + ks, so contact force reaches zero","At the start of every rise","Only with flat-faced followers"], a:1, why:"Contact force N = F₀ + ks + m·a goes to zero during deceleration when a is large and negative."}
+],
 dynamics:[
  {q:"A second-order system has ζ = 0.7. Roughly how much does its step response overshoot?", o:["0%","4.6%","16%","25%"], a:1, why:"M_p = exp(−πζ/√(1 − ζ²)) ≈ 4.6% at ζ = 0.7."},
  {q:"A 2 kg mass on an 800 N/m spring has what natural frequency?", o:["20 rad/s","400 rad/s","0.05 rad/s","10 rad/s"], a:0, why:"ω_n = √(k/m) = √400 = 20 rad/s, about 3.2 Hz."},
@@ -2477,6 +3125,42 @@ elements:[
  {q:"A long ball screw is fixed at one end and supported at the other. Switching to fixed–fixed raises its buckling load by about:", o:["The same","1.2×","2×","4×"], a:2, why:"The buckling constant goes from 2 (fixed–supported) to 4 (fixed–fixed)."},
  {q:"A timing belt delivers 10 N·m from a 40 mm pitch-diameter pulley. What is the effective pull?", o:["250 N","500 N","400 N","50 N"], a:1, why:"T_e = 2T/d = 2 × 10 / 0.04 = 500 N."},
  {q:"For through-hardened steel spur gears, which failure usually governs a first-pass design?", o:["Tooth bending","Surface pitting from contact stress","Shaft torsion","Key shear"], a:1, why:"Contact stress grows with the square root of load but the allowable grows only linearly with hardness, so pitting usually limits hardened gears."}
+],
+magnetics:[
+ {q:"An iron circuit has a 1 mm air gap and 500 ampere-turns. Ignoring the iron's reluctance, what is the gap flux density?", o:["0.063 T","0.63 T","6.3 T","0.5 T"], a:1, why:"B = μ₀Ni/g = 4π×10⁻⁷ × 500 / 0.001 ≈ 0.63 T."},
+ {q:"At a fixed gap, below saturation, doubling a solenoid's current changes its pull force by:", o:["2×","4×","√2×","Nothing"], a:1, why:"Reluctance force ∝ B² ∝ i², so doubling current quadruples force."},
+ {q:"Why do solenoid drivers use a lower holding current after pull-in?", o:["To reverse the force","With the gap closed, far less current gives the same force, so heat drops","Inductance falls when closed","To reduce the flyback voltage only"], a:1, why:"Force rises steeply as the gap closes, so holding needs only a fraction of pull-in current, and I²R heating falls with its square."},
+ {q:"A voice coil has K_m = 5 N/√W. How much heat does it dissipate producing 15 N continuously?", o:["3 W","9 W","15 W","45 W"], a:1, why:"P = (F/K_m)² = (15/5)² = 9 W."}
+],
+statespace:[
+ {q:"The eigenvalues of the state matrix A are:", o:["The system's zeros","The system's poles","The controller gains","The sensor noise levels"], a:1, why:"G(s) = C(sI − A)⁻¹B + D has denominator det(sI − A), whose roots are A's eigenvalues."},
+ {q:"For a 2 kg mass under state feedback u = −k₁x − k₂v, which gains give ω_n = 10 rad/s and ζ = 0.7?", o:["k₁ = 100, k₂ = 14","k₁ = 200, k₂ = 28","k₁ = 20, k₂ = 2.8","k₁ = 400, k₂ = 14"], a:1, why:"k₁ = mω_n² = 200 N/m and k₂ = 2ζω_n·m = 28 N·s/m."},
+ {q:"If the measurement noise covariance R in a Kalman filter is increased, the Kalman gain:", o:["Increases: trust the sensor more","Decreases: trust the model more","Is unchanged","Becomes negative"], a:1, why:"K = P⁻Cᵀ(CP⁻Cᵀ + R)⁻¹ shrinks as R grows."},
+ {q:"What does the separation principle let you do?", o:["Ignore unmeasured states","Design the state-feedback gain and the observer gain independently","Skip the observer","Use one gain for both"], a:1, why:"For linear systems, the closed-loop poles are those of A − BK together with those of A − LC."}
+],
+vibration:[
+ {q:"A motor drives a load through a compliant shaft. Measured at the motor, where is the anti-resonance?", o:["√(k/J_motor)","√(k/J_load)","√(k(J₁+J₂)/(J₁J₂))","At zero frequency"], a:1, why:"The load oscillates on the spring while the motor stays nearly still, at √(k/J₂)."},
+ {q:"A lightly damped resonance is at 10 Hz. About how much delay does a ZV input shaper add?", o:["10 ms","50 ms","100 ms","200 ms"], a:1, why:"ZV adds half a damped period: 0.5 × (1/10 Hz) = 50 ms."},
+ {q:"A notch filter with ζ_z = 0.05 and ζ_p = 0.5 has what gain at its center frequency?", o:["0.5 (−6 dB)","0.1 (−20 dB)","0.01 (−40 dB)","1 (0 dB)"], a:1, why:"Depth = ζ_z/ζ_p = 0.1, which is −20 dB."},
+ {q:"Why choose a ZVD shaper over ZV?", o:["It adds no delay","It tolerates errors in the assumed frequency much better, at the cost of more delay","It needs no damping estimate","It works only for undamped systems"], a:1, why:"ZVD also zeroes the sensitivity to frequency error, flattening the residual-vibration curve, and adds a full period of delay."}
+],
+friction:[
+ {q:"What feature of the Stribeck curve causes stick-slip?", o:["Viscous friction rising with speed","Friction falling as speed rises from zero, which acts as negative damping","Constant Coulomb friction","Pre-sliding stiffness"], a:1, why:"A negative slope of force versus velocity at low speed feeds energy into oscillation."},
+ {q:"P-only position control with Coulomb friction F_c = 5 N and K_p = 10 N/mm leaves a dead band of:", o:["±0.05 mm","±0.5 mm","±5 mm","None"], a:1, why:"The controller must build up F_c before motion: |e| ≤ F_c/K_p = 0.5 mm."},
+ {q:"Why base friction feedforward on the reference velocity rather than the measured velocity?", o:["It's more accurate","The measured velocity is noisy near zero, so switching on its sign causes chattering","The reference is always larger","Measured velocity isn't available"], a:1, why:"The reference is clean and known ahead of time; sign(noisy velocity) toggles randomly near zero."},
+ {q:"Which change most directly reduces stick-slip in a slow-moving slide?", o:["A softer drive coupling","A stiffer drive and rolling-element guides","More static friction","Lower drive speed"], a:1, why:"Stiffness shrinks the jumps (2ΔF/k), and rolling elements remove most of the static-to-kinetic gap."}
+],
+sysid:[
+ {q:"Successive peaks of a free decay have ratio 1.88 (δ ≈ 0.63). The damping ratio is about:", o:["0.01","0.1","0.3","0.63"], a:1, why:"ζ = δ/√(4π² + δ²) = 0.63/6.32 ≈ 0.1."},
+ {q:"At some frequency the measured coherence is 0.3. What should you conclude?", o:["The plant has a resonance there","The FRF estimate there is unreliable: noise, nonlinearity or weak excitation","The gain is 0.3","The phase is −30°"], a:1, why:"Coherence is the fraction of output linearly explained by the input; 0.3 means most of it isn't."},
+ {q:"Why can't data from constant-speed motion in one direction separate viscous and Coulomb friction?", o:["Too much noise","The columns ω and sign(ω) are nearly proportional, so ΦᵀΦ is nearly singular","Coulomb friction is zero","Inertia dominates"], a:1, why:"Without varied speeds and reversals, the regressors aren't independent: the data lack persistent excitation."},
+ {q:"In closed loop, why compute the plant as S_ry/S_ru instead of S_uy/S_uu?", o:["It's faster","Feedback correlates u with the output noise, biasing the direct estimate; the external excitation r is uncorrelated with that noise","S_uu is always zero","It removes the controller"], a:1, why:"Using cross-spectra with the injected excitation removes the feedback-induced bias."}
+],
+precision:[
+ {q:"A scale is 100 mm from the tool, and the carriage pitches 50 µrad. What is the Abbe error?", o:["0.5 µm","5 µm","50 µm","500 µm"], a:1, why:"e ≈ d·ε = 100 mm × 50×10⁻⁶ = 5 µm."},
+ {q:"A 500 mm steel ball screw warms by 2 °C. Roughly how much does it grow?", o:["1.2 µm","12 µm","120 µm","1.2 mm"], a:1, why:"ΔL = αLΔT ≈ 11.5×10⁻⁶ × 500 mm × 2 ≈ 11.5 µm."},
+ {q:"A Maxwell kinematic coupling (three balls in three V-grooves) constrains how many degrees of freedom?", o:["3","5","6, each exactly once","12"], a:2, why:"Each ball touches two groove flanks: six contacts constrain all six freedoms without redundancy."},
+ {q:"How should independent random errors be combined in an error budget?", o:["Add their magnitudes","Root sum of squares","Take the largest","Multiply them"], a:1, why:"Independent variances add, so σ_total = √(Σσᵢ²). Worst-case addition is reserved for correlated or systematic terms."}
 ],
 rigid:[
  {q:"Which property must every rotation matrix R satisfy?", o:["R = Rᵀ","RᵀR = I and det R = +1","det R = 0","All entries are between 0 and 1"], a:1, why:"Its columns are orthonormal unit vectors of a right-handed frame, so RᵀR = I and det R = +1."},
@@ -2740,7 +3424,7 @@ let currentView=null;
 MODULES.forEach((m,i)=>{
   const sec=$("view-"+m.id); if(!sec) return;
   const [pl,pn]=PARTS[m.part];
-  const builds = m.builds.length ? "Builds on " + m.builds.map(pad).join(" · ") : "Start here";
+  const builds = m.builds.length ? "Builds on " + m.builds.map(id=>pad((MODULES.find(x=>x.id===id)||{n:0}).n)).join(" · ") : "Start here";
   const head=document.createElement("header"); head.className="mod-head";
   head.innerHTML=`<div class="eyebrow">${pl} · ${pn}</div><h1>${m.title}</h1><div class="meta"><span>Module ${pad(m.n)}</span><span>~${m.mins} min</span><span>${builds}</span></div>`;
   sec.prepend(head);
@@ -4263,6 +4947,387 @@ defineSim("parallel",()=>{
   }
   dragOn(cv,()=>lastInv,(x,y)=>{ c.set("x",clamp(+x.toFixed(3),-0.6,0.6)); c.set("y",clamp(+y.toFixed(3),-0.2,0.8)); render(); });
   render(); return {render};
+});
+
+/* ================= shared: seeded noise ================= */
+function rng(seed){ let a=seed>>>0; return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+function gauss(r){ let u=0; while(u===0) u=r(); return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*r()); }
+const MU0=4*Math.PI*1e-7;
+
+/* ================= 08 magnetics ================= */
+defineSim("magnetics",()=>{
+  const cv=$("cv-magnetics"), Bsat=1.6;
+  const c=controls("c-magnetics",[
+    {id:"N",label:"Turns N",min:100,max:3000,step:50,value:1000,fmt:v=>v.toFixed(0)},
+    {id:"i",label:"Current",min:0.05,max:3,step:0.05,value:0.5,fmt:v=>fx(v,2)+" A"},
+    {id:"A",label:"Pole face area",min:10,max:1000,value:100,log:true,fmt:v=>fx(v,0)+" mm²"},
+    {id:"g",label:"Air gap",min:0.1,max:10,value:1,log:true,fmt:v=>fx(v,v<1?2:1)+" mm"},
+    {id:"R",label:"Coil resistance",min:0.5,max:50,step:0.5,value:8,fmt:v=>fx(v,1)+" Ω"},
+    {id:"Kf",label:"Voice-coil force constant",min:1,max:50,value:10,log:true,fmt:v=>fx(v,1)+" N/A"}
+  ],render);
+  function render(){
+    const v=c.vals, A=v.A*1e-6, Bat=g=>Math.min(MU0*v.N*v.i/(g/1000),Bsat), Fat=g=>Bat(g)**2*A/(2*MU0);
+    const gs=logspace(0.1,10,200), F=gs.map(Fat), Fv=v.Kf*v.i, all=F.concat([Fv]);
+    const lo=Math.pow(10,Math.floor(Math.log10(Math.max(1e-3,Math.min(...all))))), hi=Math.pow(10,Math.ceil(Math.log10(Math.max(...all)*1.01)));
+    plot(cv,{x:[0.1,10],logx:true,logy:true,y:[lo,hi],xlabel:"Air gap (mm)",ylabel:"Force (N)",
+      series:[{x:gs,y:F,color:"--ch1"},{x:[0.1,10],y:[Fv,Fv],color:"--ch2"}],vlines:[{x:v.g,color:"--ch3"}],markers:[{x:v.g,y:Fat(v.g),color:"--ch1",r:5}]});
+    const B=Bat(v.g), sat=MU0*v.N*v.i/(v.g/1000)>=Bsat, L=MU0*v.N*v.N*A/(v.g/1000);
+    readouts("ro-magnetics",[["Gap flux density",fx(B,3)+" T",sat?["warn","saturated (capped at 1.6 T)"]:["good","below saturation"]],["Solenoid force",eng(Fat(v.g),"N")],
+      ["Coil inductance (unsaturated)",eng(L,"H")],["Electrical time constant L/R",eng(L/v.R,"s")],["Voice-coil force K_f·i",eng(Fv,"N")],
+      ["Coil heat i²R",eng(v.i*v.i*v.R,"W")],["Voice-coil motor constant K_m",fx(v.Kf/Math.sqrt(v.R),2)+" N/√W"]]);
+  }
+  render(); return {render};
+});
+
+/* ================= 15 state space: tilt estimation ================= */
+defineSim("statespace",()=>{
+  const cv=$("cv-statespace");
+  const c=controls("c-statespace",[
+    {id:"bias",label:"Gyro bias",min:0,max:5,step:0.1,value:1,fmt:v=>fx(v,1)+" °/s"},
+    {id:"sg",label:"Gyro noise",min:0.05,max:2,step:0.05,value:0.3,fmt:v=>fx(v,2)+" °/s"},
+    {id:"sa",label:"Accelerometer noise",min:0.5,max:10,step:0.5,value:3,fmt:v=>fx(v,1)+"°"},
+    {id:"tau",label:"Complementary time constant τ",min:0.1,max:5,step:0.1,value:1,fmt:v=>fx(v,1)+" s"},
+    {id:"rs",label:"Kalman: assumed accel noise ×",min:0.1,max:10,value:1,log:true,fmt:v=>fx(v,2)+"×"}
+  ],render);
+  function render(){
+    const v=c.vals, dt=0.01, T=20, N=Math.round(T/dt), r=rng(12345);
+    const th=t=>15*Math.sin(TAU*0.15*t)+5*Math.sin(TAU*0.7*t), om=t=>15*TAU*0.15*Math.cos(TAU*0.15*t)+5*TAU*0.7*Math.cos(TAU*0.7*t);
+    let tg=th(0), tc=th(0), x=[th(0),0], P=[[10,0],[0,1]];
+    const al=v.tau/(v.tau+dt), Rk=(v.sa*v.rs)**2, Qt=(v.sg*dt)**2, Qb=(0.01)**2*dt;
+    const ts=[],yt=[],yg=[],ya=[],yc=[],yk=[]; let e={g:0,a:0,c:0,k:0}, ne=0;
+    for(let k=0;k<=N;k++){
+      const t=k*dt, tt=th(t), wm=om(t)+v.bias+v.sg*gauss(r);
+      const vib=((t%3)>1.5&&(t%3)<1.75)?8*Math.sin(TAU*15*t):0, am=tt+v.sa*gauss(r)+vib;
+      if(k>0){
+        tg+=wm*dt; tc=al*(tc+wm*dt)+(1-al)*am;
+        x=[x[0]+(wm-x[1])*dt, x[1]];
+        const F=[[1,-dt],[0,1]];
+        const FP=[[F[0][0]*P[0][0]+F[0][1]*P[1][0],F[0][0]*P[0][1]+F[0][1]*P[1][1]],[P[1][0],P[1][1]]];
+        P=[[FP[0][0]*F[0][0]+FP[0][1]*F[0][1]+Qt, FP[0][1]],[FP[1][0]*F[0][0]+FP[1][1]*F[0][1], FP[1][1]+Qb]];
+        const S=P[0][0]+Rk, K=[P[0][0]/S,P[1][0]/S], y=am-x[0];
+        x=[x[0]+K[0]*y, x[1]+K[1]*y];
+        P=[[(1-K[0])*P[0][0],(1-K[0])*P[0][1]],[P[1][0]-K[1]*P[0][0],P[1][1]-K[1]*P[0][1]]];
+      }
+      if(t>2){ e.g+=(tg-tt)**2; e.a+=(am-tt)**2; e.c+=(tc-tt)**2; e.k+=(x[0]-tt)**2; ne++; }
+      if(k%2===0){ ts.push(t); yt.push(tt); yg.push(tg); ya.push(am); yc.push(tc); yk.push(x[0]); }
+    }
+    plot(cv,{x:[0,T],y:[-45,45],xlabel:"Time (s)",ylabel:"Tilt (°)",
+      series:[{x:ts,y:ya,color:"--ch4",width:1,alpha:.45},{x:ts,y:yg,color:"--ch3",width:1.6},{x:ts,y:yc,color:"--ch2",width:1.6},{x:ts,y:yk,color:"--ch1",width:2},{x:ts,y:yt,color:"--ch5",width:1.4,dash:[5,4]}]});
+    const rm=k=>Math.sqrt(e[k]/ne);
+    readouts("ro-statespace",[["RMS error, gyro integrated",fx(rm("g"),2)+"°"],["RMS error, accelerometer",fx(rm("a"),2)+"°"],["RMS error, complementary",fx(rm("c"),2)+"°"],
+      ["RMS error, Kalman",fx(rm("k"),2)+"°",chip(rm("k")<=Math.min(rm("c"),rm("a")),rm("k")<=rm("a"),"best","good","worse than complementary")],
+      ["Kalman bias estimate",fx(x[1],2)+" °/s (true "+fx(v.bias,1)+")"],["Complementary bias offset ≈ bias·τ",fx(v.bias*v.tau,2)+"°"]]);
+  }
+  render(); return {render};
+});
+
+/* ================= 16 vibration ================= */
+function trapX(t,D,tm){ const ta=tm/3, vp=D/(tm-ta), a=vp/ta; if(t<=0) return [0,0]; if(t<ta) return [0.5*a*t*t,a*t]; if(t<tm-ta) return [0.5*a*ta*ta+vp*(t-ta),vp]; if(t<tm){ const r=tm-t; return [D-0.5*a*r*r,a*r]; } return [D,0]; }
+function shaperImp(kind,fn,z){ if(kind==="none") return [[0,1]]; const wd=TAU*fn*Math.sqrt(1-z*z), K=Math.exp(-z*Math.PI/Math.sqrt(1-z*z)), h=Math.PI/wd;
+  if(kind==="zv") return [[0,1/(1+K)],[h,K/(1+K)]]; const d=(1+K)**2; return [[0,1/d],[h,2*K/d],[2*h,K*K/d]]; }
+function simShaped(fnA,z,kind,ferr){
+  const D=0.1, tm=0.3, imp=shaperImp(kind,fnA/(1+ferr),z), tEnd=tm+imp[imp.length-1][0], wn=TAU*fnA, T=tEnd+1.2, dt=1e-4;
+  let x=0,v=0; const out={t:[],e:[]}; let res=0;
+  for(let i=0;i<=T/dt;i++){ const t=i*dt; let xb=0,vb=0; imp.forEach(([ti,ai])=>{ const [p,q]=trapX(t-ti,D,tm); xb+=ai*p; vb+=ai*q; });
+    const a=wn*wn*(xb-x)+2*z*wn*(vb-v); v+=a*dt; x+=v*dt;
+    if(t>=tEnd) res=Math.max(res,Math.abs(x-D)); if(i%20===0){ out.t.push(t); out.e.push((x-xb)*1000); } }
+  out.res=res*1000; out.tEnd=tEnd; out.delay=imp[imp.length-1][0]; out.imp=imp; return out;
+}
+defineSim("vibration",()=>{
+  const cv=$("cv-vibration");
+  const c=controls("c-vibration",[
+    {id:"fn",label:"Payload natural frequency",min:2,max:30,step:0.5,value:8,fmt:v=>fx(v,1)+" Hz"},
+    {id:"z",label:"Damping ratio ζ",min:0.005,max:0.2,step:0.005,value:0.02,fmt:v=>fx(v,3)},
+    {id:"kind",type:"seg",label:"Command",value:"zv",options:[{label:"Unshaped",value:"none"},{label:"ZV shaper",value:"zv"},{label:"ZVD shaper",value:"zvd"}]},
+    {id:"err",label:"Actual vs estimated frequency",min:-40,max:40,step:1,value:0,fmt:v=>(v>0?"+":"")+v.toFixed(0)+" %"}
+  ],render);
+  function render(){
+    const v=c.vals, o=simShaped(v.fn,v.z,v.kind,v.err/100), base=simShaped(v.fn,v.z,"none",0), yl=Math.max(2,...o.e.map(Math.abs))*1.1;
+    plot(cv,{x:[0,o.t[o.t.length-1]],y:[-yl,yl],xlabel:"Time (s)",ylabel:"Deflection (mm)",series:[{x:o.t,y:o.e,color:"--ch1"}],vlines:[{x:o.tEnd,color:"--ch5",label:"move complete"}]});
+    readouts("ro-vibration",[["Residual vibration after move",fx(o.res,3)+" mm"],["Unshaped residual",fx(base.res,3)+" mm"],
+      ["Reduction",v.kind==="none"?"—":(base.res/Math.max(o.res,1e-9)>1000?"> 1000 ×":fx(base.res/Math.max(o.res,1e-9),1)+" ×"),v.kind==="none"?null:chip(base.res/o.res>10,base.res/o.res>3,"strong","partial","weak")],
+      ["Delay added by shaper",eng(o.delay,"s")],["Impulses (time, amplitude)",o.imp.map(([t,a])=>`${fx(t*1000,0)} ms: ${fx(a,3)}`).join(" · "),null,true]]);
+  }
+  render();
+  const cn=$("cv-notch");
+  const n=controls("c-notch",[
+    {id:"f",label:"Notch frequency",min:10,max:500,value:100,log:true,fmt:v=>fx(v,0)+" Hz"},
+    {id:"zp",label:"Width ζ_p",min:0.05,max:1,step:0.01,value:0.3,fmt:v=>fx(v,2)},
+    {id:"d",label:"Depth at center",min:-40,max:-3,step:1,value:-20,fmt:v=>v.toFixed(0)+" dB"}
+  ],nrender);
+  function nrender(){
+    const v=n.vals, wn=TAU*v.f, zz=v.zp*Math.pow(10,v.d/20);
+    const H=f=>{ const w=TAU*f, nr=wn*wn-w*w, ni=2*zz*wn*w, dr=wn*wn-w*w, di=2*v.zp*wn*w, den=dr*dr+di*di; return [(nr*dr+ni*di)/den,(ni*dr-nr*di)/den]; };
+    const fs=logspace(v.f/20,v.f*20,400), mag=fs.map(f=>{ const h=H(f); return 20*Math.log10(Math.hypot(h[0],h[1])); }), ph=fs.map(f=>{ const h=H(f); return Math.atan2(h[1],h[0])*R2D; });
+    plot(cn,{x:[v.f/20,v.f*20],logx:true,y:[-45,5],y2:[-90,90],xlabel:"Frequency (Hz)",ylabel:"Gain (dB)",y2label:"Phase (°)",y2color:"--ch2",series:[{x:fs,y:mag,color:"--ch1"},{x:fs,y:ph,color:"--ch2",axis:2}],vlines:[{x:v.f,color:"--ch3"},{x:v.f/3,color:"--ch5",label:"f/3"}]});
+    const p3=H(v.f/3), p5=H(v.f/5);
+    readouts("ro-notch",[["Phase at f/3",fx(Math.atan2(p3[1],p3[0])*R2D,1)+"°"],["Phase at f/5",fx(Math.atan2(p5[1],p5[0])*R2D,1)+"°"],["Gain at f/3",fx(20*Math.log10(Math.hypot(p3[0],p3[1])),2)+" dB"],["Zero damping ζ_z",fx(zz,4)]]);
+  }
+  nrender();
+  return {render:()=>{ render(); nrender(); }};
+});
+
+/* ================= 17 friction ================= */
+function stickSlip(v){
+  const m=1, b=v.b, vs=0.001, k=v.k*1000, V=v.V/1000, Fs=v.Fs, Fc=Math.min(v.Fc,v.Fs), w=Math.sqrt(k/m);
+  const cyc=2*(Fs-Fc)/(k*V)+Math.PI/w, T=clamp(4*cyc,0.5,30), dt=Math.min(1e-4,0.02/w), N=Math.min(600000,Math.round(T/dt)), dtt=T/N;
+  let x=0, vel=0, stuck=true; const out={t:[],v:[],f:[]}; const rec=Math.max(1,Math.round(N/1500)); let stuckTime=0, events=[];
+  const fric=u=>(Fc+(Fs-Fc)*Math.exp(-((u/vs)**2)))*Math.sign(u)+b*u;
+  for(let i=0;i<=N;i++){ const t=i*dtt, Fsp=k*(V*t-x);
+    if(stuck){ if(Math.abs(Fsp)>Fs){ stuck=false; vel=Math.sign(Fsp)*1e-9; } else { vel=0; if(t>T/2) stuckTime+=dtt; } }
+    if(!stuck){ const s=vel===0?Math.sign(Fsp):Math.sign(vel); const ff=(Fc+(Fs-Fc)*Math.exp(-((vel/vs)**2)))*s+b*vel; const nv=vel+(Fsp-ff)/m*dtt;
+      if(Math.sign(nv)!==Math.sign(vel)&&Math.abs(Fsp)<=Fs){ vel=0; stuck=true; events.push(t); } else vel=nv; x+=vel*dtt; }
+    if(i%rec===0){ out.t.push(t); out.v.push(vel*1000); out.f.push(Fsp); } }
+  const late=events.filter(t=>t>T/3); out.period=late.length>2?(late[late.length-1]-late[0])/(late.length-1):null; out.stickFrac=stuckTime/(T/2); out.cyc=cyc; out.T=T; out.Fs=Fs; out.Fc=Fc; out.k=k; out.V=V; return out;
+}
+function hunting(v){
+  const m=1, b=20, Fs=12, Fc=8, vs=0.001, Kp=v.Kp*1000, Ki=v.Ki*1000, Kd=200, r=0.001, db=v.db*1e-6, T=4, dt=2e-5;
+  let x=0, vel=0, stuck=true, I=0; const out={t:[],x:[]}; let lastMove=0, moves=0;
+  for(let i=0;i<=T/dt;i++){ const t=i*dt, e=r-x; if(Math.abs(e)>db) I+=e*dt; const u=Kp*e+Ki*I-Kd*vel;
+    if(stuck){ if(Math.abs(u)>Fs){ stuck=false; vel=Math.sign(u)*1e-9; moves++; } else vel=0; }
+    if(!stuck){ const s=Math.sign(vel); const ff=(Fc+(Fs-Fc)*Math.exp(-((vel/vs)**2)))*s+b*vel; const nv=vel+(u-ff)/m*dt;
+      if(Math.sign(nv)!==Math.sign(vel)&&Math.abs(u)<=Fs){ vel=0; stuck=true; } else vel=nv; x+=vel*dt; lastMove=t; }
+    if(i%100===0){ out.t.push(t); out.x.push(x*1e6); } }
+  out.lastMove=lastMove; out.moves=moves; out.final=(x-r)*1e6; return out;
+}
+defineSim("friction",()=>{
+  const cv=$("cv-friction");
+  const c=controls("c-friction",[
+    {id:"V",label:"Drive speed",min:0.1,max:100,value:1,log:true,fmt:v=>fx(v,v<1?2:1)+" mm/s"},
+    {id:"k",label:"Drive stiffness",min:0.5,max:100,value:5,log:true,fmt:v=>fx(v,v<1?2:1)+" N/mm"},
+    {id:"Fs",label:"Static friction F_s",min:2,max:30,step:0.5,value:12,fmt:v=>fx(v,1)+" N"},
+    {id:"Fc",label:"Coulomb friction F_c",min:1,max:30,step:0.5,value:8,fmt:v=>fx(v,1)+" N"},
+    {id:"b",label:"Viscous / damping b",min:1,max:200,value:20,log:true,fmt:v=>fx(v,0)+" N·s/m"}
+  ],render);
+  function render(){
+    const o=stickSlip(c.vals), vmax=Math.max(c.vals.V*1.5,...o.v)*1.1, fmax=Math.max(...o.f)*1.15, fmin=Math.min(0,...o.f);
+    plot(cv,{x:[0,o.T],y:[Math.min(0,...o.v)*1.1,vmax],y2:[fmin,fmax],xlabel:"Time (s)",ylabel:"Velocity (mm/s)",y2label:"Spring force (N)",ycolor:"--ch1",y2color:"--ch2",
+      series:[{x:o.t,y:o.f,color:"--ch2",axis:2,width:1.4},{x:o.t,y:o.v,color:"--ch1",width:1.6}],hlines:[{y:c.vals.V,color:"--ch5",label:"drive speed",left:true}]});
+    const ss=o.stickFrac>0.02;
+    readouts("ro-friction",[["Motion",ss?"stick-slip":"smooth sliding",ss?["bad","stick-slip"]:["good","smooth"]],["Time stuck (second half)",fx(o.stickFrac*100,0)+" %"],
+      ["Predicted stick time 2(F_s−F_c)/(kV)",eng(2*(o.Fs-o.Fc)/(o.k*o.V),"s")],["Predicted slip distance 2(F_s−F_c)/k",eng(2*(o.Fs-o.Fc)/o.k,"m")],["Measured cycle period",o.period?eng(o.period,"s"):"—"]]);
+  }
+  render();
+  const ch=$("cv-hunt");
+  const h=controls("c-hunt",[
+    {id:"Kp",label:"K_p",min:2,max:100,value:50,log:true,fmt:v=>fx(v,0)+" N/mm"},
+    {id:"Ki",label:"K_i",min:0,max:2000,step:10,value:400,fmt:v=>fx(v,0)+" N/(mm·s)"},
+    {id:"db",label:"Integrator deadband",min:0,max:100,step:1,value:0,fmt:v=>"±"+v.toFixed(0)+" µm"}
+  ],hrender);
+  function hrender(){
+    const o=hunting(h.vals), lo=Math.min(...o.x), hi=Math.max(...o.x);
+    plot(ch,{x:[0,4],y:[Math.min(0,lo)-50,Math.max(1100,hi+50)],xlabel:"Time (s)",ylabel:"Position (µm)",series:[{x:o.t,y:o.x,color:"--ch1"}],hlines:[{y:1000,color:"--ch5",label:"target",left:true}]});
+    const hunt=o.lastMove>2;
+    readouts("ro-hunt",[["Behavior",hunt?"hunting: still breaking away late in the run":"settled",hunt?["bad","limit cycle"]:["good","stopped"]],["Breakaways",String(o.moves)],["Last motion at",fx(o.lastMove,2)+" s"],["Final error",fx(o.final,1)+" µm"],
+      ["P-only dead band F_c/K_p",fx(8/(h.vals.Kp*1000)*1e6,0)+" µm"]]);
+  }
+  hrender();
+  return {render:()=>{ render(); hrender(); }};
+});
+
+/* ================= 18 system identification ================= */
+function sym3eig(A){ let a=A.map(r=>r.slice()); for(let s=0;s<50;s++){ let p=0,q=1,mx=Math.abs(a[0][1]); [[0,2],[1,2]].forEach(([i,j])=>{ if(Math.abs(a[i][j])>mx){ mx=Math.abs(a[i][j]); p=i; q=j; } }); if(mx<1e-14) break;
+  const th=0.5*Math.atan2(2*a[p][q],a[q][q]-a[p][p]), c=Math.cos(th), sn=Math.sin(th);
+  for(let k=0;k<3;k++){ const akp=a[k][p], akq=a[k][q]; a[k][p]=c*akp-sn*akq; a[k][q]=sn*akp+c*akq; }
+  for(let k=0;k<3;k++){ const apk=a[p][k], aqk=a[q][k]; a[p][k]=c*apk-sn*aqk; a[q][k]=sn*apk+c*aqk; } }
+  return [a[0][0],a[1][1],a[2][2]]; }
+function solve3(M,y){ const A=M.map((r,i)=>r.concat([y[i]])); for(let i=0;i<3;i++){ let p=i; for(let k=i+1;k<3;k++) if(Math.abs(A[k][i])>Math.abs(A[p][i])) p=k; [A[i],A[p]]=[A[p],A[i]]; for(let k=i+1;k<3;k++){ const f=A[k][i]/A[i][i]; for(let j=i;j<4;j++) A[k][j]-=f*A[i][j]; } }
+  const x=[0,0,0]; for(let i=2;i>=0;i--){ let s=A[i][3]; for(let j=i+1;j<3;j++) s-=A[i][j]*x[j]; x[i]=s/A[i][i]; } return x; }
+defineSim("sysid",()=>{
+  const cv=$("cv-sysid");
+  const c=controls("c-sysid",[
+    {id:"fn",label:"Plant natural frequency",min:5,max:100,step:1,value:20,fmt:v=>fx(v,0)+" Hz"},
+    {id:"z",label:"Plant damping ζ",min:0.01,max:0.5,step:0.01,value:0.05,fmt:v=>fx(v,2)},
+    {id:"noise",label:"Output noise (relative to input amplitude)",min:0,max:0.5,step:0.01,value:0.05,fmt:v=>fx(v,2)},
+    {id:"cyc",type:"seg",label:"Cycles per frequency",value:10,options:[{label:"2",value:2},{label:"10",value:10},{label:"50",value:50}]}
+  ],render);
+  function render(){
+    const v=c.vals, wn=TAU*v.fn, r=rng(777), G=f=>{ const w=TAU*f, re=wn*wn-w*w, im=2*v.z*wn*w, d=re*re+im*im; return [wn*wn*re/d,-wn*wn*im/d]; };
+    const ft=logspace(v.fn/10,v.fn*10,300), fm=logspace(v.fn/10,v.fn*10,30), mag=f=>{ const g=G(f); return Math.hypot(g[0],g[1]); }, ph=f=>{ const g=G(f); return Math.atan2(g[1],g[0])*R2D; };
+    const mm=[], mp=[]; let errMax=0, ttot=0, perr=0;
+    fm.forEach(f=>{ const g=G(f), A=Math.hypot(g[0],g[1]), phi=Math.atan2(g[1],g[0]), n=40*v.cyc; let si=0,co=0;
+      for(let k=0;k<n;k++){ const th=TAU*k/40, y=A*Math.sin(th+phi)+v.noise*gauss(r); si+=y*Math.sin(th); co+=y*Math.cos(th); }
+      const a=2*si/n, b=2*co/n, Am=Math.hypot(a,b), pm=Math.atan2(b,a)*R2D; mm.push(20*Math.log10(Math.max(Am,1e-6))); mp.push(pm>30?pm-360:pm);
+      errMax=Math.max(errMax,Math.abs(20*Math.log10(Math.max(Am,1e-6)/A))); perr+=(wrapA((pm*D2R)-phi)*R2D)**2; ttot+=v.cyc/f+4/(v.z*wn); });
+    const tm=ft.map(f=>20*Math.log10(mag(f)));
+    plot(cv,{x:[v.fn/10,v.fn*10],logx:true,y:[Math.min(-45,...mm)-3,Math.max(...tm,...mm)+5],y2:[-200,20],xlabel:"Frequency (Hz)",ylabel:"Gain (dB)",y2label:"Phase (°)",y2color:"--ch2",
+      series:[{x:ft,y:tm,color:"--ch1",width:1.4},{x:ft,y:ft.map(ph),color:"--ch2",axis:2,width:1.4},{x:fm,y:mm,color:"--ch1",dots:true,dotsOnly:true,dotR:3.2},{x:fm,y:mp,color:"--ch2",axis:2,dots:true,dotsOnly:true,dotR:3.2}]});
+    readouts("ro-sysid",[["Worst gain error",fx(errMax,2)+" dB",chip(errMax<1,errMax<3,"good","fair","poor")],["RMS phase error",fx(Math.sqrt(perr/fm.length),1)+"°"],
+      ["Test time incl. settling (4/ζω_n per point)",eng(ttot,"s")],["Peak gain (true)",fx(20*Math.log10(1/(2*v.z*Math.sqrt(1-v.z*v.z))),1)+" dB"]]);
+  }
+  render();
+  const l=controls("c-lsq",[
+    {id:"mot",type:"seg",label:"Test motion",value:"rev",options:[{label:"Back-and-forth, varied speed",value:"rev"},{label:"One direction, near-constant speed",value:"one"}]},
+    {id:"sn",label:"Torque measurement noise",min:0,max:0.02,step:0.001,value:0.005,fmt:v=>fx(v*1000,0)+" mN·m"}
+  ],lro);
+  function lro(){
+    const v=l.vals, J=2e-4, b=1e-3, Fc=0.05, r=rng(4242), N=2000, dt=0.002, rows=[], y=[];
+    for(let k=0;k<N;k++){ const t=k*dt; let w,a;
+      if(v.mot==="rev"){ w=40*Math.sin(TAU*0.5*t)+15*Math.sin(TAU*2.3*t); a=40*TAU*0.5*Math.cos(TAU*0.5*t)+15*TAU*2.3*Math.cos(TAU*2.3*t); }
+      else { w=40+2*Math.sin(TAU*0.5*t); a=2*TAU*0.5*Math.cos(TAU*0.5*t); }
+      const s=Math.sign(w); rows.push([a,w,s]); y.push(J*a+b*w+Fc*s+v.sn*gauss(r)); }
+    const nrm=[0,1,2].map(j=>Math.sqrt(rows.reduce((s,rw)=>s+rw[j]*rw[j],0)));
+    const M=[0,1,2].map(i=>[0,1,2].map(j=>rows.reduce((s,rw)=>s+rw[i]*rw[j],0))), Y=[0,1,2].map(i=>rows.reduce((s,rw,k)=>s+rw[i]*y[k],0));
+    const th=solve3(M,Y), Mn=M.map((rw,i)=>rw.map((x,j)=>x/(nrm[i]*nrm[j]))), ev=sym3eig(Mn).map(Math.abs), cond=Math.max(...ev)/Math.max(Math.min(...ev),1e-300);
+    const res=Math.sqrt(rows.reduce((s,rw,k)=>s+(y[k]-rw[0]*th[0]-rw[1]*th[1]-rw[2]*th[2])**2,0)/N);
+    const pe=(e,t)=>fx(100*(e-t)/t,1)+"%";
+    readouts("ro-lsq",[["Inertia J",sci(th[0],3)+" kg·m² ("+pe(th[0],J)+")"],["Viscous b",sci(th[1],3)+" N·m·s/rad ("+pe(th[1],b)+")"],["Coulomb F_c",fx(th[2],4)+" N·m ("+pe(th[2],Fc)+")"],
+      ["Fit residual (RMS)",eng(res,"N·m")],["Condition number (normalized)",cond>1e6?sci(cond,2):fx(cond,1),chip(cond<100,cond<1e4,"well posed","weak","ill posed")]]);
+  }
+  lro();
+  return {render:()=>{ render(); lro(); }};
+});
+
+/* ================= 24 precision: error budget ================= */
+defineSim("precision",()=>{
+  const cv=$("cv-precision");
+  const c=controls("c-precision",[
+    {id:"cpr",type:"seg",label:"Encoder counts per rev (after decoding)",value:4000,options:[{label:"1 000",value:1000},{label:"4 000",value:4000},{label:"20 000",value:20000}]},
+    {id:"lead",label:"Screw lead",min:2,max:20,step:1,value:10,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"le",label:"Lead deviation over travel",min:2,max:50,step:1,value:12,fmt:v=>v.toFixed(0)+" µm"},
+    {id:"L",label:"Screw length in use",min:100,max:1000,step:10,value:300,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"dT",label:"Temperature change",min:0,max:5,step:0.1,value:1,fmt:v=>fx(v,1)+" °C"},
+    {id:"d",label:"Abbe offset",min:0,max:200,step:1,value:50,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"ang",label:"Carriage pitch/yaw error",min:2,max:100,step:1,value:20,fmt:v=>v.toFixed(0)+" µrad"},
+    {id:"F",label:"Process force",min:0,max:500,step:5,value:100,fmt:v=>v.toFixed(0)+" N"},
+    {id:"k",label:"Axial loop stiffness",min:20,max:1000,value:200,log:true,fmt:v=>fx(v,0)+" N/µm"},
+    {id:"bl",label:"Lost motion (bidirectional)",min:0,max:20,step:0.5,value:3,fmt:v=>fx(v,1)+" µm"},
+    {id:"rep",label:"Random repeatability σ",min:0,max:5,step:0.1,value:0.5,fmt:v=>fx(v,1)+" µm"},
+    {id:"cal",label:"Calibration removes",min:0,max:95,step:5,value:0,fmt:v=>v.toFixed(0)+" % of systematic"}
+  ],render);
+  function render(){
+    const v=c.vals, q=v.lead*1000/v.cpr, cal=1-v.cal/100;
+    const items=[["Encoder quantization",q/2,"r"],["Screw lead deviation",v.le,"s"],["Thermal growth αLΔT",11.5e-6*v.L*1000*v.dT,"s"],["Abbe error d·ε",v.d*v.ang*1e-3,"s"],
+      ["Deflection F/k",v.F/v.k,"s"],["Lost motion (±half)",v.bl/2,"s"],["Repeatability (±2σ)",2*v.rep,"r"]];
+    const p=prepCanvas(cv); if(!p) return; const {ctx,W,H}=p, narrow=W<520, labW=narrow?0:170, top=12, rowH=(H-40)/items.length, mx=Math.max(1,...items.map(i=>i[1]))*1.15;
+    const x0=12+labW, x1=W-60, X=v2=>x0+v2/mx*(x1-x0), txt=cssVar("--scope-text");
+    ctx.font='11px "IBM Plex Mono", monospace'; ctx.textBaseline="middle";
+    const t=linTicks(0,mx,5); ctx.strokeStyle=cssVar("--scope-grid"); t.ticks.forEach(tv=>{ const px=Math.round(X(tv))+.5; ctx.beginPath(); ctx.moveTo(px,top); ctx.lineTo(px,H-26); ctx.stroke(); ctx.fillStyle=txt; ctx.textAlign="center"; ctx.fillText(tickLabel(tv,t.step),px,H-14); });
+    ctx.textAlign="right"; ctx.fillText("µm",W-8,H-14);
+    items.forEach(([name,val,kind],i)=>{ const y=top+i*rowH, bh=Math.min(16,rowH*0.32);
+      ctx.fillStyle=txt; ctx.textAlign="left"; if(narrow){ ctx.fillText(name,x0,y+rowH*0.2); } else { ctx.fillText(name,12,y+rowH*0.5); }
+      const yb=narrow?y+rowH*0.38:y+rowH*0.5-bh-1;
+      ctx.fillStyle=cssVar(kind==="s"?"--ch1":"--ch2"); ctx.fillRect(x0,yb,X(val)-x0,bh);
+      if(kind==="s"){ ctx.fillStyle=cssVar("--ch5"); ctx.fillRect(x0,yb+bh+2,X(val*cal)-x0,bh*0.7); }
+      ctx.fillStyle=txt; ctx.textAlign="left"; ctx.fillText(fx(val,2),X(val)+5,yb+bh/2); });
+    const sys=items.filter(i=>i[2]==="s").map(i=>i[1]), ran=items.filter(i=>i[2]==="r").map(i=>i[1]), sum=a=>a.reduce((s,x)=>s+x,0), rss=a=>Math.sqrt(a.reduce((s,x)=>s+x*x,0));
+    const top3=items.slice().sort((a,b)=>b[1]-a[1]).slice(0,2).map(i=>i[0]).join(", ");
+    readouts("ro-precision",[["Worst case (all added)","±"+fx(sum(sys)+sum(ran),2)+" µm"],["RSS (all independent)","±"+fx(rss(sys.concat(ran)),2)+" µm"],
+      ["Systematic summed + random RSS","±"+fx(sum(sys)+rss(ran),2)+" µm"],["After calibration (same rule)","±"+fx(sum(sys)*cal+rss(ran),2)+" µm"],["Largest contributors",top3,null,true]]);
+  }
+  render(); return {render};
+});
+
+/* ================= 12 linkages ================= */
+function fourbar(a,b,c,d,t2,br){
+  const A=[a*Math.cos(t2),a*Math.sin(t2)], O4=[d,0], dx=O4[0]-A[0], dy=O4[1]-A[1], z=Math.hypot(dx,dy);
+  if(z>b+c||z<Math.abs(b-c)||z<1e-12) return null;
+  const e=(b*b-c*c+z*z)/(2*z), h=Math.sqrt(Math.max(0,b*b-e*e)), ux=dx/z, uy=dy/z, M=[A[0]+e*ux,A[1]+e*uy];
+  const B=[M[0]-br*h*uy, M[1]+br*h*ux];
+  const t4=Math.atan2(B[1],B[0]-d), t3=Math.atan2(B[1]-A[1],B[0]-A[0]), mu=Math.acos(clamp((b*b+c*c-z*z)/(2*b*c),-1,1));
+  return {A,B,O4,t3,t4,mu};
+}
+defineSim("linkages",()=>{
+  const cv=$("cv-linkages"); let playing=false, raf=0, last=0;
+  const c=controls("c-linkages",[
+    {id:"a",label:"Crank a (input)",min:10,max:200,step:1,value:40,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"b",label:"Coupler b",min:10,max:300,step:1,value:120,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"c",label:"Rocker c (output)",min:10,max:300,step:1,value:100,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"d",label:"Ground d",min:10,max:300,step:1,value:140,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"t2",label:"Crank angle θ₂",min:0,max:360,step:1,value:60,fmt:v=>v.toFixed(0)+"°"},
+    {id:"br",type:"seg",label:"Branch",value:1,options:[{label:"Open",value:1},{label:"Crossed",value:-1}]},
+    {id:"u",label:"Coupler point: along AB",min:-0.5,max:1.5,step:0.01,value:0.5,fmt:v=>fx(v,2)+" × b"},
+    {id:"v",label:"Coupler point: offset",min:-150,max:150,step:1,value:50,fmt:v=>v.toFixed(0)+" mm"}
+  ],render);
+  function cp(st,u,v){ const ex=(st.B[0]-st.A[0]), ey=(st.B[1]-st.A[1]), L=Math.hypot(ex,ey); return [st.A[0]+u*ex-v*ey/L, st.A[1]+u*ey+v*ex/L]; }
+  function render(){
+    const p=c.vals, a=p.a/1000, b=p.b/1000, cc=p.c/1000, d=p.d/1000, v=p.v/1000;
+    const pr=prepCanvas(cv); if(!pr) return; const {ctx,W,H}=pr, h1=Math.round(H*0.64);
+    const ext=Math.max(a+b+Math.abs(v),d+cc,b+cc,0.05)*0.62+0.01;
+    const V=worldView(ctx,{x:0,y:0,w:W,h:h1},ext,d/2,0.12*ext);
+    const ths=linspace(0,360,361), mus=[], curve=[]; let mn=999, mxu=-1;
+    ths.forEach(t=>{ const st=fourbar(a,b,cc,d,t*D2R,p.br); if(st){ const m=st.mu*R2D; mus.push(m); mn=Math.min(mn,m); mxu=Math.max(mxu,m); curve.push(cp(st,p.u,v)); } else { mus.push(NaN); curve.push(null); } });
+    ctx.save(); ctx.strokeStyle=cssVar("--ch3"); ctx.lineWidth=1.5; ctx.beginPath(); let pen=false; curve.forEach(q=>{ if(!q){ pen=false; return; } const [x,y]=V.P(q[0],q[1]); pen?ctx.lineTo(x,y):ctx.moveTo(x,y); pen=true; }); ctx.stroke(); ctx.restore();
+    const st=fourbar(a,b,cc,d,p.t2*D2R,p.br);
+    ctx.save(); ctx.strokeStyle=cssVar("--scope-text"); ctx.lineWidth=2; const [g0x,g0y]=V.P(0,0),[g1x]=V.P(d,0); ctx.setLineDash([6,4]); ctx.beginPath(); ctx.moveTo(g0x,g0y); ctx.lineTo(g1x,g0y); ctx.stroke(); ctx.restore();
+    [[0,0],[d,0]].forEach(q=>{ const [x,y]=V.P(q[0],q[1]); ctx.fillStyle=cssVar("--scope-text"); ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-8,y+12); ctx.lineTo(x+8,y+12); ctx.closePath(); ctx.fill(); });
+    let w4=NaN;
+    if(st){
+      const P=cp(st,p.u,v);
+      ctx.save(); ctx.fillStyle="rgba(244,208,63,.12)"; ctx.strokeStyle=cssVar("--ch1"); ctx.lineWidth=1.5; ctx.beginPath(); [st.A,st.B,P].forEach((q,i)=>{ const [x,y]=V.P(q[0],q[1]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.closePath(); ctx.fill(); ctx.restore();
+      drawChain(ctx,V.P,[[0,0],st.A,st.B,[d,0]],"--ch1",5); dotW(ctx,V.P,P[0],P[1],"--ch3",5);
+      const dt=1e-4, s1=fourbar(a,b,cc,d,p.t2*D2R+dt,p.br), s0=fourbar(a,b,cc,d,p.t2*D2R-dt,p.br); if(s1&&s0) w4=wrapA(s1.t4-s0.t4)/(2*dt);
+    } else { ctx.fillStyle=cssVar("--ch3"); ctx.font='12px "IBM Plex Mono", monospace'; ctx.textAlign="center"; ctx.fillText("cannot assemble at this crank angle",W/2,22); }
+    drawPlot(ctx,{x:0,y:h1,w:W,h:H-h1},{x:[0,360],y:[0,180],xlabel:"Crank angle θ₂ (°)",ylabel:"μ (°)",series:[{x:ths,y:mus,color:"--ch2"}],hlines:[{y:40,color:"--ch5"},{y:140,color:"--ch5"}],vlines:[{x:p.t2,color:"--ch1",dash:[3,3]}]});
+    const L=[p.a,p.b,p.c,p.d], s=Math.min(...L), l=Math.max(...L), sum=L.reduce((x,y)=>x+y,0), pq=sum-s-l, gr=s+l<pq-1e-9, eq=Math.abs(s+l-pq)<1e-9;
+    let type; if(eq) type="change point (s + l = p + q)"; else if(!gr) type="non-Grashof triple-rocker"; else { const i=L.indexOf(s); type=i===3?"double-crank (drag link)":i===1?"Grashof double-rocker":i===0?"crank-rocker (input turns fully)":"crank-rocker (output turns fully)"; }
+    readouts("ro-linkages",[["Grashof check s + l vs p + q",`${s+l} ${gr?"<":eq?"=":">"} ${pq} mm`,gr?["good","Grashof"]:eq?["warn","change point"]:["warn","non-Grashof"]],["Type",type,null,true],
+      ["Output angle θ₄",st?fx(st.t4*R2D,1)+"°":"—"],["Transmission angle μ",st?fx(st.mu*R2D,1)+"°":"—",st?chip(st.mu*R2D>=40&&st.mu*R2D<=140,st.mu*R2D>=25&&st.mu*R2D<=155,"good","poor","near dead point"):null],
+      ["μ range over the cycle",mxu>0?`${fx(mn,0)}° – ${fx(mxu,0)}°`:"—"],["ω₄/ω₂",isFinite(w4)?fx(w4,3):"—"],["Torque ratio T₄/T₂ (lossless)",isFinite(w4)&&Math.abs(w4)>1e-3?fx(1/Math.abs(w4),2):"≫ 1 (toggle)"]]);
+  }
+  function loop(ts){ if(!playing){ raf=0; return; } const dt=last?Math.min(0.05,(ts-last)/1000):0; last=ts; c.set("t2",(c.vals.t2+90*dt)%360); render(); raf=requestAnimationFrame(loop); }
+  function start(){ if(playing&&!raf){ last=0; raf=requestAnimationFrame(loop); } }
+  function stop(){ if(raf) cancelAnimationFrame(raf); raf=0; }
+  const pb=$("lk-play"); pb.addEventListener("click",()=>{ playing=!playing; pb.textContent=playing?"Pause":"Play"; if(playing) start(); else stop(); });
+  render(); return {render,start,stop};
+});
+
+/* ================= 13 cams ================= */
+const CAMLAW={
+  harm:x=>[0.5*(1-Math.cos(Math.PI*x)), Math.PI/2*Math.sin(Math.PI*x), Math.PI**2/2*Math.cos(Math.PI*x), -(Math.PI**3)/2*Math.sin(Math.PI*x)],
+  cyc:x=>[x-Math.sin(TAU*x)/TAU, 1-Math.cos(TAU*x), TAU*Math.sin(TAU*x), TAU*TAU*Math.cos(TAU*x)],
+  p345:x=>[10*x**3-15*x**4+6*x**5, 30*x*x-60*x**3+30*x**4, 60*x-180*x*x+120*x**3, 60-360*x+360*x*x],
+  p4567:x=>[35*x**4-84*x**5+70*x**6-20*x**7, 140*x**3-420*x**4+420*x**5-140*x**6, 420*x*x-1680*x**3+2100*x**4-840*x**5, 840*x-5040*x*x+8400*x**3-4200*x**4]
+};
+function camAt(law,h,beta,th){ // th, beta in rad; returns s (mm) and derivatives wrt theta (mm/rad^n); NaN-free
+  const f=CAMLAW[law]; let k=0,x=0,sgn=1,base=0;
+  if(th<beta){ x=th/beta; k=1; } else if(th<Math.PI){ return [h,0,0,0]; } else if(th<Math.PI+beta){ x=(th-Math.PI)/beta; k=1; sgn=-1; base=h; } else return [0,0,0,0];
+  const r=f(x); return [base+sgn*h*r[0], sgn*h*r[1]/beta, sgn*h*r[2]/beta**2, sgn*h*r[3]/beta**3];
+}
+defineSim("cams",()=>{
+  const cv=$("cv-cams"), cs=$("cv-camsize");
+  const c=controls("c-cams",[
+    {id:"law",type:"seg",label:"Motion law",value:"harm",options:[{label:"Harmonic",value:"harm"},{label:"Cycloidal",value:"cyc"},{label:"3-4-5",value:"p345"},{label:"4-5-6-7",value:"p4567"}]},
+    {id:"show",type:"seg",label:"Show",value:"a",options:[{label:"Displacement",value:"s"},{label:"Velocity",value:"v"},{label:"Acceleration",value:"a"},{label:"Jerk",value:"j"}]},
+    {id:"h",label:"Rise h",min:5,max:50,step:1,value:20,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"beta",label:"Rise angle β",min:30,max:150,step:5,value:90,fmt:v=>v.toFixed(0)+"°"},
+    {id:"rpm",label:"Cam speed",min:10,max:2000,value:300,log:true,fmt:v=>fx(v,0)+" rpm"}
+  ],()=>{ render(); srender(); });
+  const IDX={s:0,v:1,a:2,j:3}, UN={s:"Displacement (mm)",v:"Velocity (m/s)",a:"Acceleration (m/s²)",j:"Jerk (m/s³)"};
+  function series(law,v,k){ const w=v.rpm*TAU/60, be=v.beta*D2R, sc=[1,w/1000,w*w/1000,w**3/1000][k], xs=linspace(0,360,1441); return {xs, ys:xs.map(t=>camAt(law,v.h,be,t*D2R)[k]*sc)}; }
+  function render(){
+    const v=c.vals, k=IDX[v.show], A=series(v.law,v,k), R=series("cyc",v,k), all=A.ys.concat(R.ys), lo=Math.min(...all), hi=Math.max(...all), pad=(hi-lo)*0.1||1;
+    plot(cv,{x:[0,360],y:[lo-pad,hi+pad],xlabel:"Cam angle (°)",ylabel:UN[v.show],series:[{x:R.xs,y:R.ys,color:"--scope-text",dash:[4,4],width:1.2},{x:A.xs,y:A.ys,color:"--ch1"}],
+      vlines:[{x:v.beta,color:"--ch5",dash:[2,4]},{x:180,color:"--ch5",dash:[2,4]},{x:180+v.beta,color:"--ch5",dash:[2,4]}]});
+    const w=v.rpm*TAU/60, be=v.beta*D2R, pk=kk=>Math.max(...series(v.law,v,kk).ys.map(Math.abs));
+    const aj=v.law==="harm"?v.h*Math.PI**2/2/be**2*w*w/1000:0, jj={harm:Infinity,cyc:4*Math.PI**2,p345:60,p4567:0}[v.law];
+    readouts("ro-cams",[["Peak velocity",fx(pk(1),3)+" m/s"],["Peak acceleration",fx(pk(2),1)+" m/s²"],["Peak jerk (finite part)",eng(pk(3),"m/s³")],
+      ["Acceleration jump at dwell boundary",aj>0?fx(aj,1)+" m/s²":"none",aj>0?["bad","violates the fundamental law"]:["good","continuous"]],
+      ["Jerk jump at dwell boundary",jj===Infinity?"infinite (impulse)":jj===0?"none":fx(jj*v.h/be**3*w**3/1000,0)+" m/s³",jj===0?["good","smoothest"]:jj===Infinity?["bad","impulse"]:["warn","finite step"]]]);
+  }
+  const z=controls("c-camsize",[
+    {id:"Rb",label:"Base circle radius R_b",min:10,max:150,step:1,value:40,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"Rr",label:"Roller radius R_r",min:2,max:30,step:1,value:10,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"m",label:"Follower moving mass",min:0.05,max:5,value:0.5,log:true,fmt:v=>fx(v,2)+" kg"},
+    {id:"k",label:"Spring rate",min:0.1,max:20,value:2,log:true,fmt:v=>fx(v,v<1?2:1)+" N/mm"},
+    {id:"F0",label:"Spring preload",min:0,max:200,step:1,value:20,fmt:v=>v.toFixed(0)+" N"}
+  ],srender);
+  function srender(){
+    const v=c.vals, q=z.vals, w=v.rpm*TAU/60, be=v.beta*D2R, Rp=q.Rb+q.Rr, xs=linspace(0,360,1441);
+    const ph=[], N=[]; let rmin=Infinity;
+    xs.forEach(t=>{ const [s,s1,s2]=camAt(v.law,v.h,be,t*D2R), r=Rp+s; ph.push(Math.atan2(s1,r)*R2D);
+      const den=r*r+2*s1*s1-r*s2, rho=Math.pow(r*r+s1*s1,1.5)/den; if(den>0) rmin=Math.min(rmin,rho);
+      N.push(q.F0+q.k*s+q.m*s2*w*w/1000); });
+    const pmax=Math.max(...ph.map(Math.abs)), nmin=Math.min(...N), nmax=Math.max(...N);
+    plot(cs,{x:[0,360],y:[-50,50],y2:[Math.min(0,nmin)-0.1*nmax,nmax*1.15],xlabel:"Cam angle (°)",ylabel:"φ (°)",y2label:"N (N)",ycolor:"--ch1",y2color:"--ch2",
+      series:[{x:xs,y:ph,color:"--ch1"},{x:xs,y:N,color:"--ch2",axis:2}],hlines:[{y:30,color:"--ch5"},{y:-30,color:"--ch5"},{y:0,axis:2,color:"--ch3",dash:[2,3]}]});
+    const fnat=Math.sqrt(q.k*1000/q.m)/TAU, fcam=v.rpm/60;
+    readouts("ro-camsize",[["Prime circle R_p",fx(Rp,0)+" mm"],["Max pressure angle",fx(pmax,1)+"°",chip(pmax<=30,pmax<=35,"≤ 30°","marginal","too steep")],
+      ["Min convex pitch radius",isFinite(rmin)?fx(rmin,1)+" mm":"—",isFinite(rmin)?chip(rmin>=2.5*q.Rr,rmin>q.Rr,"≥ 2.5 R_r","close to R_r","undercut"):null],
+      ["Min contact force",fx(nmin,1)+" N",chip(nmin>0.1*nmax,nmin>0,"keeps contact","thin margin","jump")],["Follower natural frequency",eng(fnat,"Hz")+" ("+fx(fnat/fcam,0)+"× cam rate)"]]);
+  }
+  render(); srender();
+  return {render:()=>{ render(); srender(); }};
 });
 /* ================= init ================= */
 buildNav(); refreshProgress(); route();
