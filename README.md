@@ -1,6 +1,6 @@
 # Mechatronic Lessons
 
-An interactive refresher course on electromechanical systems, written for mechanical engineers who want to get back up to speed on the electrical, sensing and control side of mechatronics.
+An interactive course on electromechanical systems, covering mechanics, electronics, sensing, actuation, control and machine-element design.
 
 The whole course is a single static page (`docs/index.html`) with no build step and no dependencies beyond Google Fonts. It works on desktop and mobile.
 
@@ -12,7 +12,7 @@ The whole course is a single static page (`docs/index.html`) with no build step 
 
 | Part | Modules |
 | --- | --- |
-| I · Mechanics refresher | 01 Rotational dynamics & power |
+| I · Mechanics fundamentals | 01 Rotational dynamics & power |
 | II · Electronics | 02 Circuit fundamentals · 03 Capacitors, inductors & filters · 04 Diodes, transistors & H-bridges · 05 PWM & power electronics |
 | III · Embedded & signals | 06 Microcontrollers, ADCs & sampling |
 | IV · Sensors | 07 Encoders, strain bridges & more |

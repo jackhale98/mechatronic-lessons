@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive refresher on electromechanical systems: mechanics, electronics, sensors, motors, transmissions, control, sizing and machine elements.">
+<meta name="description" content="Interactive course on electromechanical systems: mechanics, electronics, sensors, motors, transmissions, control, sizing and machine elements.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Mechatronics Refresher</title>
+<title>Mechatronic Lessons</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
@@ -275,15 +275,15 @@ pre.code .c{color:#7f948f}
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
     Modules
   </button>
-  <div class="t"><b id="tbTitle">Mechatronics Refresher</b><span id="tbSub">0 of 18 complete</span></div>
+  <div class="t"><b id="tbTitle">Mechatronic Lessons</b><span id="tbSub">0 of 18 complete</span></div>
 </header>
 <div class="scrim" id="scrim"></div>
 
 <div class="app">
   <nav class="rail" id="rail" aria-label="Course modules">
     <div class="brand">
-      <a href="#start"><span class="name">Mechatronics Refresher</span></a>
-      <span class="sub">Electromechanical systems, rebuilt from the shaft outward</span>
+      <a href="#start"><span class="name">Mechatronic Lessons</span></a>
+      <span class="sub">Electromechanical systems, from the shaft outward</span>
       <div class="prog"><div class="bar"><i id="progBar"></i></div><span class="lbl" id="progLbl">0 / 18 modules complete</span></div>
     </div>
     <div id="navList"></div>
@@ -299,15 +299,15 @@ pre.code .c{color:#7f948f}
 <!-- ======================= HOME ======================= -->
 <section class="view" id="view-start" data-title="Course map">
   <div class="hero">
-    <span class="eyebrow">Refresher course · 18 modules · 9 parts</span>
-    <h1>Mechatronics Refresher</h1>
-    <p class="lead">You already think in forces, stiffness, inertia and tolerances. This course rebuilds the electrical, sensing and control half of mechatronics on top of that intuition, starting from the load and working back to the controller. Every module has a working lab you can drive with sliders, plus a short quiz.</p>
+    <span class="eyebrow">Interactive course · 18 modules · 9 parts</span>
+    <h1>Mechatronic Lessons</h1>
+    <p class="lead">An interactive course on electromechanical systems: mechanics, circuits and power electronics, embedded sensing, motors and transmissions, feedback control, motor sizing and machine-element design. Each module pairs the theory with a working lab you drive with sliders, followed by a short quiz.</p>
   </div>
 
   <h2>How to use it</h2>
   <div class="howto">
     <div><b>Go in order</b>Each module builds on the ones before it. The “Builds on” line at the top of each module tells you what to revisit if something feels shaky.</div>
-    <div><b>Play with every lab</b>The “Try this” prompts under each lab are the fastest way to rebuild intuition. Predict the result before you move the slider.</div>
+    <div><b>Play with every lab</b>The “Try this” prompts under each lab are the fastest way to build intuition. Predict the result before you move the slider.</div>
     <div><b>Take the quiz, then mark complete</b>Quizzes use realistic numbers. Your progress stays in this browser.</div>
     <div><b>Then build something</b>The bench projects turn each part into a hands-on exercise with a gearmotor, a driver and a dev board.</div>
   </div>
@@ -331,7 +331,7 @@ pre.code .c{color:#7f948f}
   <header class="mod-head">
     <div class="eyebrow">Hands-on</div>
     <h1>Bench projects</h1>
-    <p class="lead">Simulations rebuild intuition; hardware makes it stick. These seven projects use one small kit and follow the course order. Each takes an evening or two.</p>
+    <p class="lead">Simulations build intuition; hardware makes it stick. These seven projects use one small kit and follow the course order. Each takes an evening or two.</p>
   </header>
   <h2>The kit</h2>
   <ul>
@@ -356,7 +356,7 @@ pre.code .c{color:#7f948f}
 
 <!-- ======================= 01 ROTATION ======================= -->
 <section class="view module" id="view-rotation">
-  <p class="lead">Every electromechanical system ends at a load that has to be accelerated, held against forces and stopped. Motor and drive selection is mostly this module's arithmetic, carried through a transmission. You know the physics; the goal here is to get the rotary forms and units back to reflex speed.</p>
+  <p class="lead">Every electromechanical system ends at a load that has to be accelerated, held against forces and stopped. Motor and drive selection is mostly this module's arithmetic, carried through a transmission. This module collects the rotary forms, units and inertia calculations the rest of the course relies on.</p>
 
   <h2>Linear and rotary, side by side</h2>
   <div class="tbl"><table>
@@ -428,7 +428,7 @@ pre.code .c{color:#7f948f}
   <h2>Kirchhoff's laws</h2>
   <p><strong>KVL</strong>: the voltages around any closed loop sum to zero. <strong>KCL</strong>: the currents into any node sum to zero. Series resistances add. Parallel resistances combine as 1/R = Σ 1/R<sub>i</sub>, which for two is R<sub>1</sub>R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>), written R<sub>1</sub>‖R<sub>2</sub>.</p>
 
-  <h2>Your mechanical intuition, translated</h2>
+  <h2>The electrical–mechanical analogy</h2>
   <div class="tbl"><table>
     <tr><th>Mechanical</th><th>Electrical (force–voltage analogy)</th></tr>
     <tr><td>Force F or torque T</td><td>Voltage V</td></tr>
@@ -439,7 +439,7 @@ pre.code .c{color:#7f948f}
     <tr><td>Kinetic energy ½·m·v²</td><td>Magnetic energy ½·L·I²</td></tr>
     <tr><td>Spring energy ½·k·x²</td><td>Electric energy ½·C·V²</td></tr>
   </table></div>
-  <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>A series RLC circuit is a mass–spring–damper. Its natural frequency is ω<sub>n</sub> = 1/√(LC) and its damping ratio is ζ = (R/2)·√(C/L). Everything you know about vibration transfers directly, including resonance peaks and ringing.</p></div>
+  <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>A series RLC circuit is a mass–spring–damper. Its natural frequency is ω<sub>n</sub> = 1/√(LC) and its damping ratio is ζ = (R/2)·√(C/L). Vibration results transfer directly, including resonance peaks and ringing.</p></div>
 
   <h2>Dividers, Thévenin and loading</h2>
   <p>A voltage divider gives V<sub>out</sub> = V<sub>in</sub>·R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>), but only with nothing connected to its output. Any linear source, seen from its output terminals, behaves like an ideal voltage V<sub>th</sub> in series with a resistance R<sub>th</sub>. For the divider, R<sub>th</sub> = R<sub>1</sub>‖R<sub>2</sub>. Connect a load R<sub>L</sub> and it forms a second divider with R<sub>th</sub>, so the output drops by roughly R<sub>th</sub>/(R<sub>th</sub>+R<sub>L</sub>).</p>
@@ -886,7 +886,7 @@ pre.code .c{color:#7f948f}
 
 <!-- ======================= 10 TRANSMISSION ======================= -->
 <section class="view module" id="view-transmission">
-  <p class="lead">The transmission links what the motor can do to what the load needs. One number, the ratio, sets torque, speed, reflected inertia and resolution all at once. You know gear geometry; this module looks at the transmission as part of a dynamic system.</p>
+  <p class="lead">The transmission links what the motor can do to what the load needs. One number, the ratio, sets torque, speed, reflected inertia and resolution all at once. This module treats the transmission as part of a dynamic system rather than as gear geometry.</p>
 
   <h2>What a ratio does</h2>
   <p>With ratio N (motor turns per load turn) and efficiency η: load torque is N·η times motor torque, load speed is motor speed divided by N, and load inertia seen by the motor is divided by N². Encoder resolution at the load improves N times, and so does stiffness against disturbances felt at the motor.</p>
@@ -949,7 +949,7 @@ pre.code .c{color:#7f948f}
 
   <h2>First and second order</h2>
   <p>A first-order system τ·dy/dt + y = K·u has G(s) = K/(τs + 1). A DC motor's speed response to voltage looks like this when inductance is small: G(s) = (1/K<sub>e</sub>)/(τ<sub>m</sub>s + 1).</p>
-  <p>A second-order system has G(s) = ω<sub>n</sub>²/(s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²). You know it as m·ẍ + c·ẋ + k·x = F, with ω<sub>n</sub> = √(k/m) and ζ = c/(2√(km)). Its poles sit at −ζω<sub>n</sub> ± jω<sub>n</sub>√(1−ζ²). Many closed position loops behave this way.</p>
+  <p>A second-order system has G(s) = ω<sub>n</sub>²/(s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²). It is the familiar mass–spring–damper, m·ẍ + c·ẋ + k·x = F, with ω<sub>n</sub> = √(k/m) and ζ = c/(2√(km)). Its poles sit at −ζω<sub>n</sub> ± jω<sub>n</sub>√(1−ζ²). Many closed position loops behave this way.</p>
   <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>A proportional position loop is a virtual spring and the derivative term is a virtual damper. Tuning PD gains is choosing k and c for a mass–spring–damper you build in software (Module 12).</p></div>
 
   <h2>Step response specs</h2>
@@ -1277,7 +1277,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
 
 <!-- ======================= 16 SHAFTS ======================= -->
 <section class="view module" id="view-shafts">
-  <p class="lead">A shaft in a motion system carries rotating bending from belt and gear loads and torque that often reverses with every move, and it has to stay stiff enough not to limit the control loop. This module refreshes Shigley's fatigue-based shaft design, then covers the stiffness, critical speed and shaft–hub practice that matter for servo axes.</p>
+  <p class="lead">A shaft in a motion system carries rotating bending from belt and gear loads and torque that often reverses with every move, and it has to stay stiff enough not to limit the control loop. This module covers Shigley's fatigue-based shaft design, then covers the stiffness, critical speed and shaft–hub practice that matter for servo axes.</p>
 
   <h2>What the shaft actually sees</h2>
   <ul>
@@ -1593,7 +1593,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
 "use strict";
 /* ================= course data ================= */
 const PARTS = {
-  I:["Part I","Mechanics refresher"], II:["Part II","Electronics"], III:["Part III","Embedded & signals"], IV:["Part IV","Sensors"],
+  I:["Part I","Mechanics fundamentals"], II:["Part II","Electronics"], III:["Part III","Embedded & signals"], IV:["Part IV","Sensors"],
   V:["Part V","Actuators"], VI:["Part VI","Power transmission"], VII:["Part VII","Modeling & control"], VIII:["Part VIII","Integration"], IX:["Part IX","Machine elements"]
 };
 const MODULES = [
@@ -2028,7 +2028,7 @@ function route(){
   document.querySelectorAll(".view").forEach(v=>{ v.hidden = v.id!=="view-"+id; });
   document.querySelectorAll("[data-nav]").forEach(a=>{ const on=a.dataset.nav===id; a.classList.toggle("active",on); if(on) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   const m=MODULES.find(x=>x.id===id);
-  $("tbTitle").textContent = m ? `${pad(m.n)} · ${m.title}` : ($("view-"+id).dataset.title || "Mechatronics Refresher");
+  $("tbTitle").textContent = m ? `${pad(m.n)} · ${m.title}` : ($("view-"+id).dataset.title || "Mechatronic Lessons");
   const changed = currentView!==id; currentView=id;
   if(changed) window.scrollTo(0,0);
   enterModule(id);
