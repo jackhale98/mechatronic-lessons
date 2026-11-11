@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive course on electromechanical systems: mechanics, electronics, sensors, motors, transmissions, control, sizing and machine elements.">
+<meta name="description" content="Interactive course on electromechanical systems and robotics: mechanics, electronics, sensors, motors, transmissions, control, machine elements, manipulators and robot mechanisms.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Mechatronic Lessons</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -270,6 +270,22 @@ pre.code .c{color:#7f948f}
 .ref-mod h3 a:hover{color:var(--accent)}
 .proj{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 .proj .uses{font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+
+/* derivations & math */
+details.deriv{border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+details.deriv>summary{cursor:pointer;padding:9px 14px;font-family:var(--font-mono);font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);list-style:none;display:flex;gap:8px;align-items:baseline}
+details.deriv>summary::-webkit-details-marker{display:none}
+details.deriv>summary::before{content:"+";font-weight:600;width:12px;flex:none}
+details.deriv[open]>summary::before{content:"−"}
+details.deriv>.d{padding:10px 16px 14px;display:flex;flex-direction:column;gap:10px;border-top:1px dashed var(--line);font-size:.95rem}
+.math{font-family:var(--font-mono);font-size:.88rem;line-height:1.75;overflow-x:auto;padding:4px 0 4px 12px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.math>div{white-space:nowrap}
+.mat{display:inline-grid;grid-template-columns:repeat(var(--c,3),auto);gap:1px 12px;padding:2px 8px;border-left:1.5px solid currentColor;border-right:1.5px solid currentColor;border-radius:4px;vertical-align:middle;text-align:right;font-family:var(--font-mono);font-size:.84rem;line-height:1.5;font-variant-numeric:tabular-nums}
+.ro .mat{font-size:.74rem;gap:0 8px;padding:1px 6px}
+.ro.wide{grid-column:1/-1}
+.ro.wide .v{overflow-x:auto;overflow-wrap:normal}
+.mat>span{white-space:nowrap}
+.screen.drag canvas{touch-action:none;cursor:crosshair}
 </style>
 
 </head>
@@ -280,7 +296,7 @@ pre.code .c{color:#7f948f}
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
     Modules
   </button>
-  <div class="t"><b id="tbTitle">Mechatronic Lessons</b><span id="tbSub">0 of 18 complete</span></div>
+  <div class="t"><b id="tbTitle">Mechatronic Lessons</b><span id="tbSub">0 of 28 complete</span></div>
 </header>
 <div class="scrim" id="scrim"></div>
 
@@ -290,7 +306,7 @@ pre.code .c{color:#7f948f}
     <div class="brand">
       <a href="#start"><span class="name">Mechatronic Lessons</span></a>
       <span class="sub">Electromechanical systems, from the shaft outward</span>
-      <div class="prog"><div class="bar"><i id="progBar"></i></div><span class="lbl" id="progLbl">0 / 18 modules complete</span></div>
+      <div class="prog"><div class="bar"><i id="progBar"></i></div><span class="lbl" id="progLbl">0 / 28 modules complete</span></div>
     </div>
     <div id="navList"></div>
     <div class="nav-extra">
@@ -305,9 +321,9 @@ pre.code .c{color:#7f948f}
 <!-- ======================= HOME ======================= -->
 <section class="view" id="view-start" data-title="Course map">
   <div class="hero">
-    <span class="eyebrow">Interactive course · 18 modules · 9 parts</span>
+    <span class="eyebrow">Interactive course · 28 modules · 11 parts</span>
     <h1>Mechatronic Lessons</h1>
-    <p class="lead">An interactive course on electromechanical systems: mechanics, circuits and power electronics, embedded sensing, motors and transmissions, feedback control, motor sizing and machine-element design. Each module pairs the theory with a working lab you drive with sliders, followed by a short quiz.</p>
+    <p class="lead">An interactive course on electromechanical systems: mechanics, circuits and power electronics, embedded sensing, motors and transmissions, feedback control, motor sizing, machine-element design and robotics. Each module pairs the theory with a working lab you drive with sliders, followed by a short quiz.</p>
   </div>
 
   <h2>How to use it</h2>
@@ -1592,6 +1608,724 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
     </ul></div>
   </section>
 </section>
+
+<!-- ======================= 19 RIGID-BODY MOTION ======================= -->
+<section class="view module" id="view-rigid">
+  <p class="lead">Every robot calculation starts by describing where a body is and which way it points. This module builds the tools: rotation matrices, the orientation parameterizations engineers actually use, and homogeneous transforms that combine rotation and translation in one object.</p>
+
+  <h2>Rotation matrices</h2>
+  <p>Attach a frame B to a body. The rotation matrix R<sub>AB</sub> has as its columns the unit vectors x̂<sub>B</sub>, ŷ<sub>B</sub>, ẑ<sub>B</sub> written in frame A's coordinates. Because those columns are orthonormal, R<sup>T</sup>R = I and det R = +1. Matrices with these properties form the special orthogonal group SO(3). The inverse is simply the transpose.</p>
+  <p>One matrix does three jobs: it describes the orientation of B relative to A, it converts coordinates (p<sub>A</sub> = R<sub>AB</sub>·p<sub>B</sub>), and it rotates vectors within a single frame.</p>
+  <p>The elementary rotation about z by angle θ is</p>
+  <div class="math"><div>R<sub>z</sub>(θ) = <span class="mat" style="--c:3"><span>cos θ</span><span>−sin θ</span><span>0</span><span>sin θ</span><span>cos θ</span><span>0</span><span>0</span><span>0</span><span>1</span></span></div></div>
+  <p>with R<sub>x</sub> and R<sub>y</sub> built the same way. Rotations compose by multiplication, R<sub>AC</sub> = R<sub>AB</sub>·R<sub>BC</sub>, and order matters. A rotation about an axis of the <em>current</em> (moving) frame multiplies on the right; a rotation about an axis of the <em>fixed</em> frame multiplies on the left.</p>
+  <details class="deriv"><summary>Show derivation: elementary rotation and orthogonality</summary><div class="d">
+    <p>Rotate frame B about the shared z-axis by θ. Its x-axis, seen from A, is (cos θ, sin θ, 0); its y-axis is (−sin θ, cos θ, 0); its z-axis is unchanged. Stacking these as columns gives R<sub>z</sub>(θ). For R<sub>x</sub>(θ), the y- and z-axes rotate in the y–z plane: columns (1,0,0), (0, cos θ, sin θ), (0, −sin θ, cos θ). For R<sub>y</sub>(θ): columns (cos θ, 0, −sin θ), (0,1,0), (sin θ, 0, cos θ). The sign pattern on R<sub>y</sub> differs because z × x = y.</p>
+    <p>Entry (i, j) of R<sup>T</sup>R is the dot product of columns i and j. Unit length gives 1 on the diagonal, and orthogonality gives 0 elsewhere, so R<sup>T</sup>R = I. A right-handed frame satisfies x̂ × ŷ = ẑ, which makes the scalar triple product det R = +1 rather than −1 (a reflection).</p>
+  </div></details>
+
+  <h2>Euler and roll–pitch–yaw angles</h2>
+  <p>Three angles are enough to describe an orientation, but there are twelve possible axis sequences. A common one in robotics and vehicles is Z–Y–X, applied about the moving axes: yaw ψ about z, then pitch θ about the new y, then roll φ about the newest x. That gives R = R<sub>z</sub>(ψ)·R<sub>y</sub>(θ)·R<sub>x</sub>(φ).</p>
+  <p>Recovering the angles from a matrix: θ = −asin(r<sub>31</sub>), ψ = atan2(r<sub>21</sub>, r<sub>11</sub>), φ = atan2(r<sub>32</sub>, r<sub>33</sub>). At θ = ±90° the first and last rotations act about the same axis, only their sum or difference is defined, and the extraction fails. This is <strong>gimbal lock</strong>. It is a property of the parameterization, not of the physical rotation.</p>
+  <details class="deriv"><summary>Show derivation: Z–Y–X matrix and angle extraction</summary><div class="d">
+    <p>Multiplying R<sub>z</sub>(ψ)R<sub>y</sub>(θ)R<sub>x</sub>(φ), with c and s for cosine and sine:</p>
+    <div class="math">
+      <div>first column = (cψ·cθ, sψ·cθ, −sθ)</div>
+      <div>third row = (−sθ, cθ·sφ, cθ·cφ)</div>
+      <div>r<sub>12</sub> = cψ·sθ·sφ − sψ·cφ, &nbsp; r<sub>13</sub> = cψ·sθ·cφ + sψ·sφ</div>
+      <div>r<sub>22</sub> = sψ·sθ·sφ + cψ·cφ, &nbsp; r<sub>23</sub> = sψ·sθ·cφ − cψ·sφ</div>
+    </div>
+    <p>So r<sub>31</sub> = −sin θ gives θ. When cos θ ≠ 0, r<sub>21</sub>/r<sub>11</sub> = tan ψ and r<sub>32</sub>/r<sub>33</sub> = tan φ, and atan2 resolves the quadrant. When cos θ = 0 those four entries are all zero, so ψ and φ can't be separated.</p>
+  </div></details>
+
+  <h2>Axis–angle and Rodrigues' formula</h2>
+  <p>Euler's rotation theorem says any rotation is a single rotation by angle θ about some unit axis ω̂. Rodrigues' formula builds the matrix directly:</p>
+  <div class="math"><div>R = I + sin θ·[ω̂] + (1 − cos θ)·[ω̂]²</div></div>
+  <p>Here [ω̂] is the skew-symmetric matrix with [ω̂]v = ω̂ × v. Going back: θ = acos((tr R − 1)/2), and the axis is (r<sub>32</sub> − r<sub>23</sub>, r<sub>13</sub> − r<sub>31</sub>, r<sub>21</sub> − r<sub>12</sub>)/(2 sin θ). This representation is the basis of the exponential coordinates used in Module 20 and in many controllers.</p>
+  <details class="deriv"><summary>Show derivation: Rodrigues' formula</summary><div class="d">
+    <p>Split a vector v into a part along the axis and a part perpendicular to it:</p>
+    <div class="math"><div>v<sub>∥</sub> = ω̂(ω̂·v), &nbsp; v<sub>⊥</sub> = v − v<sub>∥</sub></div></div>
+    <p>Rotation leaves v<sub>∥</sub> alone and turns v<sub>⊥</sub> by θ within the plane spanned by v<sub>⊥</sub> and ω̂ × v:</p>
+    <div class="math"><div>v′ = v<sub>∥</sub> + cos θ·v<sub>⊥</sub> + sin θ·(ω̂ × v)</div></div>
+    <p>The triple-product identity ω̂ × (ω̂ × v) = ω̂(ω̂·v) − v, which is [ω̂]²v, gives v<sub>⊥</sub> = −[ω̂]²v and v<sub>∥</sub> = v + [ω̂]²v. Substituting:</p>
+    <div class="math"><div>v′ = v + [ω̂]²v − cos θ·[ω̂]²v + sin θ·[ω̂]v = (I + sin θ[ω̂] + (1 − cos θ)[ω̂]²)·v</div></div>
+    <p>Taking the trace, tr[ω̂] = 0 and tr[ω̂]² = −2, so tr R = 3 − 2(1 − cos θ) = 1 + 2 cos θ, which inverts to the angle formula. The antisymmetric part R − R<sup>T</sup> = 2 sin θ[ω̂] gives the axis.</p>
+  </div></details>
+
+  <h2>Quaternions</h2>
+  <p>A unit quaternion q = (w, x, y, z) = (cos(θ/2), ω̂·sin(θ/2)) encodes the same axis–angle information in four numbers with one constraint, ‖q‖ = 1. Quaternions have no singularities, compose with 16 multiplications, renormalize cheaply, and interpolate smoothly (slerp), which is why controllers, IMUs and animation use them. Note that q and −q describe the same rotation.</p>
+  <details class="deriv"><summary>Show derivation: quaternion to rotation matrix</summary><div class="d">
+    <p>Rotating a vector with a unit quaternion is v′ = q·v·q*, treating v as a pure quaternion (0, v). Expanding the product and collecting terms gives</p>
+    <div class="math">
+      <div>R = <span class="mat" style="--c:3"><span>1−2(y²+z²)</span><span>2(xy−wz)</span><span>2(xz+wy)</span><span>2(xy+wz)</span><span>1−2(x²+z²)</span><span>2(yz−wx)</span><span>2(xz−wy)</span><span>2(yz+wx)</span><span>1−2(x²+y²)</span></span></div>
+    </div>
+    <p>Substituting w = cos(θ/2) and (x, y, z) = ω̂ sin(θ/2), with the half-angle identities 1 − cos θ = 2 sin²(θ/2) and sin θ = 2 sin(θ/2)cos(θ/2), reproduces Rodrigues' formula term by term. The half angle is also why q and −q (θ and θ + 2π) give the same R.</p>
+  </div></details>
+  <div class="tbl"><table>
+    <tr><th>Representation</th><th>Numbers</th><th>Singular?</th><th>Best for</th></tr>
+    <tr><td>Rotation matrix</td><td>9 (6 constraints)</td><td>No</td><td>Composing, transforming points</td></tr>
+    <tr><td>Euler / RPY angles</td><td>3</td><td>Yes (gimbal lock)</td><td>Human-readable input and display</td></tr>
+    <tr><td>Axis–angle</td><td>3 or 4</td><td>At θ = 0 the axis is undefined</td><td>Errors, small rotations, exponential coordinates</td></tr>
+    <tr><td>Unit quaternion</td><td>4 (1 constraint)</td><td>No</td><td>Storage, interpolation, estimation</td></tr>
+  </table></div>
+
+  <h2>Homogeneous transforms</h2>
+  <p>A pose combines orientation R and position p. Packing them in a 4×4 matrix makes transforms compose by multiplication:</p>
+  <div class="math"><div>T<sub>AB</sub> = <span class="mat" style="--c:2"><span>R<sub>AB</sub></span><span>p<sub>AB</sub></span><span>0 0 0</span><span>1</span></span>, &nbsp; p<sub>A</sub> = T<sub>AB</sub>·p<sub>B</sub> (with p written as (x, y, z, 1)), &nbsp; T<sub>AC</sub> = T<sub>AB</sub>·T<sub>BC</sub></div></div>
+  <details class="deriv"><summary>Show derivation: inverse of a transform</summary><div class="d">
+    <p>A point maps as p<sub>A</sub> = R·p<sub>B</sub> + p. Solving for p<sub>B</sub>, and using R<sup>−1</sup> = R<sup>T</sup>:</p>
+    <div class="math"><div>p<sub>B</sub> = R<sup>T</sup>p<sub>A</sub> − R<sup>T</sup>p &nbsp;⇒&nbsp; T<sup>−1</sup> = <span class="mat" style="--c:2"><span>R<sup>T</sup></span><span>−R<sup>T</sup>p</span><span>0 0 0</span><span>1</span></span></div></div>
+    <p>This is cheaper and more accurate than a general 4×4 inverse.</p>
+  </div></details>
+  <div class="callout bridge"><span class="tag">Mechanical bridge</span><p>CAD assembly mates do exactly this. Each mate fixes a transform between part frames, and a part's pose in the assembly is the product of transforms along the chain of mates.</p></div>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>R<sup>T</sup>R = I, det R = +1, R<sup>−1</sup> = R<sup>T</sup></code><span>Rotation matrix properties</span></div>
+    <div class="eq"><code>R = R<sub>z</sub>(ψ)R<sub>y</sub>(θ)R<sub>x</sub>(φ)</code><span>Z–Y–X (yaw, pitch, roll) Euler angles</span></div>
+    <div class="eq"><code>R = I + sin θ[ω̂] + (1 − cos θ)[ω̂]²</code><span>Rodrigues' formula</span></div>
+    <div class="eq"><code>θ = acos((tr R − 1)/2)</code><span>Rotation angle from a matrix</span></div>
+    <div class="eq"><code>q = (cos(θ/2), ω̂ sin(θ/2))</code><span>Unit quaternion</span></div>
+    <div class="eq"><code>T<sup>−1</sup> = [R<sup>T</sup>, −R<sup>T</sup>p; 0, 1]</code><span>Inverse homogeneous transform</span></div>
+  </div>
+
+  <section class="lab" data-lab="rigid">
+    <div class="lab-head"><span class="lab-tag">Lab 19</span><h3>Orientation explorer</h3></div>
+    <p class="lab-note">Set three angles and choose the multiplication order. The faint axes are the fixed frame; the bright axes and plate are the rotated body. Drag on the view to orbit the camera. Readouts show the same orientation as a matrix, an axis–angle pair and a quaternion.</p>
+    <div class="controls" id="c-rigid"></div>
+    <div class="screen tall drag"><canvas id="cv-rigid"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch3)"></i>Body x</span><span class="lg"><i style="--c:var(--ch5)"></i>Body y</span><span class="lg"><i style="--c:var(--ch4)"></i>Body z</span><span class="lg"><i style="--c:var(--ch1)"></i>Rotation axis ω̂</span></div>
+    <div class="readouts" id="ro-rigid"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Set yaw 90° and roll 90°, then switch the order. Same angles, different orientation: rotations don't commute.</li>
+      <li>Set pitch to 90°. Yaw and roll now spin the plate about the same axis: gimbal lock.</li>
+      <li>Watch the yellow axis: every orientation is one rotation about one axis, whatever angles produced it.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 20 FORWARD KINEMATICS ======================= -->
+<section class="view module" id="view-fk">
+  <p class="lead">Forward kinematics maps joint positions to the pose of the tool. It is a product of transforms, one per link. The real work is choosing the frames systematically so the product is easy to write and hard to get wrong.</p>
+
+  <h2>Links, joints and the kinematic chain</h2>
+  <p>A serial manipulator is a chain of rigid links connected by revolute (rotary) or prismatic (sliding) joints, each with one variable q<sub>i</sub>. Attach a frame to each link. The transform from link i−1 to link i depends only on q<sub>i</sub>, so the tool pose is</p>
+  <div class="math"><div>T<sub>0n</sub>(q) = A<sub>1</sub>(q<sub>1</sub>)·A<sub>2</sub>(q<sub>2</sub>)···A<sub>n</sub>(q<sub>n</sub>)</div></div>
+  <p>Six joints are needed to reach an arbitrary position and orientation in space. Fewer joints restrict the reachable poses; more give redundancy (Module 22).</p>
+
+  <h2>Denavit–Hartenberg parameters</h2>
+  <p>The DH convention reduces each A<sub>i</sub> to four parameters by placing frames under two rules: z<sub>i−1</sub> lies along the axis of joint i, and x<sub>i</sub> lies along the common normal between z<sub>i−1</sub> and z<sub>i</sub>. The four parameters are:</p>
+  <div class="tbl narrow"><table>
+    <tr><th>Parameter</th><th>Measured</th><th>Meaning</th></tr>
+    <tr><td>θ<sub>i</sub></td><td>about z<sub>i−1</sub></td><td>Joint angle (the variable for a revolute joint)</td></tr>
+    <tr><td>d<sub>i</sub></td><td>along z<sub>i−1</sub></td><td>Offset (the variable for a prismatic joint)</td></tr>
+    <tr><td>a<sub>i</sub></td><td>along x<sub>i</sub></td><td>Link length: distance between the joint axes</td></tr>
+    <tr><td>α<sub>i</sub></td><td>about x<sub>i</sub></td><td>Link twist: angle between the joint axes</td></tr>
+  </table></div>
+  <div class="math"><div>A<sub>i</sub> = Rot<sub>z</sub>(θ<sub>i</sub>)·Trans<sub>z</sub>(d<sub>i</sub>)·Trans<sub>x</sub>(a<sub>i</sub>)·Rot<sub>x</sub>(α<sub>i</sub>) = <span class="mat" style="--c:4"><span>cθ</span><span>−sθ·cα</span><span>sθ·sα</span><span>a·cθ</span><span>sθ</span><span>cθ·cα</span><span>−cθ·sα</span><span>a·sθ</span><span>0</span><span>sα</span><span>cα</span><span>d</span><span>0</span><span>0</span><span>0</span><span>1</span></span></div></div>
+  <p>The <strong>modified DH</strong> convention (Craig) uses the same four quantities but places frame i at joint i and orders the operations Rot<sub>x</sub>(α<sub>i−1</sub>)·Trans<sub>x</sub>(a<sub>i−1</sub>)·Rot<sub>z</sub>(θ<sub>i</sub>)·Trans<sub>z</sub>(d<sub>i</sub>). Both are valid. Mixing a parameter table from one convention with the matrix of the other is one of the most common kinematics bugs, so always state which you use.</p>
+  <details class="deriv"><summary>Show derivation: the DH link transform</summary><div class="d">
+    <p>Multiply the four elementary transforms in order. The first two act along and about z:</p>
+    <div class="math"><div>Rot<sub>z</sub>(θ)·Trans<sub>z</sub>(d) = <span class="mat" style="--c:4"><span>cθ</span><span>−sθ</span><span>0</span><span>0</span><span>sθ</span><span>cθ</span><span>0</span><span>0</span><span>0</span><span>0</span><span>1</span><span>d</span><span>0</span><span>0</span><span>0</span><span>1</span></span></div></div>
+    <p>Trans<sub>x</sub>(a) adds a along the new x-axis, which in the base frame is (a·cθ, a·sθ, 0), so it fills in the translation column. Rot<sub>x</sub>(α) then mixes columns 2 and 3: new column 2 = cα·(old col 2) + sα·(old col 3), and new column 3 = −sα·(old col 2) + cα·(old col 3). With old columns (−sθ, cθ, 0) and (0, 0, 1), that gives (−sθcα, cθcα, sα) and (sθsα, −cθsα, cα), matching the matrix above.</p>
+  </div></details>
+
+  <h2>Worked examples</h2>
+  <p><strong>Planar 3R arm.</strong> All three joint axes are parallel, so every α<sub>i</sub> = 0 and d<sub>i</sub> = 0, with a<sub>i</sub> = L<sub>i</sub>. The tool position and orientation are</p>
+  <div class="math">
+    <div>x = L<sub>1</sub>c<sub>1</sub> + L<sub>2</sub>c<sub>12</sub> + L<sub>3</sub>c<sub>123</sub></div>
+    <div>y = L<sub>1</sub>s<sub>1</sub> + L<sub>2</sub>s<sub>12</sub> + L<sub>3</sub>s<sub>123</sub></div>
+    <div>φ = θ<sub>1</sub> + θ<sub>2</sub> + θ<sub>3</sub></div>
+  </div>
+  <p>using the shorthand c<sub>12</sub> = cos(θ<sub>1</sub> + θ<sub>2</sub>).</p>
+  <details class="deriv"><summary>Show derivation: planar 3R product</summary><div class="d">
+    <p>With α = d = 0, each A<sub>i</sub> is a planar rotation by θ<sub>i</sub> followed by a translation L<sub>i</sub> along the rotated x-axis. Planar rotations add, so A<sub>1</sub>A<sub>2</sub> has rotation θ<sub>1</sub> + θ<sub>2</sub> and translation (L<sub>1</sub>c<sub>1</sub> + L<sub>2</sub>c<sub>12</sub>, L<sub>1</sub>s<sub>1</sub> + L<sub>2</sub>s<sub>12</sub>): link 2's vector rotated by the accumulated angle and added. Multiplying by A<sub>3</sub> adds one more term the same way.</p>
+  </div></details>
+  <p><strong>SCARA (RRPR).</strong> Two parallel revolute joints for horizontal positioning, a vertical prismatic joint, and a wrist roll.</p>
+  <div class="tbl narrow"><table>
+    <tr><th>Link</th><th>a</th><th>α</th><th>d</th><th>θ</th></tr>
+    <tr><td>1</td><td>a<sub>1</sub></td><td>0</td><td>d<sub>1</sub></td><td>θ<sub>1</sub>*</td></tr>
+    <tr><td>2</td><td>a<sub>2</sub></td><td>180°</td><td>0</td><td>θ<sub>2</sub>*</td></tr>
+    <tr><td>3</td><td>0</td><td>0</td><td>d<sub>3</sub>*</td><td>0</td></tr>
+    <tr><td>4</td><td>0</td><td>0</td><td>d<sub>4</sub></td><td>θ<sub>4</sub>*</td></tr>
+  </table></div>
+  <p>Asterisks mark the joint variables. The 180° twist on link 2 flips z downward so the prismatic joint extends toward the work surface.</p>
+
+  <h2>Product of exponentials</h2>
+  <p>The product-of-exponentials (PoE) formulation skips the frame-placement rules. Choose a base frame and a tool frame, record the tool pose M with all joints at zero, and describe each joint by its screw axis S<sub>i</sub> = (ω<sub>i</sub>, v<sub>i</sub>) in the base frame. For a revolute joint, ω<sub>i</sub> is the unit axis and v<sub>i</sub> = −ω<sub>i</sub> × q<sub>i</sub> for any point q<sub>i</sub> on the axis; for a prismatic joint, ω<sub>i</sub> = 0 and v<sub>i</sub> is the sliding direction. Then</p>
+  <div class="math"><div>T(θ) = e<sup>[S<sub>1</sub>]θ<sub>1</sub></sup>·e<sup>[S<sub>2</sub>]θ<sub>2</sub></sup>···e<sup>[S<sub>n</sub>]θ<sub>n</sub></sup>·M</div></div>
+  <p>Axes come straight from the CAD model, there are no special cases for parallel axes, and the same screw axes give the Jacobian directly in Module 21.</p>
+  <details class="deriv"><summary>Show derivation: exponential of a revolute screw</summary><div class="d">
+    <p>Rotating a body by θ about an axis with direction ω through point q moves a point p to R(p − q) + q, where R = e<sup>[ω]θ</sup> from Rodrigues' formula. As a transform:</p>
+    <div class="math"><div>e<sup>[S]θ</sup> = <span class="mat" style="--c:2"><span>e<sup>[ω]θ</sup></span><span>(I − e<sup>[ω]θ</sup>)q</span><span>0</span><span>1</span></span></div></div>
+    <p>Writing v = −ω × q and using Rodrigues' series, (I − e<sup>[ω]θ</sup>)q equals (Iθ + (1 − cos θ)[ω] + (θ − sin θ)[ω]²)v, the general form that also covers screws with pitch. Why the product works: the last joint moves only the parts beyond it, so apply e<sup>[S<sub>n</sub>]θ<sub>n</sub></sup> to M first. Joint n−1 then rotates everything beyond it, including joint n's axis, which is why the factors multiply in order from the base outward.</p>
+  </div></details>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>T<sub>0n</sub> = A<sub>1</sub>A<sub>2</sub>···A<sub>n</sub></code><span>Serial chain forward kinematics</span></div>
+    <div class="eq"><code>A<sub>i</sub> = Rot<sub>z</sub>(θ)Trans<sub>z</sub>(d)Trans<sub>x</sub>(a)Rot<sub>x</sub>(α)</code><span>Standard DH link transform</span></div>
+    <div class="eq"><code>x = ΣL<sub>i</sub>cos(θ<sub>1</sub>+…+θ<sub>i</sub>), φ = Σθ<sub>i</sub></code><span>Planar serial arm</span></div>
+    <div class="eq"><code>T = e<sup>[S<sub>1</sub>]θ<sub>1</sub></sup>···e<sup>[S<sub>n</sub>]θ<sub>n</sub></sup>M</code><span>Product of exponentials</span></div>
+    <div class="eq"><code>S = (ω, −ω × q)</code><span>Screw axis of a revolute joint through point q</span></div>
+  </div>
+
+  <section class="lab" data-lab="fk">
+    <div class="lab-head"><span class="lab-tag">Lab 20</span><h3>Planar 3R forward kinematics</h3></div>
+    <p class="lab-note">Set the joint angles and link lengths. Each joint shows its frame, and the readouts give the DH table and the resulting tool transform.</p>
+    <div class="controls" id="c-fk"></div>
+    <div class="screen tall"><canvas id="cv-fk"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Links</span><span class="lg"><i style="--c:var(--ch3)"></i>Frame x-axes</span><span class="lg"><i style="--c:var(--ch5)"></i>Frame y-axes</span><span class="lg"><i class="dash" style="--c:var(--scope-text)"></i>Reachable workspace</span></div>
+    <div class="readouts" id="ro-fk"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Change only θ<sub>1</sub>. The whole arm rotates rigidly: the first factor premultiplies everything.</li>
+      <li>Set θ<sub>2</sub> = θ<sub>3</sub> = 0. The arm is fully stretched and the tool sits on the outer workspace boundary.</li>
+      <li>Find two different joint sets that put the tool at the same point with a different φ. Position alone doesn't pin down the arm.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 21 JACOBIAN ======================= -->
+<section class="view module" id="view-jacobian">
+  <p class="lead">The Jacobian maps joint velocities to tool velocity and, transposed, tool forces to joint torques. It governs how fast and how hard a robot can push in each direction, how stiff the tool feels, and where the arm becomes singular.</p>
+
+  <h2>Velocity kinematics</h2>
+  <p>Differentiating the forward kinematics x = f(q) with respect to time gives ẋ = J(q)·q̇, where J = ∂f/∂q. For the 2-link planar arm:</p>
+  <div class="math"><div>J = <span class="mat" style="--c:2"><span>−L<sub>1</sub>s<sub>1</sub> − L<sub>2</sub>s<sub>12</sub></span><span>−L<sub>2</sub>s<sub>12</sub></span><span>L<sub>1</sub>c<sub>1</sub> + L<sub>2</sub>c<sub>12</sub></span><span>L<sub>2</sub>c<sub>12</sub></span></span></div></div>
+  <p>For spatial arms, the <strong>geometric Jacobian</strong> maps q̇ to the tool's linear and angular velocity (v, ω). Each column comes from one joint: for a revolute joint i, J<sub>v,i</sub> = z<sub>i−1</sub> × (o<sub>n</sub> − o<sub>i−1</sub>) and J<sub>ω,i</sub> = z<sub>i−1</sub>; for a prismatic joint, J<sub>v,i</sub> = z<sub>i−1</sub> and J<sub>ω,i</sub> = 0. The <strong>analytic Jacobian</strong> instead differentiates a minimal orientation description such as Euler angles, and inherits their singularities.</p>
+  <details class="deriv"><summary>Show derivation: 2R Jacobian and geometric columns</summary><div class="d">
+    <p>From x = L<sub>1</sub>c<sub>1</sub> + L<sub>2</sub>c<sub>12</sub> and y = L<sub>1</sub>s<sub>1</sub> + L<sub>2</sub>s<sub>12</sub>, the chain rule gives ∂x/∂θ<sub>1</sub> = −L<sub>1</sub>s<sub>1</sub> − L<sub>2</sub>s<sub>12</sub>, ∂x/∂θ<sub>2</sub> = −L<sub>2</sub>s<sub>12</sub>, ∂y/∂θ<sub>1</sub> = L<sub>1</sub>c<sub>1</sub> + L<sub>2</sub>c<sub>12</sub>, ∂y/∂θ<sub>2</sub> = L<sub>2</sub>c<sub>12</sub>.</p>
+    <p>Geometric columns: if only joint i moves, everything beyond it rotates rigidly with angular velocity ω = z<sub>i−1</sub>q̇<sub>i</sub> about an axis through o<sub>i−1</sub>. A rigid body's point velocity is ω × r, with r from a point on the axis to the tool, so v = (z<sub>i−1</sub> × (o<sub>n</sub> − o<sub>i−1</sub>))q̇<sub>i</sub>. Velocities from different joints superpose, because the joints act in series and angular velocities add.</p>
+  </div></details>
+
+  <h2>Statics: the transpose Jacobian</h2>
+  <p>A force F at the tool needs joint torques τ = J<sup>T</sup>F to hold it in static equilibrium. The same matrix appears in both directions, which gives a duality: directions in which the arm moves fast are directions in which it pushes weakly, and the reverse.</p>
+  <p>Stiffness maps the same way. Joint compliance C<sub>q</sub> (joint servo or gearbox flexibility) appears at the tool as C<sub>x</sub> = J·C<sub>q</sub>·J<sup>T</sup>, ignoring the geometric stiffness from load changes in the arm's shape.</p>
+  <details class="deriv"><summary>Show derivation: τ = Jᵀ F by virtual work</summary><div class="d">
+    <p>In static equilibrium the virtual work done by the joint torques equals the virtual work done at the tool, for any virtual displacement:</p>
+    <div class="math"><div>τ<sup>T</sup>δq = F<sup>T</sup>δx = F<sup>T</sup>J·δq</div></div>
+    <p>This must hold for every δq, so τ<sup>T</sup> = F<sup>T</sup>J, or τ = J<sup>T</sup>F. For compliance, a joint deflection δq = C<sub>q</sub>τ produces a tool deflection δx = Jδq = J·C<sub>q</sub>·J<sup>T</sup>F.</p>
+  </div></details>
+
+  <h2>Singularities and manipulability</h2>
+  <p>A configuration is singular where J loses rank. For the 2R arm, det J = L<sub>1</sub>L<sub>2</sub>·sin θ<sub>2</sub>, which vanishes when the arm is fully stretched or folded (θ<sub>2</sub> = 0 or π). Near a singularity:</p>
+  <ul>
+    <li>Some tool directions need very large joint speeds, because q̇ = J<sup>−1</sup>ẋ blows up.</li>
+    <li>Inverse kinematics becomes ill-conditioned (Module 22).</li>
+    <li>In the lost direction the arm resists force without any joint torque, which is useful for carrying loads and dangerous for control.</li>
+  </ul>
+  <p>Singularities on the workspace boundary (arm stretched) are unavoidable. Internal ones, such as a 6-axis wrist with its first and last axes aligned, appear in the middle of the workspace and are what path planners have to avoid.</p>
+  <p>The singular value decomposition J = UΣV<sup>T</sup> quantifies this. The unit ball of joint velocities maps to a <strong>velocity ellipsoid</strong> with axes along the columns of U and half-lengths σ<sub>i</sub>. The force ellipsoid has the same axes with lengths 1/σ<sub>i</sub>. Yoshikawa's manipulability w = √det(JJ<sup>T</sup>) = Πσ<sub>i</sub> measures the ellipsoid's volume. The condition number κ = σ<sub>max</sub>/σ<sub>min</sub> measures how lopsided it is.</p>
+  <details class="deriv"><summary>Show derivation: velocity ellipsoid</summary><div class="d">
+    <p>Take all joint velocities with ‖q̇‖ ≤ 1. For a non-redundant arm with J invertible, q̇ = J<sup>−1</sup>ẋ, so</p>
+    <div class="math"><div>q̇<sup>T</sup>q̇ = ẋ<sup>T</sup>J<sup>−T</sup>J<sup>−1</sup>ẋ = ẋ<sup>T</sup>(JJ<sup>T</sup>)<sup>−1</sup>ẋ ≤ 1</div></div>
+    <p>That is an ellipsoid. With JJ<sup>T</sup> = UΣ²U<sup>T</sup>, its axes are the columns of U and its half-lengths are σ<sub>i</sub>. For forces, τ<sup>T</sup>τ ≤ 1 with τ = J<sup>T</sup>F gives F<sup>T</sup>JJ<sup>T</sup>F ≤ 1: the same axes with half-lengths 1/σ<sub>i</sub>.</p>
+  </div></details>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>ẋ = J(q)·q̇, &nbsp; J = ∂f/∂q</code><span>Velocity kinematics</span></div>
+    <div class="eq"><code>J<sub>v,i</sub> = z<sub>i−1</sub> × (o<sub>n</sub> − o<sub>i−1</sub>), J<sub>ω,i</sub> = z<sub>i−1</sub></code><span>Geometric Jacobian, revolute joint</span></div>
+    <div class="eq"><code>τ = J<sup>T</sup>F</code><span>Static force mapping</span></div>
+    <div class="eq"><code>C<sub>x</sub> = J·C<sub>q</sub>·J<sup>T</sup></code><span>Tool compliance from joint compliance</span></div>
+    <div class="eq"><code>det J = L<sub>1</sub>L<sub>2</sub> sin θ<sub>2</sub></code><span>2R singularity measure</span></div>
+    <div class="eq"><code>w = √det(JJ<sup>T</sup>), &nbsp; κ = σ<sub>max</sub>/σ<sub>min</sub></code><span>Manipulability and condition number</span></div>
+  </div>
+
+  <section class="lab" data-lab="jacobian">
+    <div class="lab-head"><span class="lab-tag">Lab 21</span><h3>Manipulability ellipse</h3></div>
+    <p class="lab-note">A 2-link planar arm. The ellipse at the tool shows the tool velocities reachable with unit joint speed, or switch to see the tool forces available with unit joint torque.</p>
+    <div class="controls" id="c-jacobian"></div>
+    <div class="screen tall"><canvas id="cv-jacobian"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Arm</span><span class="lg"><i style="--c:var(--ch2)"></i>Ellipse</span><span class="lg"><i class="dash" style="--c:var(--scope-text)"></i>Workspace boundary</span></div>
+    <div class="readouts" id="ro-jacobian"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Bring θ<sub>2</sub> toward 0°. The velocity ellipse flattens into a line: no radial motion is possible when the arm is straight.</li>
+      <li>Switch to the force ellipse at the same pose. It stretches radially: a straight arm holds radial loads with almost no torque.</li>
+      <li>Make the ellipse a circle (κ = 1). That isotropic pose needs L<sub>1</sub> = √2·L<sub>2</sub> and θ<sub>2</sub> = ±135°: try L<sub>1</sub> = 1.0 m, L<sub>2</sub> = 0.71 m.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 22 IK & TRAJECTORIES ======================= -->
+<section class="view module" id="view-ik">
+  <p class="lead">Inverse kinematics finds the joint positions that put the tool at a desired pose. There may be several solutions, none, or infinitely many, and singularities make it ill-conditioned. Once joint goals are known, a trajectory decides how to get there smoothly.</p>
+
+  <h2>Analytic solution for the 2-link arm</h2>
+  <div class="math">
+    <div>c<sub>2</sub> = (x² + y² − L<sub>1</sub>² − L<sub>2</sub>²)/(2L<sub>1</sub>L<sub>2</sub>), &nbsp; s<sub>2</sub> = ±√(1 − c<sub>2</sub>²)</div>
+    <div>θ<sub>2</sub> = atan2(s<sub>2</sub>, c<sub>2</sub>), &nbsp; θ<sub>1</sub> = atan2(y, x) − atan2(L<sub>2</sub>s<sub>2</sub>, L<sub>1</sub> + L<sub>2</sub>c<sub>2</sub>)</div>
+  </div>
+  <p>The sign of s<sub>2</sub> picks elbow-up or elbow-down. If |c<sub>2</sub>| &gt; 1 the target is out of reach. Using atan2 rather than acos keeps the correct quadrant and stays well conditioned.</p>
+  <details class="deriv"><summary>Show derivation: law of cosines and atan2</summary><div class="d">
+    <p>Square and add the forward kinematics:</p>
+    <div class="math"><div>x² + y² = L<sub>1</sub>² + L<sub>2</sub>² + 2L<sub>1</sub>L<sub>2</sub>(c<sub>1</sub>c<sub>12</sub> + s<sub>1</sub>s<sub>12</sub>) = L<sub>1</sub>² + L<sub>2</sub>² + 2L<sub>1</sub>L<sub>2</sub>c<sub>2</sub></div></div>
+    <p>because c<sub>1</sub>c<sub>12</sub> + s<sub>1</sub>s<sub>12</sub> = cos(θ<sub>12</sub> − θ<sub>1</sub>) = c<sub>2</sub>. That is the law of cosines on the triangle formed by the two links and the line to the target. For θ<sub>1</sub>, the target direction is atan2(y, x), and the second link offsets it by the angle of the vector (L<sub>1</sub> + L<sub>2</sub>c<sub>2</sub>, L<sub>2</sub>s<sub>2</sub>), which is the target expressed in a frame aligned with link 1.</p>
+  </div></details>
+  <p>Most industrial 6-axis arms have a <strong>spherical wrist</strong>: the last three axes intersect at one point. That decouples the problem. The wrist center p<sub>w</sub> = p − d<sub>6</sub>Rẑ depends only on the first three joints, so solve those for position, then solve the wrist for orientation. That yields up to eight closed-form solutions.</p>
+
+  <h2>Numerical inverse kinematics</h2>
+  <p>General arms are solved iteratively. Given the error e = x<sub>d</sub> − f(q), update q by Δq and repeat:</p>
+  <ul>
+    <li><strong>Newton–Raphson:</strong> Δq = J<sup>−1</sup>e. Fast near the solution, but it explodes near singularities.</li>
+    <li><strong>Jacobian transpose:</strong> Δq = αJ<sup>T</sup>e. Gradient descent on ½‖e‖²; robust but slow.</li>
+    <li><strong>Damped least squares (Levenberg–Marquardt):</strong> Δq = J<sup>T</sup>(JJ<sup>T</sup> + λ²I)<sup>−1</sup>e. Behaves like Newton away from singularities and like a damped transpose near them, trading accuracy for bounded joint motion.</li>
+  </ul>
+  <details class="deriv"><summary>Show derivation: damped least squares</summary><div class="d">
+    <p>Choose the step that balances reducing the error against moving the joints:</p>
+    <div class="math"><div>minimize ‖JΔq − e‖² + λ²‖Δq‖²</div></div>
+    <p>Setting the gradient to zero gives (J<sup>T</sup>J + λ²I)Δq = J<sup>T</sup>e. The identity (J<sup>T</sup>J + λ²I)J<sup>T</sup> = J<sup>T</sup>(JJ<sup>T</sup> + λ²I) rearranges this to Δq = J<sup>T</sup>(JJ<sup>T</sup> + λ²I)<sup>−1</sup>e, which inverts the smaller task-space matrix. In SVD terms, each singular value σ is replaced by σ/(σ² + λ²), which approaches 1/σ when σ ≫ λ and goes to 0 rather than ∞ as σ → 0.</p>
+  </div></details>
+  <p><strong>Redundancy.</strong> With more joints than task coordinates, a whole family of joint motions gives the same tool motion: q̇ = J<sup>+</sup>ẋ + (I − J<sup>+</sup>J)z, with J<sup>+</sup> = J<sup>T</sup>(JJ<sup>T</sup>)<sup>−1</sup>. The second term moves the joints in the null space of J without moving the tool, so z can serve secondary goals such as staying away from joint limits, obstacles or singularities.</p>
+
+  <h2>Trajectories</h2>
+  <p>Point-to-point moves in joint space use polynomials whose coefficients come from boundary conditions. Writing Δ = q<sub>f</sub> − q<sub>0</sub> and s = t/T:</p>
+  <ul>
+    <li><strong>Cubic</strong> (position and velocity specified at both ends): q = q<sub>0</sub> + Δ(3s² − 2s³). Peak velocity 1.5Δ/T, peak acceleration 6Δ/T². The acceleration jumps at the start and end, which means infinite jerk.</li>
+    <li><strong>Quintic</strong> (position, velocity and acceleration specified): q = q<sub>0</sub> + Δ(10s³ − 15s⁴ + 6s⁵). Peak velocity 1.875Δ/T, peak acceleration about 5.77Δ/T², with smooth acceleration that excites resonances far less.</li>
+  </ul>
+  <p>Joint-space interpolation is simple and avoids singularities, but the tool path is curved. Straight-line Cartesian motion needs IK at every control step and can pass near singularities. The trapezoidal profiles from Module 15 apply to either.</p>
+  <details class="deriv"><summary>Show derivation: cubic and quintic coefficients</summary><div class="d">
+    <p><strong>Cubic</strong> q = a<sub>0</sub> + a<sub>1</sub>t + a<sub>2</sub>t² + a<sub>3</sub>t³ with q(0) = q<sub>0</sub>, q̇(0) = 0, q(T) = q<sub>f</sub>, q̇(T) = 0. The conditions at t = 0 give a<sub>0</sub> = q<sub>0</sub> and a<sub>1</sub> = 0. The conditions at T give a<sub>2</sub>T² + a<sub>3</sub>T³ = Δ and 2a<sub>2</sub>T + 3a<sub>3</sub>T² = 0, so a<sub>2</sub> = 3Δ/T² and a<sub>3</sub> = −2Δ/T³. Then q̈(0) = 6Δ/T², nonzero at the start.</p>
+    <p><strong>Quintic</strong>, in normalized time with six conditions: zero velocity and acceleration at both ends. Write q = q<sub>0</sub> + Δ·h(s) with h = b<sub>3</sub>s³ + b<sub>4</sub>s⁴ + b<sub>5</sub>s⁵, since h(0) = h′(0) = h″(0) = 0 force the lower terms to zero. Then h(1) = 1, h′(1) = 0 and h″(1) = 0 give b<sub>3</sub> + b<sub>4</sub> + b<sub>5</sub> = 1, 3b<sub>3</sub> + 4b<sub>4</sub> + 5b<sub>5</sub> = 0 and 6b<sub>3</sub> + 12b<sub>4</sub> + 20b<sub>5</sub> = 0. The solution is (10, −15, 6). Peak velocity is h′(½) = 30/16 = 1.875. Peak acceleration comes from h‴ = 0 at s = ½ − √3/6, where h″ = 10/√3 ≈ 5.77.</p>
+  </div></details>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>c<sub>2</sub> = (x²+y²−L<sub>1</sub>²−L<sub>2</sub>²)/(2L<sub>1</sub>L<sub>2</sub>)</code><span>2R inverse kinematics, elbow angle</span></div>
+    <div class="eq"><code>θ<sub>1</sub> = atan2(y,x) − atan2(L<sub>2</sub>s<sub>2</sub>, L<sub>1</sub>+L<sub>2</sub>c<sub>2</sub>)</code><span>2R inverse kinematics, shoulder angle</span></div>
+    <div class="eq"><code>Δq = J<sup>T</sup>(JJ<sup>T</sup> + λ²I)<sup>−1</sup>e</code><span>Damped least squares step</span></div>
+    <div class="eq"><code>q̇ = J<sup>+</sup>ẋ + (I − J<sup>+</sup>J)z</code><span>Redundancy resolution with null-space motion</span></div>
+    <div class="eq"><code>q = q<sub>0</sub> + Δ(3s² − 2s³)</code><span>Cubic point-to-point (s = t/T)</span></div>
+    <div class="eq"><code>q = q<sub>0</sub> + Δ(10s³ − 15s⁴ + 6s⁵)</code><span>Quintic point-to-point</span></div>
+  </div>
+
+  <section class="lab" data-lab="ik">
+    <div class="lab-head"><span class="lab-tag">Lab 22a</span><h3>Analytic and numerical IK</h3></div>
+    <p class="lab-note">Drag the target on the view, or use the sliders. The faint arms are the two analytic solutions. The bright arm runs damped least squares from its current pose and shows its iteration path.</p>
+    <div class="controls" id="c-ik"></div>
+    <div class="screen tall drag"><canvas id="cv-ik"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Numerical (DLS) solution</span><span class="lg"><i style="--c:var(--ch2)"></i>Analytic, θ₂ &gt; 0</span><span class="lg"><i style="--c:var(--ch3)"></i>Analytic, θ₂ &lt; 0</span><span class="lg"><i style="--c:var(--ch5)"></i>Iteration path</span></div>
+    <div class="readouts" id="ro-ik"></div>
+    <div class="sublab">
+      <h4>Lab 22b · Cubic versus quintic trajectories</h4>
+      <div class="controls" id="c-traj"></div>
+      <div class="screen"><canvas id="cv-traj"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Cubic</span><span class="lg"><i style="--c:var(--ch2)"></i>Quintic</span></div>
+      <div class="readouts" id="ro-traj"></div>
+    </div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Drag the target outside the workspace. The analytic solutions disappear; DLS stretches the arm toward the target and stops with a residual error.</li>
+      <li>Set λ to its minimum and drag the target near the origin or the outer edge. Iterations jump wildly near singularities; raise λ and they settle.</li>
+      <li>In 22b, view acceleration. The cubic jumps at both ends; the quintic starts and ends at zero.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 23 DYNAMICS ======================= -->
+<section class="view module" id="view-robodyn">
+  <p class="lead">Dynamics relates joint torques to motion. For any rigid serial arm the equations take the same form, M(q)q̈ + C(q, q̇)q̇ + g(q) = τ, and that structure is what model-based controllers exploit.</p>
+
+  <h2>Lagrange's method</h2>
+  <p>Form the Lagrangian 𝓛 = K − P, kinetic minus potential energy, in terms of the joint coordinates. Each joint then obeys</p>
+  <div class="math"><div>d/dt(∂𝓛/∂q̇<sub>i</sub>) − ∂𝓛/∂q<sub>i</sub> = τ<sub>i</sub></div></div>
+  <p>For a manipulator, kinetic energy is always quadratic in velocity, K = ½q̇<sup>T</sup>M(q)q̇. The inertia matrix sums each link's translational and rotational contributions through its Jacobians:</p>
+  <div class="math"><div>M(q) = Σ [m<sub>i</sub>J<sub>v,ci</sub><sup>T</sup>J<sub>v,ci</sub> + J<sub>ω,i</sub><sup>T</sup>R<sub>i</sub>I<sub>i</sub>R<sub>i</sub><sup>T</sup>J<sub>ω,i</sub>]</div></div>
+  <p>Here J<sub>v,ci</sub> is the Jacobian of link i's center of mass, and I<sub>i</sub> is its inertia tensor about the center of mass in its own frame.</p>
+
+  <h2>The 2-link arm</h2>
+  <p>Links of mass m<sub>i</sub>, length L<sub>i</sub>, center of mass at distance l<sub>ci</sub> from the joint, and centroidal inertia I<sub>i</sub>, moving in a vertical plane with angles measured from horizontal:</p>
+  <div class="math">
+    <div>M<sub>11</sub> = m<sub>1</sub>l<sub>c1</sub>² + m<sub>2</sub>(L<sub>1</sub>² + l<sub>c2</sub>² + 2L<sub>1</sub>l<sub>c2</sub>c<sub>2</sub>) + I<sub>1</sub> + I<sub>2</sub></div>
+    <div>M<sub>12</sub> = M<sub>21</sub> = m<sub>2</sub>(l<sub>c2</sub>² + L<sub>1</sub>l<sub>c2</sub>c<sub>2</sub>) + I<sub>2</sub>, &nbsp; M<sub>22</sub> = m<sub>2</sub>l<sub>c2</sub>² + I<sub>2</sub></div>
+    <div>with h = −m<sub>2</sub>L<sub>1</sub>l<sub>c2</sub>s<sub>2</sub>: &nbsp; C-terms = (h(2q̇<sub>1</sub>q̇<sub>2</sub> + q̇<sub>2</sub>²), −h·q̇<sub>1</sub>²)</div>
+    <div>g<sub>1</sub> = (m<sub>1</sub>l<sub>c1</sub> + m<sub>2</sub>L<sub>1</sub>)g·c<sub>1</sub> + m<sub>2</sub>l<sub>c2</sub>g·c<sub>12</sub>, &nbsp; g<sub>2</sub> = m<sub>2</sub>l<sub>c2</sub>g·c<sub>12</sub></div>
+  </div>
+  <p>Note the coupling. Joint 1 feels joint 2's acceleration through M<sub>12</sub>, and both joints feel Coriolis (q̇<sub>1</sub>q̇<sub>2</sub>) and centrifugal (q̇²) terms that grow with the square of speed.</p>
+  <details class="deriv"><summary>Show derivation: 2-link equations of motion</summary><div class="d">
+    <p>Centers of mass: p<sub>c1</sub> = l<sub>c1</sub>(c<sub>1</sub>, s<sub>1</sub>) and p<sub>c2</sub> = L<sub>1</sub>(c<sub>1</sub>, s<sub>1</sub>) + l<sub>c2</sub>(c<sub>12</sub>, s<sub>12</sub>). Differentiating:</p>
+    <div class="math">
+      <div>‖ṗ<sub>c1</sub>‖² = l<sub>c1</sub>²q̇<sub>1</sub>²</div>
+      <div>‖ṗ<sub>c2</sub>‖² = L<sub>1</sub>²q̇<sub>1</sub>² + l<sub>c2</sub>²(q̇<sub>1</sub>+q̇<sub>2</sub>)² + 2L<sub>1</sub>l<sub>c2</sub>c<sub>2</sub>q̇<sub>1</sub>(q̇<sub>1</sub>+q̇<sub>2</sub>)</div>
+    </div>
+    <p>The cross term comes from the dot product of the two velocity components, whose directions differ by θ<sub>2</sub>. Link angular velocities are q̇<sub>1</sub> and q̇<sub>1</sub> + q̇<sub>2</sub>, so</p>
+    <div class="math"><div>K = ½m<sub>1</sub>‖ṗ<sub>c1</sub>‖² + ½m<sub>2</sub>‖ṗ<sub>c2</sub>‖² + ½I<sub>1</sub>q̇<sub>1</sub>² + ½I<sub>2</sub>(q̇<sub>1</sub>+q̇<sub>2</sub>)²</div></div>
+    <p>Reading off the coefficients of ½q̇<sub>i</sub>q̇<sub>j</sub> gives M above. Potential energy is P = m<sub>1</sub>g·l<sub>c1</sub>s<sub>1</sub> + m<sub>2</sub>g(L<sub>1</sub>s<sub>1</sub> + l<sub>c2</sub>s<sub>12</sub>), and g<sub>i</sub> = ∂P/∂q<sub>i</sub>.</p>
+    <p>For the velocity terms, d/dt(∂K/∂q̇) = Mq̈ + Ṁq̇, and the only q-dependence in M is through c<sub>2</sub>, with ∂M<sub>11</sub>/∂q<sub>2</sub> = 2h and ∂M<sub>12</sub>/∂q<sub>2</sub> = h. Collecting Ṁq̇ − ∂K/∂q:</p>
+    <div class="math">
+      <div>row 1: 2h·q̇<sub>1</sub>q̇<sub>2</sub> + h·q̇<sub>2</sub>² − 0 = h(2q̇<sub>1</sub>q̇<sub>2</sub> + q̇<sub>2</sub>²)</div>
+      <div>row 2: h·q̇<sub>1</sub>q̇<sub>2</sub> − ½(2h·q̇<sub>1</sub>² + 2h·q̇<sub>1</sub>q̇<sub>2</sub>) = −h·q̇<sub>1</sub>²</div>
+    </div>
+  </div></details>
+
+  <h2>Structural properties</h2>
+  <ul>
+    <li><strong>M(q) is symmetric and positive definite</strong>, and bounded above and below. It can always be inverted for simulation and control.</li>
+    <li><strong>Ṁ − 2C is skew-symmetric</strong> when C is built from Christoffel symbols, c<sub>kj</sub> = Σ<sub>i</sub> ½(∂m<sub>kj</sub>/∂q<sub>i</sub> + ∂m<sub>ki</sub>/∂q<sub>j</sub> − ∂m<sub>ij</sub>/∂q<sub>k</sub>)q̇<sub>i</sub>. This expresses energy conservation and is the key step in many stability proofs (Module 24).</li>
+    <li><strong>The equations are linear in the parameters:</strong> τ = Y(q, q̇, q̈)·π, where π collects masses, first moments and inertias. That is the basis of parameter identification and adaptive control.</li>
+  </ul>
+  <details class="deriv"><summary>Show derivation: why Ṁ − 2C is skew-symmetric</summary><div class="d">
+    <p>With Christoffel symbols, element (k, j) of C is Σ<sub>i</sub> c<sub>ijk</sub>q̇<sub>i</sub>. Then</p>
+    <div class="math"><div>(Ṁ − 2C)<sub>kj</sub> = Σ<sub>i</sub> (∂m<sub>kj</sub>/∂q<sub>i</sub> − ∂m<sub>kj</sub>/∂q<sub>i</sub> − ∂m<sub>ki</sub>/∂q<sub>j</sub> + ∂m<sub>ij</sub>/∂q<sub>k</sub>)q̇<sub>i</sub> = Σ<sub>i</sub> (∂m<sub>ij</sub>/∂q<sub>k</sub> − ∂m<sub>ki</sub>/∂q<sub>j</sub>)q̇<sub>i</sub></div></div>
+    <p>Swapping k and j, and using the symmetry of M, flips the sign, so the matrix is skew-symmetric and x<sup>T</sup>(Ṁ − 2C)x = 0 for any x. Physically, with τ = 0 and no gravity, dK/dt = q̇<sup>T</sup>Mq̈ + ½q̇<sup>T</sup>Ṁq̇ = q̇<sup>T</sup>(½Ṁ − C)q̇ = 0: the velocity terms do no work.</p>
+  </div></details>
+
+  <h2>Including the drives and real-time computation</h2>
+  <p>A gearmotor adds N²J<sub>m</sub> to the diagonal of M. With high ratios this term dominates and the joints barely feel each other, which is why independent-joint PID works well on many industrial arms. Direct-drive and low-ratio arms see the full coupling and benefit from model-based control. Friction (Module 01) adds τ<sub>f</sub>(q̇) to each joint.</p>
+  <p>For real-time inverse dynamics, the recursive <strong>Newton–Euler</strong> algorithm is preferred over expanding the Lagrangian. It runs a forward pass from base to tool to propagate velocities and accelerations, then a backward pass to compute the force and moment at each joint. The cost is O(n) in the number of joints.</p>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>M(q)q̈ + C(q,q̇)q̇ + g(q) + τ<sub>f</sub> = τ</code><span>Manipulator equations of motion</span></div>
+    <div class="eq"><code>d/dt(∂𝓛/∂q̇) − ∂𝓛/∂q = τ, &nbsp; 𝓛 = K − P</code><span>Euler–Lagrange equations</span></div>
+    <div class="eq"><code>K = ½q̇<sup>T</sup>M(q)q̇</code><span>Kinetic energy</span></div>
+    <div class="eq"><code>x<sup>T</sup>(Ṁ − 2C)x = 0</code><span>Skew-symmetry (energy conservation)</span></div>
+    <div class="eq"><code>τ = Y(q,q̇,q̈)·π</code><span>Linearity in inertial parameters</span></div>
+    <div class="eq"><code>M<sub>ii</sub> += N²J<sub>m</sub></code><span>Reflected motor inertia</span></div>
+  </div>
+
+  <section class="lab" data-lab="robodyn">
+    <div class="lab-head"><span class="lab-tag">Lab 23</span><h3>A 2-link arm falling under gravity</h3></div>
+    <p class="lab-note">Uniform links released from rest with no motor torque, integrated with RK4 from the equations above. With zero damping, total energy should stay constant, which checks the derivation. Press Reset after changing parameters.</p>
+    <div class="btnrow"><button class="btn small" id="dyn-play" type="button">Pause</button><button class="btn small" id="dyn-reset" type="button">Reset</button></div>
+    <div class="controls" id="c-robodyn"></div>
+    <div class="screen tall"><canvas id="cv-robodyn"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Arm</span><span class="lg"><i style="--c:var(--ch3)"></i>Tool path</span><span class="lg"><i style="--c:var(--ch2)"></i>Kinetic energy</span><span class="lg"><i style="--c:var(--ch5)"></i>Potential energy</span><span class="lg"><i style="--c:var(--ch4)"></i>Total</span></div>
+    <div class="readouts" id="ro-robodyn"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Leave damping at zero. Motion looks chaotic, yet total energy stays flat.</li>
+      <li>Make link 2 much heavier and watch M<sub>12</sub> grow: joint 1 is now strongly driven by joint 2's motion.</li>
+      <li>Add damping. Energy decays and the arm settles hanging straight down, where g(q) = 0.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 24 ROBOT CONTROL ======================= -->
+<section class="view module" id="view-robocontrol">
+  <p class="lead">With the dynamics in hand, controllers can do more than one PID per joint. This module derives the main model-based laws, proves the simplest one stable, and covers how robots control contact forces instead of only positions.</p>
+
+  <h2>Independent joint control</h2>
+  <p>Treat each joint as a motor (Module 08) and put everything else, coupling, gravity and Coriolis terms, into a disturbance that the PID rejects. With high gear ratios the reflected motor inertia dominates (Module 23) and this works well. It degrades at high speeds, with heavy payloads, and on low-ratio or direct-drive arms.</p>
+
+  <h2>PD with gravity compensation</h2>
+  <p>To hold a constant target q<sub>d</sub>, add the model's gravity torque to a PD law:</p>
+  <div class="math"><div>τ = K<sub>p</sub>(q<sub>d</sub> − q) − K<sub>d</sub>q̇ + g(q)</div></div>
+  <p>For any positive-definite K<sub>p</sub> and K<sub>d</sub>, the arm converges to q<sub>d</sub> with no integral term and no steady-state error from gravity. It needs only the gravity model, not the full dynamics.</p>
+  <details class="deriv"><summary>Show derivation: Lyapunov stability</summary><div class="d">
+    <p>With error e = q<sub>d</sub> − q (so ė = −q̇), take the total “energy” of the robot plus the virtual spring as a Lyapunov candidate:</p>
+    <div class="math"><div>V = ½q̇<sup>T</sup>M(q)q̇ + ½e<sup>T</sup>K<sub>p</sub>e &gt; 0 for (e, q̇) ≠ 0</div></div>
+    <p>Differentiate, substitute Mq̈ = τ − Cq̇ − g, then the control law:</p>
+    <div class="math">
+      <div>V̇ = q̇<sup>T</sup>Mq̈ + ½q̇<sup>T</sup>Ṁq̇ − q̇<sup>T</sup>K<sub>p</sub>e</div>
+      <div>&nbsp;&nbsp; = q̇<sup>T</sup>(K<sub>p</sub>e − K<sub>d</sub>q̇ − Cq̇) + ½q̇<sup>T</sup>Ṁq̇ − q̇<sup>T</sup>K<sub>p</sub>e</div>
+      <div>&nbsp;&nbsp; = −q̇<sup>T</sup>K<sub>d</sub>q̇ + ½q̇<sup>T</sup>(Ṁ − 2C)q̇ = −q̇<sup>T</sup>K<sub>d</sub>q̇ ≤ 0</div>
+    </div>
+    <p>The skew-symmetry property removed the last term. V̇ is only negative semidefinite (zero whenever q̇ = 0), so LaSalle's invariance principle finishes the proof: if q̇ ≡ 0 then q̈ = 0, so M⁻¹K<sub>p</sub>e = 0, which forces e = 0. The only invariant set is the target, so the system converges to it.</p>
+  </div></details>
+
+  <h2>Computed torque (inverse dynamics control)</h2>
+  <p>To track a trajectory q<sub>d</sub>(t), cancel the nonlinear dynamics and impose linear error dynamics:</p>
+  <div class="math"><div>τ = M(q)(q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e) + C(q,q̇)q̇ + g(q) &nbsp;⇒&nbsp; ë + K<sub>d</sub>ė + K<sub>p</sub>e = 0</div></div>
+  <p>Each joint's error then behaves like an independent mass–spring–damper. Choose K<sub>p</sub> = ω<sub>n</sub>² and K<sub>d</sub> = 2ζω<sub>n</sub> (Module 11). The catch is that cancellation is only as good as the model. Payload errors and friction leave residual coupling, so practical versions add integral action, robust terms or online parameter adaptation using the linear-in-parameters form.</p>
+  <details class="deriv"><summary>Show derivation: closed-loop error dynamics</summary><div class="d">
+    <p>Substitute the control law into Mq̈ + Cq̇ + g = τ. The Cq̇ and g terms cancel exactly when the model is perfect, leaving M(q)q̈ = M(q)(q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e). M is invertible, so q̈ = q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e. With ë = q̈<sub>d</sub> − q̈, this becomes ë + K<sub>d</sub>ė + K<sub>p</sub>e = 0. With model error, the right side becomes M̂⁻¹[(M̂ − M)q̈ + (Ĉ − C)q̇ + (ĝ − g)], a disturbance that grows with speed and payload mismatch.</p>
+  </div></details>
+
+  <h2>Task-space control</h2>
+  <p>Control can be written directly in Cartesian coordinates. The simplest form is a Cartesian spring and damper mapped through the transpose Jacobian:</p>
+  <div class="math"><div>τ = J<sup>T</sup>(K<sub>x</sub>(x<sub>d</sub> − x) − D<sub>x</sub>ẋ) + g(q)</div></div>
+  <p>The Lyapunov argument above carries over, using x in place of q. Khatib's operational-space formulation goes further, using the task-space inertia Λ = (JM⁻¹J<sup>T</sup>)⁻¹ to decouple the Cartesian directions the way computed torque decouples joints.</p>
+
+  <h2>Interaction control: impedance and admittance</h2>
+  <p>A stiff position controller pressed against a rigid surface produces large, poorly controlled forces. Interaction control regulates the relation between motion and force instead.</p>
+  <ul>
+    <li><strong>Impedance control</strong> makes the robot behave like a chosen mass–spring–damper: F = K(x<sub>d</sub> − x) + D(ẋ<sub>d</sub> − ẋ). It measures motion and commands force, as in the task-space law above. It suits torque-controllable, backdrivable arms and stiff environments.</li>
+    <li><strong>Admittance control</strong> measures force with a force/torque sensor, runs it through a virtual model M<sub>a</sub>ẍ + D<sub>a</sub>ẋ + K<sub>a</sub>x = F<sub>ext</sub> to get a motion command, and tracks that motion with a stiff position loop. It suits geared, non-backdrivable arms and soft environments. Against very stiff environments it tends to chatter, because the inner position loop and sensor filtering add delay.</li>
+    <li><strong>Hybrid force/position control</strong> splits task directions: force control normal to a surface, position control along it.</li>
+  </ul>
+  <details class="deriv"><summary>Show derivation: steady contact force under impedance control</summary><div class="d">
+    <p>A robot with virtual stiffness K is commanded to x<sub>d</sub>, a distance δ beyond a wall of stiffness k<sub>w</sub>. At rest, the virtual spring force equals the wall force: K(x<sub>d</sub> − x) = k<sub>w</sub>(x − x<sub>w</sub>). With x<sub>d</sub> − x<sub>w</sub> = δ, the penetration is x − x<sub>w</sub> = Kδ/(K + k<sub>w</sub>), and the contact force is</p>
+    <div class="math"><div>F = (K·k<sub>w</sub>/(K + k<sub>w</sub>))·δ ≈ K·δ when k<sub>w</sub> ≫ K</div></div>
+    <p>So against a stiff wall, the chosen K sets the force for a given commanded overshoot. A stiff position controller (K → ∞) gives F ≈ k<sub>w</sub>δ, which is huge for a rigid wall.</p>
+  </div></details>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>τ = K<sub>p</sub>e − K<sub>d</sub>q̇ + g(q)</code><span>PD with gravity compensation (regulation)</span></div>
+    <div class="eq"><code>V = ½q̇<sup>T</sup>Mq̇ + ½e<sup>T</sup>K<sub>p</sub>e, &nbsp; V̇ = −q̇<sup>T</sup>K<sub>d</sub>q̇</code><span>Lyapunov function and derivative</span></div>
+    <div class="eq"><code>τ = M(q̈<sub>d</sub> + K<sub>d</sub>ė + K<sub>p</sub>e) + Cq̇ + g</code><span>Computed torque</span></div>
+    <div class="eq"><code>τ = J<sup>T</sup>(K<sub>x</sub>(x<sub>d</sub>−x) − D<sub>x</sub>ẋ) + g</code><span>Task-space PD (Cartesian impedance)</span></div>
+    <div class="eq"><code>Λ = (JM<sup>−1</sup>J<sup>T</sup>)<sup>−1</sup></code><span>Operational-space inertia</span></div>
+    <div class="eq"><code>F = Kk<sub>w</sub>δ/(K + k<sub>w</sub>)</code><span>Steady contact force against a wall</span></div>
+  </div>
+
+  <section class="lab" data-lab="robocontrol">
+    <div class="lab-head"><span class="lab-tag">Lab 24a</span><h3>Tracking a circle with three controllers</h3></div>
+    <p class="lab-note">The 2-link arm from Lab 23 (1 m and 0.8 m links, 3 kg and 2 kg plus payload) follows a 0.3 m circle once per second. The controller's model has the nominal payload; set the real payload to test robustness. Torque is limited to 200 N·m per joint, and the controller runs at 1 kHz.</p>
+    <div class="controls" id="c-robocontrol"></div>
+    <div class="screen tall"><canvas id="cv-robocontrol"></canvas></div>
+    <div class="legend"><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>Desired path</span><span class="lg"><i style="--c:var(--ch1)"></i>Actual tool path</span><span class="lg"><i style="--c:var(--ch2)"></i>Tracking error (lower panel)</span></div>
+    <div class="readouts" id="ro-robocontrol"></div>
+    <div class="sublab">
+      <h4>Lab 24b · Pressing on a wall: impedance versus stiff position control</h4>
+      <p class="lab-note">A 2 kg robot axis is commanded 10 mm past a wall that starts at 50 mm. Compare a stiff position controller with impedance control at your chosen stiffness and damping ratio.</p>
+      <div class="controls" id="c-imp"></div>
+      <div class="screen"><canvas id="cv-imp"></canvas></div>
+      <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Position (left axis)</span><span class="lg"><i style="--c:var(--ch2)"></i>Contact force (right axis)</span><span class="lg"><i class="dash" style="--c:var(--ch3)"></i>Wall</span></div>
+      <div class="readouts" id="ro-imp"></div>
+    </div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Start with PD only. Gravity pulls the path down and the error never vanishes. Add gravity compensation, then switch to computed torque.</li>
+      <li>With computed torque, raise the real payload to 4 kg. Model mismatch brings some error back; raising ω<sub>n</sub> shrinks it.</li>
+      <li>In 24b, compare stiff control with impedance against a 1 MN/m wall. The commanded 10 mm overshoot becomes a crushing force without compliance.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 25 TENDONS ======================= -->
+<section class="view module" id="view-tendons">
+  <p class="lead">Cables let a robot place its motors far from the joints they drive, keeping moving mass low and joints compact. Robot hands, exoskeletons, haptic devices and long-reach arms all rely on them. The price is friction along the route, cable stretch, coupling between joints, and the need for pretension.</p>
+
+  <h2>Routing architectures</h2>
+  <p>A cable can only pull. An <strong>open-ended</strong> drive therefore uses an antagonistic pair per joint (2N cables for N joints), a spring return, or a shared scheme with N + 1 cables. A <strong>closed-loop</strong> drive runs one continuous cable from the motor capstan around the joint pulley and back, so it can drive in both directions. Cables run over idler pulleys, through low-friction sheaths (Bowden cables), or across intermediate joints on their way to distal ones.</p>
+
+  <h2>Capstan friction</h2>
+  <p>A cable sliding over a curved surface with friction coefficient μ and total wrap angle θ loses tension exponentially:</p>
+  <div class="math"><div>T<sub>tight</sub> = T<sub>slack</sub>·e<sup>μθ</sup></div></div>
+  <p>This is the same Euler–Eytelwein relation as the friction belt in Module 18. What counts is the total angle of sliding contact, not the radius. A Bowden sheath with 360° of accumulated bends and μ = 0.1 delivers only e<sup>−0.63</sup> ≈ 53% of the input tension. Pulleys on bearings convert sliding into rolling and nearly eliminate the loss, which is why serious cable drives use them wherever space allows.</p>
+  <details class="deriv"><summary>Show derivation: the capstan equation</summary><div class="d">
+    <p>Take a cable element subtending dθ on a drum, at the slip limit, with tension T on one side and T + dT on the other. The two tensions both have components toward the drum center, which press the cable on with normal force dN = T·dθ (to first order, using sin(dθ/2) ≈ dθ/2 on each side). Friction opposes slip with at most μ·dN, and that is what the tension difference must overcome:</p>
+    <div class="math"><div>dT = μ·T·dθ &nbsp;⇒&nbsp; ∫dT/T = μ∫dθ &nbsp;⇒&nbsp; ln(T<sub>tight</sub>/T<sub>slack</sub>) = μθ</div></div>
+    <p>For a sheath, the curvature is distributed along its length, but the same element argument applies with dθ as the local bend angle, so the total bend angle Σθ enters the exponent.</p>
+  </div></details>
+
+  <h2>Stiffness and pretension</h2>
+  <p>A cable of axial stiffness EA and free length L acts as a spring k = EA/L. Synthetic fiber ropes are light and flexible over small pulleys but are nonlinear and creep under load. Steel wire rope is stiffer but fatigues quickly over small pulleys, so follow the maker's minimum pulley-to-cable diameter ratio.</p>
+  <p>An antagonistic pair with pretension T<sub>0</sub> on a joint pulley of radius r gives a joint stiffness of k<sub>θ</sub> = 2kr², because both cables contribute while they are taut. Under a joint torque τ, the two tensions become T<sub>0</sub> ± τ/(2r). Once τ exceeds 2rT<sub>0</sub>, one side goes slack: stiffness halves and the joint loses control authority in that direction. So pretension must exceed the peak torque divided by 2r, with margin.</p>
+  <p>Pretension isn't free. It loads bearings and pulleys continuously, and since friction scales with tension (capstan again), more pretension means more friction torque.</p>
+  <details class="deriv"><summary>Show derivation: joint stiffness and slack condition</summary><div class="d">
+    <p>Rotate the joint by a small δθ with the motor held fixed. One cable stretches by rδθ and the other shortens by rδθ, so their tensions change by +k·rδθ and −k·rδθ. Both act at radius r in the same rotational sense:</p>
+    <div class="math"><div>δτ = r(kr·δθ) − r(−kr·δθ) = 2kr²·δθ &nbsp;⇒&nbsp; k<sub>θ</sub> = 2kr²</div></div>
+    <p>For load sharing, with both cables taut the tensions are T<sub>0</sub> + ΔT and T<sub>0</sub> − ΔT, and the net torque is 2rΔT = τ. So ΔT = τ/(2r), and the slack side reaches zero when τ = 2rT<sub>0</sub>.</p>
+  </div></details>
+
+  <h2>Coupling between joints</h2>
+  <p>When the cable for joint 2 passes over a pulley on joint 1, rotating joint 1 changes the length of joint 2's cable path. In general, cable displacements and joint angles are related by a routing matrix R, and cable tensions map to joint torques through its transpose: x = R·q and τ = R<sup>T</sup>f. The controller inverts this coupling. Routing cables so they pass through a joint's axis keeps their length constant as that joint moves, and removes the coupling for that joint.</p>
+  <details class="deriv"><summary>Show derivation: a two-joint coupling matrix</summary><div class="d">
+    <p>Cable 1 wraps a pulley of radius r<sub>1</sub> on joint 1, so x<sub>1</sub> = r<sub>1</sub>q<sub>1</sub>. Cable 2 passes over an idler of radius r<sub>1</sub>′ on joint 1 and then wraps a pulley of radius r<sub>2</sub> on joint 2, so x<sub>2</sub> = r<sub>1</sub>′q<sub>1</sub> + r<sub>2</sub>q<sub>2</sub>:</p>
+    <div class="math"><div>x = <span class="mat" style="--c:2"><span>r<sub>1</sub></span><span>0</span><span>r<sub>1</sub>′</span><span>r<sub>2</sub></span></span>·q</div></div>
+    <p>By virtual work, f<sup>T</sup>δx = τ<sup>T</sup>δq for all δq, with δx = Rδq, so τ = R<sup>T</sup>f. Cable 2's tension therefore also produces torque r<sub>1</sub>′f<sub>2</sub> on joint 1. To move joint 2 alone, both motors must move.</p>
+  </div></details>
+
+  <h2>Hysteresis</h2>
+  <p>Friction makes the tension along the cable depend on which way it is moving. Combined with cable stretch, that produces a dead band and hysteresis between motor angle and joint angle that changes with load and pretension. Common remedies are measuring the joint angle directly at the joint, model-based friction and stretch compensation, and higher pretension and stiffer cables, accepting the friction cost.</p>
+
+  <div class="callout"><span class="tag">Best practices</span><ul>
+    <li>Minimize total sliding wrap angle; use pulleys on bearings wherever possible.</li>
+    <li>Size pulleys large relative to the cable, per the maker's ratio.</li>
+    <li>Pre-stretch and run in synthetic cables, and provide a way to re-tension them.</li>
+    <li>Route cables through joint axes where you can to remove coupling.</li>
+    <li>Terminate cables with tested crimps or swages; knots can lose a large fraction of the cable's strength.</li>
+  </ul></div>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>T<sub>tight</sub>/T<sub>slack</sub> = e<sup>μθ</sup></code><span>Capstan equation (total sliding wrap θ)</span></div>
+    <div class="eq"><code>k = EA/L</code><span>Cable axial stiffness</span></div>
+    <div class="eq"><code>k<sub>θ</sub> = 2kr²</code><span>Antagonistic pair joint stiffness</span></div>
+    <div class="eq"><code>T<sub>0</sub> &gt; τ<sub>max</sub>/(2r)</code><span>Pretension to keep both sides taut</span></div>
+    <div class="eq"><code>x = R·q, &nbsp; τ = R<sup>T</sup>f</code><span>Tendon routing (coupling) matrix</span></div>
+  </div>
+
+  <section class="lab" data-lab="tendons">
+    <div class="lab-head"><span class="lab-tag">Lab 25</span><h3>Cable routing loss, stiffness and pretension</h3></div>
+    <p class="lab-note">An antagonistic cable pair drives a joint pulley through a route with some total sliding wrap. The plot shows tension along the route when the motor drives the load and when the load back-drives the motor. The gap between them is the source of hysteresis.</p>
+    <div class="controls" id="c-tendons"></div>
+    <div class="screen"><canvas id="cv-tendons"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Motor driving load</span><span class="lg"><i style="--c:var(--ch2)"></i>Load back-driving motor</span></div>
+    <div class="readouts" id="ro-tendons"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Raise μ from 0.05 to 0.2 with 540° of wrap. Efficiency collapses: the exponent, not the coefficient, is what hurts.</li>
+      <li>Raise the joint torque until the slack warning appears, then raise pretension until it clears.</li>
+      <li>Double the pulley radius. Joint stiffness quadruples and the pretension needed halves.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 26 COMPLIANT ======================= -->
+<section class="view module" id="view-compliant">
+  <p class="lead">A stiff, highly geared actuator is excellent for positioning and poor at interacting. Collisions produce large forces, and force control is limited by the reflected inertia the controller has to fight. Building deliberate compliance into the drive changes that trade.</p>
+
+  <h2>Mechanical impedance</h2>
+  <p>An actuator's output impedance Z(s) = F(s)/V(s) is the force it produces when something moves its output. For a geared motor it is dominated at high frequency by reflected inertia. Expressed as an equivalent linear mass at the output, m<sub>r</sub> = N²J<sub>m</sub>/r², which for a high-ratio drive can be tens or hundreds of kilograms. Feedback lowers the impedance only within its bandwidth. Above that, during an impact for example, the full reflected inertia hits whatever is in the way.</p>
+  <p>Peak force when a mass m moving at v hits a surface of stiffness k<sub>e</sub> is F = v·√(m·k<sub>e</sub>).</p>
+  <details class="deriv"><summary>Show derivation: impact force</summary><div class="d">
+    <p>All of the kinetic energy goes into compressing the contact spring at the instant of peak force:</p>
+    <div class="math"><div>½mv² = ½k<sub>e</sub>x<sub>max</sub>² &nbsp;⇒&nbsp; x<sub>max</sub> = v√(m/k<sub>e</sub>) &nbsp;⇒&nbsp; F<sub>max</sub> = k<sub>e</sub>x<sub>max</sub> = v√(mk<sub>e</sub>)</div></div>
+    <p>Adding a compliant element of stiffness k in series lowers the effective contact stiffness to k<sub>e</sub>k/(k<sub>e</sub> + k), which reduces the peak force for the same mass and speed.</p>
+  </div></details>
+
+  <h2>Series elastic actuators</h2>
+  <p>A series elastic actuator (SEA) puts a spring of stiffness k between the gearbox output and the load. Measuring the spring's deflection gives force, F = k(x<sub>m</sub> − x<sub>L</sub>), and a controller moves the motor to produce the desired deflection. The benefits:</p>
+  <ul>
+    <li><strong>Low impedance where it matters.</strong> Above the force loop's bandwidth, the output feels like the spring, not the reflected inertia.</li>
+    <li><strong>Shock tolerance.</strong> The spring absorbs impacts that would otherwise reach the gear teeth.</li>
+    <li><strong>Accurate, cheap force sensing.</strong> Force resolution is k times the deflection sensor's resolution.</li>
+    <li><strong>Energy storage</strong> for cyclic motions such as walking.</li>
+  </ul>
+  <p>The costs: lower bandwidth for large forces (the motor must wind up the spring), lower position stiffness and bandwidth, and more mechanical complexity. Choosing k is the central design decision. It must be stiff enough for the required force bandwidth and position accuracy, and soft enough for impact tolerance and force resolution.</p>
+  <details class="deriv"><summary>Show derivation: output impedance of an SEA</summary><div class="d">
+    <p>The spring and the motor side are in series: the same force passes through both, and their velocities add. Impedances therefore combine like resistors in parallel:</p>
+    <div class="math"><div>1/Z = 1/Z<sub>m</sub> + 1/Z<sub>k</sub>, &nbsp; Z<sub>k</sub> = k/s, &nbsp; Z<sub>m</sub> = m<sub>r</sub>s + b</div></div>
+    <div class="math"><div>Z = Z<sub>m</sub>Z<sub>k</sub>/(Z<sub>m</sub> + Z<sub>k</sub>)</div></div>
+    <p>At low frequency Z<sub>m</sub> is small, so Z ≈ Z<sub>m</sub>: the motor side dominates and feedback can shape it. At high frequency Z<sub>m</sub> grows like m<sub>r</sub>ω while Z<sub>k</sub> falls like k/ω, so Z → k/s: the spring dominates. The crossover is near the motor–spring natural frequency ω = √(k/m<sub>r</sub>).</p>
+  </div></details>
+
+  <h2>Other compliant designs</h2>
+  <ul>
+    <li><strong>Variable stiffness actuators</strong> use antagonistic nonlinear springs or adjustable lever arms to change stiffness on the fly: stiff for precision, soft for safety.</li>
+    <li><strong>Parallel elastic actuators</strong> put a spring alongside the motor to carry gravity or store energy, reducing motor torque.</li>
+    <li><strong>Quasi-direct drives</strong> use high-torque motors with low gear ratios (often below 10:1), so the drive is backdrivable and motor current is a good force estimate, without a physical spring.</li>
+    <li><strong>Flexures</strong> replace bearings with elastic hinges: no friction, no backlash, no wear, but limited range and fatigue limits. A leaf flexure's rotational stiffness is about EI/L, from the same beam theory used for springs.</li>
+  </ul>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>Z(s) = F(s)/V(s)</code><span>Mechanical impedance</span></div>
+    <div class="eq"><code>m<sub>r</sub> = N²J<sub>m</sub>/r²</code><span>Reflected inertia as an output mass</span></div>
+    <div class="eq"><code>F<sub>max</sub> = v√(m·k<sub>e</sub>)</code><span>Peak impact force</span></div>
+    <div class="eq"><code>Z<sub>SEA</sub> = Z<sub>m</sub>Z<sub>k</sub>/(Z<sub>m</sub> + Z<sub>k</sub>), Z<sub>k</sub> = k/s</code><span>Series spring output impedance</span></div>
+    <div class="eq"><code>ω<sub>c</sub> = √(k/m<sub>r</sub>)</code><span>Frequency where the spring takes over</span></div>
+    <div class="eq"><code>F<sub>res</sub> = k·Δx<sub>res</sub></code><span>SEA force resolution</span></div>
+  </div>
+
+  <section class="lab" data-lab="compliant">
+    <div class="lab-head"><span class="lab-tag">Lab 26</span><h3>Rigid versus series elastic output impedance</h3></div>
+    <p class="lab-note">Output impedance magnitude across frequency for a rigid geared drive and the same drive with a series spring, plus the peak force if the output hits a stiff object. Log scales on both axes.</p>
+    <div class="controls" id="c-compliant"></div>
+    <div class="screen"><canvas id="cv-compliant"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Rigid drive |Z|</span><span class="lg"><i style="--c:var(--ch2)"></i>Series elastic |Z|</span><span class="lg"><i class="dash" style="--c:var(--ch5)"></i>√(k/m<sub>r</sub>)</span></div>
+    <div class="readouts" id="ro-compliant"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Raise the reflected mass. The rigid drive's impedance rises everywhere above a few hertz; the SEA's high-frequency impedance doesn't change.</li>
+      <li>Lower the spring stiffness. Impact force and impedance fall, but the crossover frequency drops too, so the force-control bandwidth you can achieve falls with it.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 27 TELEOPERATION ======================= -->
+<section class="view module" id="view-teleop">
+  <p class="lead">In teleoperation a person moves a leader device and a follower robot reproduces the motion, often with forces reflected back to the operator. It is used for hazardous materials handling, space and undersea work, and remote inspection. Every design trades transparency against stability.</p>
+
+  <h2>Architectures</h2>
+  <ul>
+    <li><strong>Unilateral:</strong> the leader commands position and nothing comes back. Simple and stable, with no sense of contact.</li>
+    <li><strong>Position–position (bilateral):</strong> leader and follower are coupled by a virtual spring and damper in both directions. Contact forces are felt through the coupling, with no force sensor needed, but free motion feels heavy and sticky.</li>
+    <li><strong>Position–force:</strong> the follower tracks the leader's position, and a force sensor at the follower drives forces back on the leader. Free motion feels lighter; contact feels sharper and is more prone to instability.</li>
+    <li><strong>Four-channel</strong> (Lawrence): sends both position and force each way. With ideal communication and the right controller gains, it can achieve perfect transparency.</li>
+  </ul>
+  <p>Practical features include <strong>motion scaling</strong> (the follower moves a fraction or multiple of the leader's motion), <strong>force scaling</strong>, <strong>indexing</strong> or clutching (repositioning the leader without moving the follower), and <strong>filtering</strong> of high-frequency hand motion above the voluntary bandwidth.</p>
+
+  <h2>Transparency</h2>
+  <p>Ideal transparency means the operator feels exactly the environment's impedance, Z<sub>t</sub> = Z<sub>e</sub>: free space feels free and a rigid wall feels rigid. Device inertia and friction, finite coupling stiffness, and limited bandwidth all make free space feel heavy and walls feel soft.</p>
+
+  <h2>Stability and passivity</h2>
+  <p>A system is <strong>passive</strong> if it can't produce net energy: ∫F·v dt ≥ −E<sub>0</sub> for some finite stored energy E<sub>0</sub>. Interconnecting passive systems always yields a stable system. The human arm and most environments are treated as passive, so if the teleoperator (the leader, controller, channel and follower together) is passive, the whole loop is stable no matter what the operator touches. That is why passivity is the standard design tool here.</p>
+  <p><strong>Time delay breaks passivity.</strong> Exchanging positions or forces over a delayed channel generates energy, and a stiff coupling with even tens of milliseconds of delay can oscillate. Remedies:</p>
+  <ul>
+    <li><strong>Added damping</strong> on both sides. Simple, but it makes motion sluggish.</li>
+    <li><strong>Wave variables</strong> (scattering transform). Sending u = (F + bv)/√(2b) instead of force and velocity makes the channel passive for any constant delay.</li>
+    <li><strong>Passivity observers and controllers.</strong> Track the energy flowing through the system and inject damping only when it goes negative.</li>
+  </ul>
+  <details class="deriv"><summary>Show derivation: why wave variables make delay passive</summary><div class="d">
+    <p>Define the forward and returning waves from force F and velocity v with a tuning impedance b:</p>
+    <div class="math"><div>u = (F + bv)/√(2b), &nbsp; w = (F − bv)/√(2b) &nbsp;⇒&nbsp; u² − w² = 4bFv/(2b) = 2Fv</div></div>
+    <p>So the power entering the channel is P = Fv = ½(u² − w²). With a delay T, the leader sends u and the follower receives it T later, and the returning wave does likewise. The energy stored in the channel is</p>
+    <div class="math"><div>E(t) = ∫<sub>t−T</sub><sup>t</sup> ½(u<sub>l</sub>² + w<sub>f</sub>²) dτ ≥ 0</div></div>
+    <p>It is nonnegative because it is the energy of the waves in transit. A channel that only stores energy is passive regardless of T. Raw force and velocity sent across the same delay have no such bound.</p>
+  </div></details>
+
+  <h2>Haptic rendering</h2>
+  <p>A haptic device renders a virtual wall as a spring K (and damper B) computed at sample period T. Sampling adds energy, so a stiff virtual wall can buzz. Colgate and Schenkel's result for a device with physical damping b is that the wall is passive when</p>
+  <div class="math"><div>b &gt; K·T/2 + |B|</div></div>
+  <p>The achievable wall stiffness therefore scales with the device's physical damping and the servo rate, which is why haptic loops run at 1 kHz or faster.</p>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>∫F·v dt ≥ −E<sub>0</sub></code><span>Passivity</span></div>
+    <div class="eq"><code>Z<sub>t</sub> = Z<sub>e</sub></code><span>Ideal transparency</span></div>
+    <div class="eq"><code>u = (F + bv)/√(2b), &nbsp; P = ½(u² − w²)</code><span>Wave variables</span></div>
+    <div class="eq"><code>b &gt; KT/2 + |B|</code><span>Passive virtual wall (Colgate–Schenkel)</span></div>
+    <div class="eq"><code>F<sub>c</sub> = K<sub>c</sub>(x<sub>l</sub>(t−T) − x<sub>f</sub>) + B<sub>c</sub>(ẋ<sub>l</sub>(t−T) − ẋ<sub>f</sub>)</code><span>Position–position coupling with delay</span></div>
+  </div>
+
+  <section class="lab" data-lab="teleop">
+    <div class="lab-head"><span class="lab-tag">Lab 27</span><h3>Bilateral teleoperation with delay</h3></div>
+    <p class="lab-note">A one-axis position–position teleoperator. The operator's hand (a stiff spring) moves the leader forward 80 mm, holds, and pulls back. The follower meets a wall at 50 mm. Each side receives the other's position after a one-way delay.</p>
+    <div class="controls" id="c-teleop"></div>
+    <div class="screen"><canvas id="cv-teleop"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Leader position</span><span class="lg"><i style="--c:var(--ch2)"></i>Follower position</span><span class="lg"><i style="--c:var(--ch3)"></i>Contact force (right axis)</span><span class="lg"><i style="--c:var(--ch5)"></i>Force felt by operator (right axis)</span></div>
+    <div class="readouts" id="ro-teleop"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Raise the delay from 10 ms to 20 ms with the default damping. Contact goes unstable.</li>
+      <li>At 40 ms, raise coupling damping to about 40 N·s/m. Contact settles again; in a real system that damping is also felt as drag during free motion, which is the transparency cost.</li>
+      <li>Compare the force felt with the contact force. The coupling spring and damping filter what the operator perceives.</li>
+    </ul></div>
+  </section>
+</section>
+
+<!-- ======================= 28 PARALLEL ======================= -->
+<section class="view module" id="view-parallel">
+  <p class="lead">A parallel mechanism joins a base to a moving platform through several legs, each carrying only part of the load. Compared with serial arms, parallel mechanisms are stiffer, lighter in their moving parts and often more accurate, but they have smaller workspaces and harder forward kinematics.</p>
+
+  <h2>Mobility</h2>
+  <p>The Grübler–Kutzbach criterion counts degrees of freedom from the number of bodies n (including the ground), the number of joints j, and the freedom f<sub>i</sub> each joint allows:</p>
+  <div class="math"><div>M = λ(n − j − 1) + Σf<sub>i</sub>, &nbsp; λ = 3 (planar) or 6 (spatial)</div></div>
+  <p>A planar four-bar has M = 3(4 − 4 − 1) + 4 = 1. A five-bar has M = 3(5 − 5 − 1) + 5 = 2, so it needs two actuators. A Gough–Stewart platform (base, platform, six two-part legs with universal, prismatic and spherical joints) has M = 6(14 − 18 − 1) + 36 = 6. The criterion can be fooled by special geometry, such as parallel axes and redundant constraints, so treat it as a check.</p>
+  <details class="deriv"><summary>Show derivation: Grübler–Kutzbach</summary><div class="d">
+    <p>Before any joints are added, each moving body has λ freedoms: (n − 1)λ in total, since the ground is fixed. A joint allowing f<sub>i</sub> freedoms removes λ − f<sub>i</sub> of them. Summing over all joints:</p>
+    <div class="math"><div>M = λ(n − 1) − Σ(λ − f<sub>i</sub>) = λ(n − 1 − j) + Σf<sub>i</sub></div></div>
+    <p>It assumes every constraint is independent. When geometry makes some constraints redundant, real mobility is higher than the count, as with the Bennett linkage and other overconstrained mechanisms.</p>
+  </div></details>
+
+  <h2>Kinematics reverse roles</h2>
+  <p>For a serial arm, forward kinematics is easy and inverse is hard. For a parallel mechanism it's the opposite. <strong>Inverse kinematics</strong> is easy: given the platform pose, each leg can be solved independently, and for a Stewart platform each leg length is just the distance between its two attachment points. <strong>Forward kinematics</strong> is hard: it means solving the legs' constraint equations simultaneously, and has multiple solutions called assembly modes. A general Stewart platform can have up to 40. A planar five-bar has two assembly modes for a given pair of actuator angles, and each leg also has two working modes (elbow in or out).</p>
+
+  <h2>Two kinds of singularity</h2>
+  <p>Differentiating the leg constraints gives a velocity relation A·ẋ + B·q̇ = 0, where x is the platform pose and q the actuated joints.</p>
+  <ul>
+    <li><strong>Type I (serial) singularity: det B = 0.</strong> A leg is fully stretched or folded. The platform loses the ability to move in some direction, as at a serial arm's workspace boundary.</li>
+    <li><strong>Type II (parallel) singularity: det A = 0.</strong> The platform gains a direction it can move with all actuators locked, and in that direction it can't resist force. These lie inside the workspace and must be kept out of the operating region.</li>
+  </ul>
+  <details class="deriv"><summary>Show derivation: five-bar velocity relation</summary><div class="d">
+    <p>Leg i has a base joint at b<sub>i</sub>, a proximal link of length L<sub>1</sub> at actuated angle q<sub>i</sub>, and an elbow at c<sub>i</sub> = b<sub>i</sub> + L<sub>1</sub>(cos q<sub>i</sub>, sin q<sub>i</sub>). Its distal link of length L<sub>2</sub> reaches the shared tool point p, so the constraint is</p>
+    <div class="math"><div>‖p − c<sub>i</sub>‖² = L<sub>2</sub>²</div></div>
+    <p>Differentiate, with ċ<sub>i</sub> = L<sub>1</sub>(−sin q<sub>i</sub>, cos q<sub>i</sub>)q̇<sub>i</sub>:</p>
+    <div class="math"><div>(p − c<sub>i</sub>)<sup>T</sup>ṗ − (p − c<sub>i</sub>)<sup>T</sup>L<sub>1</sub>(−sin q<sub>i</sub>, cos q<sub>i</sub>)·q̇<sub>i</sub> = 0</div></div>
+    <p>Stacking the two legs: the rows of A are (p − c<sub>i</sub>)<sup>T</sup>, and B is diagonal with entries −(p − c<sub>i</sub>)·L<sub>1</sub>(−sin q<sub>i</sub>, cos q<sub>i</sub>). B<sub>ii</sub> = 0 when the distal link is parallel to the proximal link (leg stretched or folded): Type I. det A = 0 when the two distal links are collinear: the tool can slide perpendicular to that line with the actuators locked, which is Type II.</p>
+  </div></details>
+
+  <h2>Where they're used</h2>
+  <ul>
+    <li><strong>Delta robots</strong> use three parallelogram legs to keep the platform level while it translates. Their very low moving mass gives pick-and-place speeds of several picks per second.</li>
+    <li><strong>Hexapods</strong> (Stewart platforms) provide six-axis positioning for flight and driving simulators, optical alignment and machine tools.</li>
+    <li><strong>Five-bar and other planar mechanisms</strong> serve as fast two-axis stages, haptic devices and pantograph-style drives.</li>
+  </ul>
+  <p>The stiffness advantage comes from the legs sharing load mostly in tension and compression rather than bending. Their accuracy depends on careful calibration of the attachment-point geometry.</p>
+
+  <div class="eqs" data-eqs><div class="eqs-title">Key relations</div>
+    <div class="eq"><code>M = λ(n − j − 1) + Σf<sub>i</sub></code><span>Grübler–Kutzbach mobility</span></div>
+    <div class="eq"><code>A·ẋ + B·q̇ = 0</code><span>Parallel mechanism velocity relation</span></div>
+    <div class="eq"><code>det B = 0</code><span>Type I (serial) singularity</span></div>
+    <div class="eq"><code>det A = 0</code><span>Type II (parallel) singularity</span></div>
+    <div class="eq"><code>‖p − c<sub>i</sub>‖ = L<sub>2</sub></code><span>Five-bar leg constraint</span></div>
+  </div>
+
+  <section class="lab" data-lab="parallel">
+    <div class="lab-head"><span class="lab-tag">Lab 28</span><h3>Five-bar parallel mechanism</h3></div>
+    <p class="lab-note">Two motors at the base drive a shared tool point through two legs. Drag the tool point and the inverse kinematics positions each leg. Choose each leg's working mode, and watch the singularity indicators.</p>
+    <div class="controls" id="c-parallel"></div>
+    <div class="screen tall drag"><canvas id="cv-parallel"></canvas></div>
+    <div class="legend"><span class="lg"><i style="--c:var(--ch1)"></i>Left leg</span><span class="lg"><i style="--c:var(--ch2)"></i>Right leg</span><span class="lg"><i style="--c:var(--ch3)"></i>Tool point</span><span class="lg"><i class="dash" style="--c:var(--scope-text)"></i>Reach limits of each leg</span></div>
+    <div class="readouts" id="ro-parallel"></div>
+    <div class="try"><strong>Try this</strong><ul>
+      <li>Drag the tool point toward the outer edge of a leg's reach. det B heads to zero: a Type I singularity.</li>
+      <li>Drag the point until the two distal links line up. det A heads to zero: a Type II singularity, inside the workspace.</li>
+      <li>Flip one leg's working mode. The motor angles change completely for the same tool position.</li>
+    </ul></div>
+  </section>
+</section>
   </main>
 </div>
 <script>
@@ -1600,7 +2334,7 @@ float pid_update(PID *c, float ref, float meas, float u_ff) {
 /* ================= course data ================= */
 const PARTS = {
   I:["Part I","Mechanics fundamentals"], II:["Part II","Electronics"], III:["Part III","Embedded & signals"], IV:["Part IV","Sensors"],
-  V:["Part V","Actuators"], VI:["Part VI","Power transmission"], VII:["Part VII","Modeling & control"], VIII:["Part VIII","Integration"], IX:["Part IX","Machine elements"]
+  V:["Part V","Actuators"], VI:["Part VI","Power transmission"], VII:["Part VII","Modeling & control"], VIII:["Part VIII","Integration"], IX:["Part IX","Machine elements"], X:["Part X","Robot manipulators"], XI:["Part XI","Robot mechanisms"]
 };
 const MODULES = [
   {id:"rotation", part:"I", title:"Rotational dynamics & power", mins:20, builds:[], desc:"Rotary forms of Newton, inertia, the torque budget, power and stored energy."},
@@ -1620,7 +2354,17 @@ const MODULES = [
   {id:"sizing", part:"VIII", title:"Motion profiles & motor sizing", mins:35, builds:[1,8,10], desc:"Trapezoidal moves, peak and RMS torque, and the selection loop."},
   {id:"shafts", part:"IX", title:"Shafts, keys & couplings", mins:45, builds:[1,10,13], desc:"Marin factors, notch sensitivity, DE-Goodman, stiffness, critical speed and hub connections."},
   {id:"bearings", part:"IX", title:"Bearings & linear guides", mins:40, builds:[1,15,16], desc:"L10 life, equivalent and cubic-mean loads, fits, location, preload and profile rails."},
-  {id:"elements", part:"IX", title:"Screws, belts & gear strength", mins:45, builds:[10,15,16], desc:"Thread torque and self-locking, buckling and whip, belt tension, Lewis and Hertz."}
+  {id:"elements", part:"IX", title:"Screws, belts & gear strength", mins:45, builds:[10,15,16], desc:"Thread torque and self-locking, buckling and whip, belt tension, Lewis and Hertz."},
+  {id:"rigid", part:"X", title:"Rigid-body motion", mins:45, builds:[1], desc:"Rotation matrices, Euler angles, Rodrigues' formula, quaternions and homogeneous transforms."},
+  {id:"fk", part:"X", title:"Forward kinematics", mins:40, builds:[19], desc:"Kinematic chains, Denavit–Hartenberg parameters and the product of exponentials."},
+  {id:"jacobian", part:"X", title:"Jacobians & singularities", mins:45, builds:[20], desc:"Velocity kinematics, τ = JᵀF, singularities and the manipulability ellipsoid."},
+  {id:"ik", part:"X", title:"Inverse kinematics & trajectories", mins:45, builds:[20,21], desc:"Analytic and numerical IK, damped least squares, redundancy, cubic and quintic paths."},
+  {id:"robodyn", part:"X", title:"Manipulator dynamics", mins:50, builds:[1,21], desc:"Lagrangian derivation, M(q), Coriolis and gravity terms, and their structural properties."},
+  {id:"robocontrol", part:"X", title:"Robot control", mins:50, builds:[12,23], desc:"PD with gravity compensation, computed torque, task-space and impedance control."},
+  {id:"tendons", part:"XI", title:"Cable & tendon transmissions", mins:35, builds:[18,21], desc:"Capstan friction, cable stiffness and pretension, routing matrices and hysteresis."},
+  {id:"compliant", part:"XI", title:"Series-elastic & compliant actuation", mins:35, builds:[8,13,24], desc:"Mechanical impedance, impact force, SEAs, quasi-direct drive and flexures."},
+  {id:"teleop", part:"XI", title:"Teleoperation & haptics", mins:40, builds:[13,24], desc:"Bilateral architectures, transparency, passivity, wave variables and virtual walls."},
+  {id:"parallel", part:"XI", title:"Parallel mechanisms", mins:40, builds:[20,21], desc:"Mobility, reversed kinematics, Type I and Type II singularities, five-bars and hexapods."}
 ];
 MODULES.forEach((m,i)=>{ m.n=i+1; });
 const pad = n => String(n).padStart(2,"0");
@@ -1733,6 +2477,66 @@ elements:[
  {q:"A long ball screw is fixed at one end and supported at the other. Switching to fixed–fixed raises its buckling load by about:", o:["The same","1.2×","2×","4×"], a:2, why:"The buckling constant goes from 2 (fixed–supported) to 4 (fixed–fixed)."},
  {q:"A timing belt delivers 10 N·m from a 40 mm pitch-diameter pulley. What is the effective pull?", o:["250 N","500 N","400 N","50 N"], a:1, why:"T_e = 2T/d = 2 × 10 / 0.04 = 500 N."},
  {q:"For through-hardened steel spur gears, which failure usually governs a first-pass design?", o:["Tooth bending","Surface pitting from contact stress","Shaft torsion","Key shear"], a:1, why:"Contact stress grows with the square root of load but the allowable grows only linearly with hardness, so pitting usually limits hardened gears."}
+],
+rigid:[
+ {q:"Which property must every rotation matrix R satisfy?", o:["R = Rᵀ","RᵀR = I and det R = +1","det R = 0","All entries are between 0 and 1"], a:1, why:"Its columns are orthonormal unit vectors of a right-handed frame, so RᵀR = I and det R = +1."},
+ {q:"You rotate a body 30° about its own (moving) x-axis after an earlier rotation R. The new orientation is:", o:["Rx(30°)·R","R·Rx(30°)","R + Rx(30°)","Rx(30°)ᵀ·R"], a:1, why:"Rotations about the current frame multiply on the right; rotations about the fixed frame multiply on the left."},
+ {q:"With Z–Y–X angles, at what pitch does gimbal lock occur?", o:["0°","±45°","±90°","180°"], a:2, why:"At θ = ±90° the first and third rotations act about the same axis, so only their sum or difference is defined."},
+ {q:"A rotation matrix has trace 2. What is the rotation angle?", o:["0°","60°","90°","120°"], a:1, why:"tr R = 1 + 2cos θ, so cos θ = 0.5 and θ = 60°."}
+],
+fk:[
+ {q:"In the standard DH convention, which parameter is the joint variable for a prismatic joint?", o:["θᵢ","dᵢ","aᵢ","αᵢ"], a:1, why:"dᵢ is the offset along z_{i−1}, the direction a prismatic joint slides."},
+ {q:"A planar 3R arm has θ₁ = 30°, θ₂ = 60°, θ₃ = −90°. What is the tool orientation φ?", o:["0°","90°","180°","−30°"], a:0, why:"For a planar serial arm, φ = θ₁ + θ₂ + θ₃ = 0°."},
+ {q:"What is the most common source of forward-kinematics bugs with DH parameters?", o:["Using radians","Mixing the standard and modified DH conventions","Too many joints","Using homogeneous coordinates"], a:1, why:"The two conventions place frames and order the operations differently, so a table from one doesn't fit the other's matrix."},
+ {q:"In the product-of-exponentials form, what is M?", o:["The mass matrix","The tool pose with all joints at zero","The Jacobian","A rotation about z"], a:1, why:"M is the home configuration; each exponential moves it by one joint's screw motion."}
+],
+jacobian:[
+ {q:"For a 2R planar arm, det J = L₁L₂ sin θ₂. Where is it singular?", o:["θ₁ = 0","θ₂ = 0 or 180°","θ₂ = 90°","Nowhere"], a:1, why:"sin θ₂ = 0 when the arm is fully stretched or folded."},
+ {q:"How do joint torques relate to a tool force F in static equilibrium?", o:["τ = JF","τ = J⁻¹F","τ = JᵀF","τ = FᵀJ⁻ᵀ"], a:2, why:"Virtual work: τᵀδq = Fᵀδx = FᵀJδq for all δq, so τ = JᵀF."},
+ {q:"Near a singularity, the velocity ellipsoid gets flat in one direction. The force ellipsoid in that direction:", o:["Also gets flat","Gets very long","Disappears","Is unaffected"], a:1, why:"Force ellipsoid half-lengths are 1/σᵢ, the reciprocal of velocity ones: slow directions are strong directions."},
+ {q:"What does a large condition number κ = σmax/σmin indicate?", o:["The arm is fast","Motion and force capability are very uneven across directions, and IK is ill-conditioned","The arm is isotropic","High payload"], a:1, why:"κ = 1 is isotropic; large κ means the arm is close to a singularity."}
+],
+ik:[
+ {q:"For a 2R arm, (x² + y² − L₁² − L₂²)/(2L₁L₂) evaluates to 1.3. What does that mean?", o:["Elbow-up solution","Two solutions","The target is out of reach","A singularity at the origin"], a:2, why:"That expression is cos θ₂, and |cos θ₂| > 1 has no solution."},
+ {q:"What does damping λ in damped least squares trade off?", o:["Speed for torque","Accuracy near singularities for bounded joint motion","Elbow-up for elbow-down","Position for orientation"], a:1, why:"Each 1/σ becomes σ/(σ² + λ²), which stays finite at σ = 0 but no longer exactly inverts J."},
+ {q:"In redundancy resolution q̇ = J⁺ẋ + (I − J⁺J)z, what does the second term do?", o:["Moves the tool faster","Moves the joints without moving the tool","Adds gravity compensation","Removes singularities"], a:1, why:"(I − J⁺J) projects onto the null space of J, so tool velocity is unchanged."},
+ {q:"Why prefer a quintic to a cubic point-to-point trajectory?", o:["Shorter move time","Zero acceleration at the endpoints, so no infinite jerk","Lower peak velocity","It needs no boundary conditions"], a:1, why:"The cubic's acceleration jumps from 0 to 6Δ/T² at the start; the quintic starts and ends with zero acceleration."}
+],
+robodyn:[
+ {q:"Which statement about the inertia matrix M(q) is true?", o:["It's constant for any robot","It's symmetric and positive definite","It can be singular in normal poses","It contains the gravity terms"], a:1, why:"Kinetic energy ½q̇ᵀMq̇ is positive for any nonzero motion, so M is positive definite, and it is symmetric by construction."},
+ {q:"For the 2-link arm, which inertia entry changes with θ₂?", o:["Only M₂₂","M₁₁ and M₁₂","None","Only gravity terms"], a:1, why:"Both contain L₁l_c2·cos θ₂; folding the arm brings link 2's mass closer to joint 1."},
+ {q:"What does the skew-symmetry of Ṁ − 2C express physically?", o:["Gravity is conservative","The Coriolis and centrifugal terms do no net work","Joints are decoupled","Friction is zero"], a:1, why:"xᵀ(Ṁ − 2C)x = 0, so with no torque and no gravity, kinetic energy is constant."},
+ {q:"Why does independent-joint PID work well on many high-ratio industrial arms?", o:["They have no gravity","Reflected motor inertia N²J_m dominates the diagonal of M, swamping the coupling","They run slowly by law","They use quaternions"], a:1, why:"With large N, each joint mostly sees its own motor inertia, so cross-coupling acts like a small disturbance."}
+],
+robocontrol:[
+ {q:"PD with gravity compensation regulates to a fixed target without integral action because:", o:["Gravity is cancelled by the model, so no steady torque has to come from the error","The derivative term removes offset","Kp is infinite","It uses the full M(q)"], a:0, why:"With g(q) supplied by feedforward, the spring term only has to be zero at rest, so e = 0."},
+ {q:"With a perfect model, computed torque makes the joint errors behave like:", o:["Coupled nonlinear oscillators","Independent linear mass–spring–dampers","Pure integrators","First-order lags"], a:1, why:"Substituting the law gives ë + Kd·ė + Kp·e = 0 for each joint."},
+ {q:"Impedance control commanded δ past a wall much stiffer than K gives a steady contact force of about:", o:["k_w·δ","K·δ","0","(K + k_w)·δ"], a:1, why:"F = K·k_w·δ/(K + k_w), which approaches K·δ when k_w ≫ K."},
+ {q:"Which suits a geared, non-backdrivable arm with a wrist force sensor working against soft materials?", o:["Impedance control","Admittance control","Computed torque only","Open-loop torque control"], a:1, why:"Admittance control turns measured force into a motion command for the stiff position loop such arms already have."}
+],
+tendons:[
+ {q:"A cable slides around 360° of total bends with μ = 0.1. What fraction of input tension reaches the far end?", o:["About 90%","About 73%","About 53%","About 10%"], a:2, why:"e^(−0.1 × 2π) = e^(−0.63) ≈ 0.53."},
+ {q:"An antagonistic cable pair has cable stiffness k on a pulley of radius r. The joint stiffness is:", o:["kr","kr²","2kr²","k/r²"], a:2, why:"Rotation δθ stretches one cable and relaxes the other by rδθ each; both contribute torque, so k_θ = 2kr²."},
+ {q:"A joint needs up to 2 N·m on a 10 mm radius pulley. Minimum pretension per cable to avoid slack?", o:["20 N","100 N","200 N","400 N"], a:1, why:"T₀ > τ/(2r) = 2/(2 × 0.01) = 100 N, plus margin."},
+ {q:"How can routing remove coupling between joints?", o:["Use thicker cable","Route distal cables through the proximal joint's axis","Increase pretension","Use more pulleys"], a:1, why:"A cable through a joint axis keeps its path length constant as that joint rotates."}
+],
+compliant:[
+ {q:"A 20 kg reflected mass hits a 1 MN/m surface at 0.5 m/s. Peak force is about:", o:["2.2 kN","10 kN","500 N","20 kN"], a:0, why:"F = v√(mk) = 0.5 × √(2 × 10⁷) ≈ 2.2 kN."},
+ {q:"At high frequency, the output impedance of a series elastic actuator approaches:", o:["The reflected motor inertia","The spring, k/s","Zero","Infinity"], a:1, why:"In series, the softer element dominates; above √(k/m_r) that's the spring."},
+ {q:"What is the main cost of a softer series spring?", o:["Worse force resolution","Lower force-control and position bandwidth","More impact force","More backlash"], a:1, why:"The motor must move further to change force, and the spring–motor resonance drops."},
+ {q:"How does a quasi-direct-drive actuator get good force control without a spring?", o:["High gear ratio","Low gear ratio, so it's backdrivable and current tracks torque","A load cell in every joint","Hydraulics"], a:1, why:"Low ratios keep reflected inertia and friction small, so motor current is a good torque estimate."}
+],
+teleop:[
+ {q:"Why is passivity the standard stability tool in teleoperation?", o:["It makes the system faster","Connecting passive systems is always stable, and humans and environments are treated as passive","It removes the need for sensors","It guarantees transparency"], a:1, why:"If the teleoperator is passive, stability holds for any passive operator or environment it touches."},
+ {q:"What does constant time delay do to a position–position coupling?", o:["Nothing","It can generate energy and destabilize contact","It improves transparency","It only affects force scaling"], a:1, why:"Exchanging raw positions or forces over a delay breaks passivity; stiff coupling then oscillates."},
+ {q:"A haptic device has physical damping b = 2 N·s/m and runs at 1 kHz. Ignoring virtual damping, the maximum passive wall stiffness is about:", o:["2 N/m","4 kN/m","2 kN/m","400 N/m"], a:1, why:"b > KT/2 ⇒ K < 2b/T = 2 × 2/0.001 = 4000 N/m."},
+ {q:"What do wave variables achieve?", o:["Remove delay","Make the communication channel passive for any constant delay","Increase stiffness","Eliminate the need for damping entirely"], a:1, why:"The channel only stores the energy of waves in transit, which is nonnegative."}
+],
+parallel:[
+ {q:"A planar mechanism has 5 bodies (including ground) and 5 revolute joints in a loop. Its mobility is:", o:["1","2","3","0"], a:1, why:"M = 3(5 − 5 − 1) + 5 = 2: the five-bar needs two actuators."},
+ {q:"For a parallel mechanism, which kinematic problem is usually easy?", o:["Forward kinematics","Inverse kinematics","Both","Neither"], a:1, why:"Given the platform pose, each leg is solved independently."},
+ {q:"What happens at a Type II (parallel) singularity?", o:["The platform can't move in some direction","The platform gains a free motion with actuators locked and can't resist some forces","The motors saturate","Nothing important"], a:1, why:"det A = 0 means some platform velocity satisfies the constraints with q̇ = 0."},
+ {q:"Why are delta robots so fast?", o:["Large motors on the platform","Motors stay on the base and the moving parts are light","They use hydraulics","They have six legs"], a:1, why:"Low moving mass means high acceleration for the same motor torque."}
 ]
 };
 
@@ -1915,7 +2719,7 @@ function controls(boxId, defs, onChange){
   return {vals, set:(k,v)=>setters[k]&&setters[k](v)};
 }
 function readouts(id, items){
-  $(id).innerHTML = items.map(([k,v,c])=>`<div class="ro"><span class="k">${k}</span><span class="v">${v}</span>${c?`<span class="chip ${c[0]}">${c[1]}</span>`:""}</div>`).join("");
+  $(id).innerHTML = items.map(([k,v,c,w])=>`<div class="ro${w?" wide":""}"><span class="k">${k}</span><span class="v">${v}</span>${c?`<span class="chip ${c[0]}">${c[1]}</span>`:""}</div>`).join("");
 }
 function chip(ok, warn, okText, warnText, badText){ return ok?["good",okText]:warn?["warn",warnText]:["bad",badText]; }
 
@@ -2977,6 +3781,488 @@ defineSim("elements",()=>{
   }
   gro2();
   return {render};
+});
+
+/* ================= robotics helpers ================= */
+const D2R=Math.PI/180, R2D=180/Math.PI;
+function worldView(ctx, R, ext, ox=0, oy=0){
+  const s=Math.min(R.w,R.h)/(2*ext), cx=R.x+R.w/2-ox*s, cy=R.y+R.h/2+oy*s;
+  const P=(x,y)=>[cx+x*s, cy-y*s], inv=(px,py)=>[(px-cx)/s,(cy-py)/s];
+  ctx.save(); ctx.beginPath(); ctx.rect(R.x,R.y,R.w,R.h); ctx.clip();
+  const step=niceStep(2*ext,6), grid=cssVar("--scope-grid"), axis=cssVar("--scope-axis");
+  ctx.lineWidth=1; ctx.strokeStyle=grid;
+  const [x0w,y1w]=inv(R.x,R.y), [x1w,y0w]=inv(R.x+R.w,R.y+R.h);
+  for(let v=Math.ceil(x0w/step)*step; v<=x1w; v+=step){ const [px]=P(v,0); ctx.beginPath(); ctx.moveTo(Math.round(px)+.5,R.y); ctx.lineTo(Math.round(px)+.5,R.y+R.h); ctx.stroke(); }
+  for(let v=Math.ceil(y0w/step)*step; v<=y1w; v+=step){ const [,py]=P(0,v); ctx.beginPath(); ctx.moveTo(R.x,Math.round(py)+.5); ctx.lineTo(R.x+R.w,Math.round(py)+.5); ctx.stroke(); }
+  ctx.strokeStyle=axis; const [ax,ay]=P(0,0);
+  ctx.beginPath(); ctx.moveTo(R.x,ay); ctx.lineTo(R.x+R.w,ay); ctx.moveTo(ax,R.y); ctx.lineTo(ax,R.y+R.h); ctx.stroke();
+  ctx.fillStyle=cssVar("--scope-text"); ctx.font='11px "IBM Plex Mono", monospace'; ctx.textAlign="left"; ctx.textBaseline="top";
+  ctx.fillText("grid "+(step>=1?step:step*1000)+(step>=1?" m":" mm"),R.x+6,R.y+5);
+  ctx.restore();
+  return {P,inv,s};
+}
+function armFrame(cv, ext, ox=0, oy=0){ const p=prepCanvas(cv); if(!p) return null; const v=worldView(p.ctx,{x:0,y:0,w:p.W,h:p.H},ext,ox,oy); return Object.assign(v,{ctx:p.ctx,W:p.W,H:p.H}); }
+function drawChain(ctx,P,pts,color,width=5,alpha=1){
+  ctx.save(); ctx.globalAlpha=alpha; ctx.strokeStyle=col(color); ctx.lineWidth=width; ctx.lineCap="round"; ctx.lineJoin="round";
+  ctx.beginPath(); pts.forEach((p,i)=>{ const [x,y]=P(p[0],p[1]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke();
+  ctx.fillStyle=cssVar("--scope-bg"); ctx.lineWidth=2;
+  pts.forEach((p,i)=>{ if(i===pts.length-1) return; const [x,y]=P(p[0],p[1]); ctx.beginPath(); ctx.arc(x,y,Math.max(3.5,width*0.9),0,TAU); ctx.fill(); ctx.stroke(); });
+  ctx.restore();
+}
+function circleW(ctx,P,s,cx,cy,r,color,dash=[4,4],w=1){ const [x,y]=P(cx,cy); ctx.save(); ctx.strokeStyle=col(color); ctx.setLineDash(dash); ctx.lineWidth=w; ctx.beginPath(); ctx.arc(x,y,Math.max(0,r*s),0,TAU); ctx.stroke(); ctx.restore(); }
+function dotW(ctx,P,x,y,color,r=5){ const [a,b]=P(x,y); ctx.fillStyle=col(color); ctx.beginPath(); ctx.arc(a,b,r,0,TAU); ctx.fill(); }
+function arrowW(ctx,P,x,y,dx,dy,color,w=2){ const [a,b]=P(x,y),[c,d]=P(x+dx,y+dy); ctx.save(); ctx.strokeStyle=col(color); ctx.fillStyle=col(color); ctx.lineWidth=w; ctx.beginPath(); ctx.moveTo(a,b); ctx.lineTo(c,d); ctx.stroke(); const ang=Math.atan2(d-b,c-a); ctx.beginPath(); ctx.moveTo(c,d); ctx.lineTo(c-8*Math.cos(ang-0.4),d-8*Math.sin(ang-0.4)); ctx.lineTo(c-8*Math.cos(ang+0.4),d-8*Math.sin(ang+0.4)); ctx.closePath(); ctx.fill(); ctx.restore(); }
+function dragOn(cv, getInv, onMove){
+  let down=false;
+  const mv=e=>{ const inv=getInv(); if(!inv) return; const r=cv.getBoundingClientRect(); const [x,y]=inv(e.clientX-r.left,e.clientY-r.top); onMove(x,y); };
+  cv.addEventListener("pointerdown",e=>{ down=true; try{cv.setPointerCapture(e.pointerId);}catch(_){} mv(e); });
+  cv.addEventListener("pointermove",e=>{ if(down) mv(e); });
+  ["pointerup","pointercancel","pointerleave"].forEach(t=>cv.addEventListener(t,()=>{ down=false; }));
+}
+function matHTML(rows,d=3){ const c=rows[0].length; return `<span class="mat" style="--c:${c}">`+rows.flat().map(v=>`<span>${typeof v==="number"?(Math.abs(v)<5e-13?0:v).toFixed(d):v}</span>`).join("")+`</span>`; }
+const mm3=(A,B)=>A.map((r,i)=>B[0].map((_,j)=>r.reduce((s,_,k)=>s+A[i][k]*B[k][j],0)));
+const Rx=a=>[[1,0,0],[0,Math.cos(a),-Math.sin(a)],[0,Math.sin(a),Math.cos(a)]];
+const Ry=a=>[[Math.cos(a),0,Math.sin(a)],[0,1,0],[-Math.sin(a),0,Math.cos(a)]];
+const Rz=a=>[[Math.cos(a),-Math.sin(a),0],[Math.sin(a),Math.cos(a),0],[0,0,1]];
+function quatFromR(R){
+  const t=R[0][0]+R[1][1]+R[2][2]; let w,x,y,z,S;
+  if(t>0){ S=Math.sqrt(t+1)*2; w=.25*S; x=(R[2][1]-R[1][2])/S; y=(R[0][2]-R[2][0])/S; z=(R[1][0]-R[0][1])/S; }
+  else if(R[0][0]>R[1][1]&&R[0][0]>R[2][2]){ S=Math.sqrt(1+R[0][0]-R[1][1]-R[2][2])*2; w=(R[2][1]-R[1][2])/S; x=.25*S; y=(R[0][1]+R[1][0])/S; z=(R[0][2]+R[2][0])/S; }
+  else if(R[1][1]>R[2][2]){ S=Math.sqrt(1+R[1][1]-R[0][0]-R[2][2])*2; w=(R[0][2]-R[2][0])/S; x=(R[0][1]+R[1][0])/S; y=.25*S; z=(R[1][2]+R[2][1])/S; }
+  else { S=Math.sqrt(1+R[2][2]-R[0][0]-R[1][1])*2; w=(R[1][0]-R[0][1])/S; x=(R[0][2]+R[2][0])/S; y=(R[1][2]+R[2][1])/S; z=.25*S; }
+  if(w<0){ w=-w; x=-x; y=-y; z=-z; } return [w,x,y,z];
+}
+function fk2(q1,q2,L1,L2){ return [[0,0],[L1*Math.cos(q1),L1*Math.sin(q1)],[L1*Math.cos(q1)+L2*Math.cos(q1+q2),L1*Math.sin(q1)+L2*Math.sin(q1+q2)]]; }
+function J2(q1,q2,L1,L2){ const s1=Math.sin(q1),c1=Math.cos(q1),s12=Math.sin(q1+q2),c12=Math.cos(q1+q2); return [[-L1*s1-L2*s12,-L2*s12],[L1*c1+L2*c12,L2*c12]]; }
+function ik2(x,y,L1,L2){ const c2=(x*x+y*y-L1*L1-L2*L2)/(2*L1*L2); if(Math.abs(c2)>1) return null;
+  return [1,-1].map(sg=>{ const s2=sg*Math.sqrt(1-c2*c2), q2=Math.atan2(s2,c2), q1=Math.atan2(y,x)-Math.atan2(L2*s2,L1+L2*c2); return [q1,q2]; }); }
+const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a));
+
+/* ================= 19 rigid ================= */
+defineSim("rigid",()=>{
+  const cv=$("cv-rigid"); let az=0.75, el=0.42;
+  const c=controls("c-rigid",[
+    {id:"yaw",label:"Yaw ψ (about z)",min:-180,max:180,step:1,value:30,fmt:v=>v.toFixed(0)+"°"},
+    {id:"pitch",label:"Pitch θ (about y)",min:-90,max:90,step:1,value:20,fmt:v=>v.toFixed(0)+"°"},
+    {id:"roll",label:"Roll φ (about x)",min:-180,max:180,step:1,value:40,fmt:v=>v.toFixed(0)+"°"},
+    {id:"ord",type:"seg",label:"Product order",value:"zyx",options:[{label:"Rz·Ry·Rx",value:"zyx"},{label:"Rx·Ry·Rz",value:"xyz"}]}
+  ],render);
+  function rot(){ const v=c.vals, a=v.yaw*D2R, b=v.pitch*D2R, g=v.roll*D2R; return v.ord==="zyx"?mm3(mm3(Rz(a),Ry(b)),Rx(g)):mm3(mm3(Rx(g),Ry(b)),Rz(a)); }
+  function render(){
+    const p=prepCanvas(cv); if(!p) return; const {ctx,W,H}=p, R=rot();
+    const e1=[-Math.sin(az),Math.cos(az),0], e2=[-Math.sin(el)*Math.cos(az),-Math.sin(el)*Math.sin(az),Math.cos(el)], dv=[Math.cos(el)*Math.cos(az),Math.cos(el)*Math.sin(az),Math.sin(el)];
+    const S=Math.min(W,H)*0.3, cx=W/2, cy=H/2+10;
+    const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+    const pr=v=>[cx+S*dot(v,e1), cy-S*dot(v,e2)];
+    const rv=v=>[R[0][0]*v[0]+R[0][1]*v[1]+R[0][2]*v[2],R[1][0]*v[0]+R[1][1]*v[1]+R[1][2]*v[2],R[2][0]*v[0]+R[2][1]*v[1]+R[2][2]*v[2]];
+    const txt=cssVar("--scope-text");
+    // world axes
+    ctx.lineWidth=1.2; ctx.setLineDash([4,4]); ctx.strokeStyle=txt; ctx.globalAlpha=.6;
+    [[1.5,0,0],[0,1.5,0],[0,0,1.5]].forEach((a,i)=>{ const [x0,y0]=pr([0,0,0]),[x1,y1]=pr(a); ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.fillStyle=txt; ctx.font='11px "IBM Plex Mono", monospace'; ctx.fillText(["X₀","Y₀","Z₀"][i],x1+4,y1); });
+    ctx.setLineDash([]); ctx.globalAlpha=1;
+    // plate
+    const hx=.85,hy=.55,hz=.08, C=[]; for(const sx of [-1,1]) for(const sy of [-1,1]) for(const sz of [-1,1]) C.push(rv([sx*hx,sy*hy,sz*hz]));
+    const F=[[0,1,3,2],[4,5,7,6],[0,1,5,4],[2,3,7,6],[0,2,6,4],[1,3,7,5]];
+    F.map(f=>({f,d:f.reduce((s,i)=>s+dot(C[i],dv),0)})).sort((a,b)=>a.d-b.d).forEach(({f})=>{
+      ctx.beginPath(); f.forEach((i,k)=>{ const [x,y]=pr(C[i]); k?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.closePath();
+      ctx.fillStyle="rgba(190,215,208,.13)"; ctx.fill(); ctx.strokeStyle="rgba(190,215,208,.45)"; ctx.lineWidth=1; ctx.stroke(); });
+    // rotation axis
+    const [qw,qx,qy,qz]=quatFromR(R), th=2*Math.acos(clamp(qw,-1,1)), sn=Math.sin(th/2);
+    if(th>1*D2R){ const ax=[qx/sn,qy/sn,qz/sn]; const [a0,b0]=pr(ax.map(v=>-1.6*v)),[a1,b1]=pr(ax.map(v=>1.6*v)); ctx.strokeStyle=cssVar("--ch1"); ctx.lineWidth=2.4; ctx.setLineDash([8,5]); ctx.beginPath(); ctx.moveTo(a0,b0); ctx.lineTo(a1,b1); ctx.stroke(); ctx.setLineDash([]); }
+    // body axes
+    [["--ch3",[1.25,0,0],"x"],["--ch5",[0,1.25,0],"y"],["--ch4",[0,0,1.25],"z"]].forEach(([cc,v,l])=>{ const [x0,y0]=pr([0,0,0]),[x1,y1]=pr(rv(v)); ctx.strokeStyle=cssVar(cc); ctx.fillStyle=cssVar(cc); ctx.lineWidth=3.5; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.beginPath(); ctx.arc(x1,y1,4,0,TAU); ctx.fill(); ctx.font='600 12px "IBM Plex Mono", monospace'; ctx.fillText(l,x1+6,y1-4); });
+    ctx.fillStyle=txt; ctx.font='11px "IBM Plex Mono", monospace'; ctx.fillText("drag to orbit",8,H-10);
+    // readouts
+    const thp=-Math.asin(clamp(R[2][0],-1,1)), lock=Math.abs(Math.cos(thp))<0.02;
+    const ext= lock?"undefined (gimbal lock)":`ψ ${fx(Math.atan2(R[1][0],R[0][0])*R2D,1)}°, θ ${fx(thp*R2D,1)}°, φ ${fx(Math.atan2(R[2][1],R[2][2])*R2D,1)}°`;
+    const det=R[0][0]*(R[1][1]*R[2][2]-R[1][2]*R[2][1])-R[0][1]*(R[1][0]*R[2][2]-R[1][2]*R[2][0])+R[0][2]*(R[1][0]*R[2][1]-R[1][1]*R[2][0]);
+    readouts("ro-rigid",[
+      ["Rotation matrix R",matHTML(R,3),null,true],
+      ["Axis–angle",th>1e-6?`${fx(th*R2D,1)}° about (${fx(qx/sn,3)}, ${fx(qy/sn,3)}, ${fx(qz/sn,3)})`:"identity"],
+      ["Quaternion (w, x, y, z)",`(${fx(qw,3)}, ${fx(qx,3)}, ${fx(qy,3)}, ${fx(qz,3)})`],
+      ["det R",fx(det,6)],["Z–Y–X angles recovered from R",ext,lock?["warn","gimbal lock"]:null]
+    ]);
+  }
+  let drag=null;
+  cv.addEventListener("pointerdown",e=>{ drag=[e.clientX,e.clientY]; try{cv.setPointerCapture(e.pointerId);}catch(_){} });
+  cv.addEventListener("pointermove",e=>{ if(!drag) return; az-=(e.clientX-drag[0])*0.01; el=clamp(el+(e.clientY-drag[1])*0.01,-1.45,1.45); drag=[e.clientX,e.clientY]; render(); });
+  ["pointerup","pointercancel"].forEach(t=>cv.addEventListener(t,()=>{ drag=null; }));
+  render(); return {render};
+});
+
+/* ================= 20 fk ================= */
+defineSim("fk",()=>{
+  const cv=$("cv-fk");
+  const c=controls("c-fk",[
+    {id:"t1",label:"θ₁",min:-180,max:180,step:1,value:30,fmt:v=>v.toFixed(0)+"°"},
+    {id:"t2",label:"θ₂",min:-180,max:180,step:1,value:45,fmt:v=>v.toFixed(0)+"°"},
+    {id:"t3",label:"θ₃",min:-180,max:180,step:1,value:-60,fmt:v=>v.toFixed(0)+"°"},
+    {id:"L1",label:"L₁",min:0.2,max:1.5,step:0.05,value:1,fmt:v=>fx(v,2)+" m"},
+    {id:"L2",label:"L₂",min:0.2,max:1.5,step:0.05,value:0.8,fmt:v=>fx(v,2)+" m"},
+    {id:"L3",label:"L₃",min:0.1,max:1,step:0.05,value:0.4,fmt:v=>fx(v,2)+" m"}
+  ],render);
+  function render(){
+    const v=c.vals, L=[v.L1,v.L2,v.L3], t=[v.t1,v.t2,v.t3].map(a=>a*D2R), sum=L[0]+L[1]+L[2];
+    const V=armFrame(cv,sum*1.08); if(!V) return; const {ctx,P,s}=V;
+    const inner=Math.max(0,2*Math.max(...L)-sum);
+    circleW(ctx,P,s,0,0,sum,"--scope-text"); if(inner>0) circleW(ctx,P,s,0,0,inner,"--scope-text");
+    const pts=[[0,0]]; let a=0, x=0, y=0; const fr=[[0,0,0]];
+    for(let i=0;i<3;i++){ a+=t[i]; x+=L[i]*Math.cos(a); y+=L[i]*Math.sin(a); pts.push([x,y]); fr.push([x,y,a]); }
+    drawChain(ctx,P,pts,"--ch1",6);
+    const al=sum*0.12;
+    fr.forEach(([fx0,fy0,fa],i)=>{ arrowW(ctx,P,fx0,fy0,al*Math.cos(fa),al*Math.sin(fa),"--ch3",1.8); arrowW(ctx,P,fx0,fy0,-al*Math.sin(fa),al*Math.cos(fa),"--ch5",1.8);
+      const [lx,ly]=P(fx0,fy0); ctx.fillStyle=cssVar("--scope-text"); ctx.font='11px "IBM Plex Mono", monospace'; ctx.fillText(String(i),lx+6,ly+14); });
+    const dh=[["i","a","α","d","θ"]].concat([0,1,2].map(i=>[String(i+1),fx(L[i],2),"0","0",fx(t[i]*R2D,0)+"°"]));
+    const T=[[Math.cos(a),-Math.sin(a),0,x],[Math.sin(a),Math.cos(a),0,y],[0,0,1,0],[0,0,0,1]];
+    readouts("ro-fk",[["DH table (standard)",matHTML(dh),null,true],["Tool transform T₀₃",matHTML(T,3),null,true],
+      ["Tool position",`(${fx(x,3)}, ${fx(y,3)}) m`],["Tool orientation φ",fx(wrapA(a)*R2D,1)+"°"],["Reach (radius)",fx(Math.hypot(x,y),3)+" m of "+fx(sum,2)]]);
+  }
+  render(); return {render};
+});
+
+/* ================= 21 jacobian ================= */
+function eig2s(a,b,d){ const tr=a+d, det=a*d-b*b, disc=Math.sqrt(Math.max(0,tr*tr/4-det)); const l1=tr/2+disc, l2=tr/2-disc; let v1=Math.abs(b)>1e-12?[l1-d,b]:(a>=d?[1,0]:[0,1]); const n=Math.hypot(v1[0],v1[1]); v1=[v1[0]/n,v1[1]/n]; return {l1,l2,v1,v2:[-v1[1],v1[0]]}; }
+defineSim("jacobian",()=>{
+  const cv=$("cv-jacobian");
+  const c=controls("c-jacobian",[
+    {id:"t1",label:"θ₁",min:-180,max:180,step:1,value:20,fmt:v=>v.toFixed(0)+"°"},
+    {id:"t2",label:"θ₂",min:-180,max:180,step:1,value:70,fmt:v=>v.toFixed(0)+"°"},
+    {id:"L1",label:"L₁",min:0.2,max:1.5,step:0.01,value:1,fmt:v=>fx(v,2)+" m"},
+    {id:"L2",label:"L₂",min:0.2,max:1.5,step:0.01,value:0.8,fmt:v=>fx(v,2)+" m"},
+    {id:"mode",type:"seg",label:"Ellipse",value:"vel",options:[{label:"Velocity",value:"vel"},{label:"Force",value:"force"}]}
+  ],render);
+  function render(){
+    const v=c.vals, q1=v.t1*D2R, q2=v.t2*D2R, ext=(v.L1+v.L2)*1.12;
+    const V=armFrame(cv,ext); if(!V) return; const {ctx,P,s}=V;
+    circleW(ctx,P,s,0,0,v.L1+v.L2,"--scope-text"); if(Math.abs(v.L1-v.L2)>0.01) circleW(ctx,P,s,0,0,Math.abs(v.L1-v.L2),"--scope-text");
+    const pts=fk2(q1,q2,v.L1,v.L2), J=J2(q1,q2,v.L1,v.L2);
+    const A=J[0][0]*J[0][0]+J[0][1]*J[0][1], B=J[0][0]*J[1][0]+J[0][1]*J[1][1], Dd=J[1][0]*J[1][0]+J[1][1]*J[1][1];
+    const E=eig2s(A,B,Dd), s1=Math.sqrt(Math.max(E.l1,0)), s2=Math.sqrt(Math.max(E.l2,0));
+    const scale=v.mode==="vel"?0.35:0.35*(v.L1*v.L2/(v.L1+v.L2));
+    let r1=v.mode==="vel"?s1*scale:scale/Math.max(s1,1e-6), r2=v.mode==="vel"?s2*scale:scale/Math.max(s2,1e-6);
+    const cap=ext*1.6; r1=Math.min(r1,cap); r2=Math.min(r2,cap);
+    const [tx,ty]=pts[2];
+    ctx.save(); ctx.strokeStyle=cssVar("--ch2"); ctx.fillStyle="rgba(60,207,226,.12)"; ctx.lineWidth=2; ctx.beginPath();
+    for(let k=0;k<=96;k++){ const a=k/96*TAU, x=tx+E.v1[0]*r1*Math.cos(a)+E.v2[0]*r2*Math.sin(a), y=ty+E.v1[1]*r1*Math.cos(a)+E.v2[1]*r2*Math.sin(a); const [px,py]=P(x,y); k?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+    ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    drawChain(ctx,P,pts,"--ch1",6); dotW(ctx,P,tx,ty,"--ch1",4);
+    const det=J[0][0]*J[1][1]-J[0][1]*J[1][0], w=s1*s2, kap=s2>1e-9?s1/s2:Infinity, near=Math.abs(det)<0.05*v.L1*v.L2;
+    readouts("ro-jacobian",[["Jacobian J",matHTML(J,3),null,true],["det J = L₁L₂ sin θ₂",fx(det,4),near?["bad","near singular"]:["good","well away"]],
+      ["Manipulability w",fx(w,4)],["Singular values σ₁, σ₂",fx(s1,3)+", "+fx(s2,3)],["Condition number κ",isFinite(kap)?fx(kap,2):"∞",chip(kap<2,kap<6,"well conditioned","lopsided","ill conditioned")],
+      ["Ellipse shown",v.mode==="vel"?"tool velocity for ‖q̇‖ = 1 rad/s":"tool force for ‖τ‖ = 1 N·m (display scaled)"]]);
+  }
+  render(); return {render};
+});
+
+/* ================= 22 ik + trajectories ================= */
+defineSim("ik",()=>{
+  const cv=$("cv-ik"); let q=[30*D2R,60*D2R], path=[], iters=0, res=0, lastInv=null;
+  const c=controls("c-ik",[
+    {id:"x",label:"Target x",min:-2,max:2,step:0.01,value:1.2,fmt:v=>fx(v,2)+" m"},
+    {id:"y",label:"Target y",min:-2,max:2,step:0.01,value:0.6,fmt:v=>fx(v,2)+" m"},
+    {id:"L1",label:"L₁",min:0.3,max:1.2,step:0.01,value:1,fmt:v=>fx(v,2)+" m"},
+    {id:"L2",label:"L₂",min:0.3,max:1.2,step:0.01,value:0.8,fmt:v=>fx(v,2)+" m"},
+    {id:"lam",label:"Damping λ",min:0.001,max:0.5,value:0.05,log:true,fmt:v=>fx(v,3)}
+  ],()=>{ solve(); render(); });
+  function solve(){
+    const {x,y,L1,L2,lam}=c.vals; path=[fk2(q[0],q[1],L1,L2)[2]]; iters=0;
+    for(let k=0;k<200;k++){
+      const p=fk2(q[0],q[1],L1,L2)[2], e=[x-p[0],y-p[1]]; res=Math.hypot(e[0],e[1]); if(res<1e-5) break;
+      const J=J2(q[0],q[1],L1,L2), a=J[0][0]*J[0][0]+J[0][1]*J[0][1]+lam*lam, b=J[0][0]*J[1][0]+J[0][1]*J[1][1], d=J[1][0]*J[1][0]+J[1][1]*J[1][1]+lam*lam, det=a*d-b*b;
+      const y0=(d*e[0]-b*e[1])/det, y1=(-b*e[0]+a*e[1])/det;
+      let dq=[J[0][0]*y0+J[1][0]*y1, J[0][1]*y0+J[1][1]*y1]; const n=Math.hypot(dq[0],dq[1]); if(n>0.5) dq=[dq[0]*0.5/n,dq[1]*0.5/n];
+      q=[wrapA(q[0]+dq[0]),wrapA(q[1]+dq[1])]; iters=k+1; path.push(fk2(q[0],q[1],L1,L2)[2]);
+    }
+    const p=fk2(q[0],q[1],L1,L2)[2]; res=Math.hypot(x-p[0],y-p[1]);
+  }
+  function render(){
+    const {x,y,L1,L2}=c.vals, ext=(L1+L2)*1.12; const V=armFrame(cv,ext); if(!V) return; const {ctx,P,s}=V; lastInv=V.inv;
+    circleW(ctx,P,s,0,0,L1+L2,"--scope-text"); circleW(ctx,P,s,0,0,Math.abs(L1-L2),"--scope-text");
+    const sol=ik2(x,y,L1,L2);
+    if(sol){ drawChain(ctx,P,fk2(sol[0][0],sol[0][1],L1,L2),"--ch2",3,.55); drawChain(ctx,P,fk2(sol[1][0],sol[1][1],L1,L2),"--ch3",3,.55); }
+    ctx.save(); ctx.strokeStyle=cssVar("--ch5"); ctx.lineWidth=1.3; ctx.beginPath(); path.forEach((p,i)=>{ const [a,b]=P(p[0],p[1]); i?ctx.lineTo(a,b):ctx.moveTo(a,b); }); ctx.stroke(); ctx.restore();
+    path.forEach(p=>dotW(ctx,P,p[0],p[1],"--ch5",1.8));
+    drawChain(ctx,P,fk2(q[0],q[1],L1,L2),"--ch1",6);
+    const [tx,ty]=P(x,y); ctx.strokeStyle=cssVar("--ch3"); ctx.lineWidth=2; ctx.beginPath(); ctx.arc(tx,ty,9,0,TAU); ctx.moveTo(tx-13,ty); ctx.lineTo(tx+13,ty); ctx.moveTo(tx,ty-13); ctx.lineTo(tx,ty+13); ctx.stroke();
+    readouts("ro-ik",[
+      ["Target",`(${fx(x,2)}, ${fx(y,2)}) m`,sol?["good","reachable"]:["bad","out of reach"]],
+      ["Analytic, θ₂ > 0",sol?`θ₁ ${fx(sol[0][0]*R2D,1)}°, θ₂ ${fx(sol[0][1]*R2D,1)}°`:"none"],
+      ["Analytic, θ₂ < 0",sol?`θ₁ ${fx(sol[1][0]*R2D,1)}°, θ₂ ${fx(sol[1][1]*R2D,1)}°`:"none"],
+      ["DLS result",`θ₁ ${fx(q[0]*R2D,1)}°, θ₂ ${fx(q[1]*R2D,1)}°`],["DLS iterations",String(iters),iters>=200?["warn","hit limit"]:null],["Residual error",eng(res,"m")]
+    ]);
+  }
+  dragOn(cv,()=>lastInv,(x,y)=>{ c.set("x",clamp(+x.toFixed(2),-2,2)); c.set("y",clamp(+y.toFixed(2),-2,2)); solve(); render(); });
+  solve(); render();
+
+  const cvT=$("cv-traj");
+  const t=controls("c-traj",[
+    {id:"D",label:"Joint move Δ",min:10,max:180,step:1,value:90,fmt:v=>v.toFixed(0)+"°"},
+    {id:"T",label:"Move time T",min:0.2,max:4,step:0.05,value:1,fmt:v=>fx(v,2)+" s"},
+    {id:"view",type:"seg",label:"Show",value:"acc",options:[{label:"Position",value:"pos"},{label:"Velocity",value:"vel"},{label:"Acceleration",value:"acc"}]}
+  ],trend);
+  function trend(){
+    const {D,T,view}=t.vals, ts=linspace(-0.1*T,1.1*T,400);
+    const cub=tt=>{ const s=clamp(tt/T,0,1), inn=tt>=0&&tt<=T; return view==="pos"?D*(3*s*s-2*s*s*s):view==="vel"?(inn?D/T*(6*s-6*s*s):0):(inn?D/(T*T)*(6-12*s):0); };
+    const qui=tt=>{ const s=clamp(tt/T,0,1), inn=tt>=0&&tt<=T; return view==="pos"?D*(10*s**3-15*s**4+6*s**5):view==="vel"?(inn?D/T*(30*s*s-60*s**3+30*s**4):0):(inn?D/(T*T)*(60*s-180*s*s+120*s**3):0); };
+    const yc=ts.map(cub), yq=ts.map(qui), lo=Math.min(...yc,...yq), hi=Math.max(...yc,...yq), pad=(hi-lo)*0.12||1;
+    const un=view==="pos"?"Position (°)":view==="vel"?"Velocity (°/s)":"Acceleration (°/s²)";
+    plot(cvT,{x:[-0.1*T,1.1*T],y:[lo-pad,hi+pad],xlabel:"Time (s)",ylabel:un,series:[{x:ts,y:yc,color:"--ch1"},{x:ts,y:yq,color:"--ch2"}]});
+    readouts("ro-traj",[["Peak velocity, cubic / quintic",fx(1.5*D/T,0)+" / "+fx(1.875*D/T,0)+" °/s"],["Peak acceleration, cubic / quintic",fx(6*D/T/T,0)+" / "+fx(10/Math.sqrt(3)*D/T/T,0)+" °/s²"],
+      ["Acceleration at t = 0⁺",fx(6*D/T/T,0)+" °/s² (cubic, a step) vs 0 (quintic)"]]);
+  }
+  trend();
+  return {render:()=>{ render(); trend(); }};
+});
+
+/* ================= 2-link dynamics ================= */
+function linkParams(m1,m2,L1,L2,mp=0){
+  const lc1=L1/2, I1=m1*L1*L1/12, lc2r=L2/2, I2r=m2*L2*L2/12, M2=m2+mp, lc2=(m2*lc2r+mp*L2)/M2;
+  const I2=I2r+m2*(lc2r-lc2)**2+mp*(L2-lc2)**2; return {m1,m2:M2,L1,L2,lc1,lc2,I1,I2,g:9.81};
+}
+function dyn2(p,q,dq){
+  const c2=Math.cos(q[1]), s2=Math.sin(q[1]);
+  const M11=p.m1*p.lc1**2+p.m2*(p.L1**2+p.lc2**2+2*p.L1*p.lc2*c2)+p.I1+p.I2, M12=p.m2*(p.lc2**2+p.L1*p.lc2*c2)+p.I2, M22=p.m2*p.lc2**2+p.I2;
+  const h=-p.m2*p.L1*p.lc2*s2, c1=Math.cos(q[0]), c12=Math.cos(q[0]+q[1]);
+  return {M:[[M11,M12],[M12,M22]], C:[h*(2*dq[0]*dq[1]+dq[1]**2), -h*dq[0]**2], G:[(p.m1*p.lc1+p.m2*p.L1)*p.g*c1+p.m2*p.lc2*p.g*c12, p.m2*p.lc2*p.g*c12]};
+}
+function acc2(p,q,dq,tau){ const {M,C,G}=dyn2(p,q,dq), r=[tau[0]-C[0]-G[0],tau[1]-C[1]-G[1]], det=M[0][0]*M[1][1]-M[0][1]**2; return [(M[1][1]*r[0]-M[0][1]*r[1])/det,(-M[0][1]*r[0]+M[0][0]*r[1])/det]; }
+function energy2(p,q,dq){ const {M}=dyn2(p,q,dq); const K=0.5*(M[0][0]*dq[0]**2+2*M[0][1]*dq[0]*dq[1]+M[1][1]*dq[1]**2); const P=p.m1*p.g*p.lc1*Math.sin(q[0])+p.m2*p.g*(p.L1*Math.sin(q[0])+p.lc2*Math.sin(q[0]+q[1])); return [K,P]; }
+
+/* ================= 23 robodyn ================= */
+defineSim("robodyn",()=>{
+  const cv=$("cv-robodyn"), L1=1, L2=0.8;
+  const c=controls("c-robodyn",[
+    {id:"m1",label:"Link 1 mass",min:0.5,max:10,step:0.1,value:3,fmt:v=>fx(v,1)+" kg"},
+    {id:"m2",label:"Link 2 mass",min:0.5,max:10,step:0.1,value:2,fmt:v=>fx(v,1)+" kg"},
+    {id:"b",label:"Joint damping",min:0,max:3,step:0.05,value:0,fmt:v=>fx(v,2)+" N·m·s/rad"},
+    {id:"q1",label:"Initial θ₁",min:-180,max:180,step:1,value:10,fmt:v=>v.toFixed(0)+"°"},
+    {id:"q2",label:"Initial θ₂",min:-180,max:180,step:1,value:30,fmt:v=>v.toFixed(0)+"°"}
+  ],()=>{ if(!playing) draw(); });
+  let p, q, dq, t, hist, trail, E0, playing=!reduceMotion, raf=0, last=0, lastRo=0;
+  function reset(){ const v=c.vals; p=linkParams(v.m1,v.m2,L1,L2); q=[v.q1*D2R,v.q2*D2R]; dq=[0,0]; t=0; hist=[]; trail=[]; const e=energy2(p,q,dq); E0=e[0]+e[1]; record(); draw(); ro(); }
+  function deriv(qq,dd){ const b=c.vals.b; return acc2(p,qq,dd,[-b*dd[0],-b*dd[1]]); }
+  function rk4(h){
+    const a1=deriv(q,dq);
+    const q2=[q[0]+dq[0]*h/2,q[1]+dq[1]*h/2], d2=[dq[0]+a1[0]*h/2,dq[1]+a1[1]*h/2], a2=deriv(q2,d2);
+    const q3=[q[0]+d2[0]*h/2,q[1]+d2[1]*h/2], d3=[dq[0]+a2[0]*h/2,dq[1]+a2[1]*h/2], a3=deriv(q3,d3);
+    const q4=[q[0]+d3[0]*h,q[1]+d3[1]*h], d4=[dq[0]+a3[0]*h,dq[1]+a3[1]*h], a4=deriv(q4,d4);
+    q=[q[0]+h/6*(dq[0]+2*d2[0]+2*d3[0]+d4[0]), q[1]+h/6*(dq[1]+2*d2[1]+2*d3[1]+d4[1])];
+    dq=[dq[0]+h/6*(a1[0]+2*a2[0]+2*a3[0]+a4[0]), dq[1]+h/6*(a1[1]+2*a2[1]+2*a3[1]+a4[1])]; t+=h;
+  }
+  function record(){ const e=energy2(p,q,dq); hist.push([t,e[0],e[1],e[0]+e[1]]); while(hist.length&&hist[0][0]<t-10) hist.shift(); trail.push(fk2(q[0],q[1],L1,L2)[2]); if(trail.length>500) trail.shift(); }
+  function draw(){
+    const pr=prepCanvas(cv); if(!pr) return; const {ctx,W,H}=pr, h1=Math.round(H*0.62);
+    const V=worldView(ctx,{x:0,y:0,w:W,h:h1},1.95);
+    ctx.save(); ctx.strokeStyle=cssVar("--ch3"); ctx.globalAlpha=.7; ctx.lineWidth=1.2; ctx.beginPath(); trail.forEach((pt,i)=>{ const [a,b]=V.P(pt[0],pt[1]); i?ctx.lineTo(a,b):ctx.moveTo(a,b); }); ctx.stroke(); ctx.restore();
+    drawChain(ctx,V.P,fk2(q[0],q[1],L1,L2),"--ch1",7);
+    const t0=Math.max(0,t-10), lo=Math.min(0,...hist.map(h=>Math.min(h[1],h[2],h[3]))), hi=Math.max(1,...hist.map(h=>Math.max(h[1],h[2],h[3]))), pad=(hi-lo)*0.08;
+    drawPlot(ctx,{x:0,y:h1,w:W,h:H-h1},{x:[t0,t0+10],y:[lo-pad,hi+pad],xlabel:"Time (s)",ylabel:"Energy (J)",
+      series:[{x:hist.map(h=>h[0]),y:hist.map(h=>h[1]),color:"--ch2",width:1.5},{x:hist.map(h=>h[0]),y:hist.map(h=>h[2]),color:"--ch5",width:1.5},{x:hist.map(h=>h[0]),y:hist.map(h=>h[3]),color:"--ch4",width:2.2}]});
+  }
+  function ro(){
+    const {M,G}=dyn2(p,q,dq), e=energy2(p,q,dq), drift=(e[0]+e[1]-E0)/Math.max(1e-9,Math.abs(E0)||1);
+    readouts("ro-robodyn",[["Inertia matrix M(q)",matHTML(M,3)+" kg·m²",null,true],["Gravity torques g(q)",`(${fx(G[0],2)}, ${fx(G[1],2)}) N·m`],
+      ["Joint angles",`${fx(wrapA(q[0])*R2D,0)}°, ${fx(wrapA(q[1])*R2D,0)}°`],["Kinetic / potential",`${fx(e[0],2)} / ${fx(e[1],2)} J`],
+      ["Total energy change",c.vals.b>0?fx(e[0]+e[1]-E0,3)+" J (damping removes energy)":fx(e[0]+e[1]-E0,6)+" J",c.vals.b>0?null:(Math.abs(e[0]+e[1]-E0)<1e-3*Math.max(1,Math.abs(E0))?["good","conserved"]:["warn","drifting"])]]);
+  }
+  function loop(ts){ if(!playing){ raf=0; return; } const dt=last?Math.min(0.05,(ts-last)/1000):0; last=ts; const n=Math.max(1,Math.round(dt/0.001)); for(let i=0;i<n;i++) rk4(dt/n); record(); draw(); if(ts-lastRo>150){ ro(); lastRo=ts; } raf=requestAnimationFrame(loop); }
+  function start(){ if(playing&&!raf){ last=0; raf=requestAnimationFrame(loop); } }
+  function stop(){ if(raf) cancelAnimationFrame(raf); raf=0; }
+  const pb=$("dyn-play"); const setPb=()=>{ pb.textContent=playing?"Pause":"Play"; };
+  pb.addEventListener("click",()=>{ playing=!playing; setPb(); if(playing) start(); else stop(); });
+  $("dyn-reset").addEventListener("click",()=>{ reset(); });
+  setPb(); reset();
+  return {render:draw,start,stop};
+});
+
+/* ================= 24 robocontrol ================= */
+function simCtrl(v){
+  const L1=1, L2=0.8, pn=linkParams(3,2,L1,L2,1), pa=linkParams(3,2,L1,L2,v.mp), C0=[1.1,0.3], r=0.3, w=TAU;
+  const xd=t=>[C0[0]+r*Math.cos(w*t),C0[1]+r*Math.sin(w*t)];
+  const qd=t=>{ const p=xd(t), s=ik2(p[0],p[1],L1,L2); return s[0]; };
+  const h=1e-4, dqd=t=>{ const a=qd(t+h),b=qd(t-h); return [wrapA(a[0]-b[0])/(2*h),wrapA(a[1]-b[1])/(2*h)]; };
+  const ddqd=t=>{ const a=qd(t+h),b=qd(t-h),c=qd(t); return [wrapA(a[0]-2*c[0]+b[0])/(h*h),wrapA(a[1]-2*c[1]+b[1])/(h*h)]; };
+  const wn=v.wn, Mn=dyn2(pn,qd(0),[0,0]).M, Kp=[Mn[0][0]*wn*wn,Mn[1][1]*wn*wn], Kd=[Mn[0][0]*2*wn,Mn[1][1]*2*wn];
+  let q=qd(0).slice(), dq=dqd(0), tau=[0,0]; const dt=1e-4, T=2, out={x:[],y:[],t:[],e:[]}; let tmax=[0,0], sat=0, n=0, bad=false;
+  for(let i=0;i<=T/dt;i++){
+    const t=i*dt;
+    if(i%10===0){
+      const qq=qd(t), e=[wrapA(qq[0]-q[0]),wrapA(qq[1]-q[1])], dd=dqd(t), de=[dd[0]-dq[0],dd[1]-dq[1]];
+      if(v.mode==="ct"){ const a=ddqd(t), u=[a[0]+2*wn*de[0]+wn*wn*e[0], a[1]+2*wn*de[1]+wn*wn*e[1]], {M,C,G}=dyn2(pn,q,dq); tau=[M[0][0]*u[0]+M[0][1]*u[1]+C[0]+G[0], M[1][0]*u[0]+M[1][1]*u[1]+C[1]+G[1]]; }
+      else { const G=v.mode==="pdg"?dyn2(pn,q,dq).G:[0,0]; tau=[Kp[0]*e[0]+Kd[0]*de[0]+G[0], Kp[1]*e[1]+Kd[1]*de[1]+G[1]]; }
+      const ts=tau.map(x=>clamp(x,-200,200)); if(ts[0]!==tau[0]||ts[1]!==tau[1]) sat++; n++; tau=ts;
+      tmax=[Math.max(tmax[0],Math.abs(tau[0])),Math.max(tmax[1],Math.abs(tau[1]))];
+    }
+    const a=acc2(pa,q,dq,tau); dq=[dq[0]+a[0]*dt,dq[1]+a[1]*dt]; q=[q[0]+dq[0]*dt,q[1]+dq[1]*dt];
+    if(!isFinite(q[0])||Math.abs(dq[0])>500){ bad=true; break; }
+    if(i%40===0){ const p=fk2(q[0],q[1],L1,L2)[2], d=xd(t); out.x.push(p[0]); out.y.push(p[1]); out.t.push(t); out.e.push(Math.hypot(p[0]-d[0],p[1]-d[1])*1000); }
+  }
+  out.q=q; out.tmax=tmax; out.sat=sat/Math.max(1,n); out.bad=bad; out.C0=C0; out.r=r; return out;
+}
+defineSim("robocontrol",()=>{
+  const cv=$("cv-robocontrol");
+  const c=controls("c-robocontrol",[
+    {id:"mode",type:"seg",label:"Controller",value:"pd",options:[{label:"PD only",value:"pd"},{label:"PD + gravity",value:"pdg"},{label:"Computed torque",value:"ct"}]},
+    {id:"wn",label:"Bandwidth ω_n",min:3,max:40,step:0.5,value:15,fmt:v=>fx(v,1)+" rad/s"},
+    {id:"mp",label:"Actual payload (model assumes 1 kg)",min:0,max:5,step:0.1,value:1,fmt:v=>fx(v,1)+" kg"}
+  ],render);
+  function render(){
+    const o=simCtrl(c.vals), pr=prepCanvas(cv); if(!pr) return; const {ctx,W,H}=pr, h1=Math.round(H*0.62);
+    const V=worldView(ctx,{x:0,y:0,w:W,h:h1},1.1,0.8,0.35);
+    ctx.save(); ctx.strokeStyle=cssVar("--ch5"); ctx.setLineDash([5,4]); ctx.lineWidth=1.5; const [cx,cy]=V.P(o.C0[0],o.C0[1]); ctx.beginPath(); ctx.arc(cx,cy,o.r*V.s,0,TAU); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=cssVar("--ch1"); ctx.lineWidth=1.6; ctx.beginPath(); o.x.forEach((x,i)=>{ const [a,b]=V.P(x,o.y[i]); i?ctx.lineTo(a,b):ctx.moveTo(a,b); }); ctx.stroke(); ctx.restore();
+    if(!o.bad) drawChain(ctx,V.P,fk2(o.q[0],o.q[1],1,0.8),"--ch1",5,.85);
+    const emax=Math.max(1,...o.e);
+    drawPlot(ctx,{x:0,y:h1,w:W,h:H-h1},{x:[0,2],y:[0,emax*1.1],xlabel:"Time (s)",ylabel:"Error (mm)",series:[{x:o.t,y:o.e,color:"--ch2"}]});
+    const lap2=o.e.filter((_,i)=>o.t[i]>=1), rms=Math.sqrt(lap2.reduce((s,x)=>s+x*x,0)/Math.max(1,lap2.length));
+    readouts("ro-robocontrol",[["RMS error, second lap",o.bad?"—":fx(rms,1)+" mm",o.bad?["bad","unstable"]:chip(rms<2,rms<15,"tight","moderate","large")],["Max error",fx(Math.max(...lap2),1)+" mm"],
+      ["Peak torques",`${fx(o.tmax[0],0)} / ${fx(o.tmax[1],0)} N·m`],["Time at torque limit",fx(o.sat*100,0)+" %",o.sat>0.01?["warn","saturating"]:null]]);
+  }
+  render();
+
+  const ci=$("cv-imp");
+  const im=controls("c-imp",[
+    {id:"mode",type:"seg",label:"Controller",value:"imp",options:[{label:"Stiff position (K = 100 kN/m)",value:"stiff"},{label:"Impedance",value:"imp"}]},
+    {id:"K",label:"Impedance stiffness K",min:100,max:20000,value:1000,log:true,fmt:v=>eng(v,"N/m")},
+    {id:"z",label:"Damping ratio ζ",min:0.2,max:1.5,step:0.05,value:0.7,fmt:v=>fx(v,2)},
+    {id:"kw",label:"Wall stiffness",min:1e3,max:1e6,value:1e5,log:true,fmt:v=>eng(v,"N/m")}
+  ],irender);
+  function irender(){
+    const v=im.vals, m=2, xw=0.05, K=v.mode==="stiff"?1e5:v.K, D=2*v.z*Math.sqrt(K*m), cw=2*0.05*Math.sqrt(v.kw*m);
+    const dt=Math.min(2e-5,0.05/Math.sqrt(Math.max(K,v.kw)/m)), T=1.2; let x=0, xv=0; const out={t:[],x:[],f:[]}; let fpk=0;
+    const xdF=t=>{ const s=clamp(t/0.4,0,1); return 0.06*(10*s**3-15*s**4+6*s**5); }, vdF=t=>{ const s=clamp(t/0.4,0,1); return t>0.4?0:0.06/0.4*(30*s*s-60*s**3+30*s**4); };
+    const N=Math.round(T/dt), rec=Math.max(1,Math.round(N/1200));
+    for(let i=0;i<=N;i++){ const t=i*dt, pen=x-xw, fw=pen>0?Math.max(0,v.kw*pen+cw*xv):0; const F=K*(xdF(t)-x)+D*(vdF(t)-xv)-fw; xv+=F/m*dt; x+=xv*dt; fpk=Math.max(fpk,fw); if(i%rec===0){ out.t.push(t); out.x.push(x*1000); out.f.push(fw); } }
+    const fss=out.f[out.f.length-1], pred=K*v.kw*0.01/(K+v.kw), ftop=Math.max(fpk,1)*1.15;
+    plot(ci,{x:[0,T],y:[0,80],y2:[0,ftop],xlabel:"Time (s)",ylabel:"Position (mm)",y2label:"Force (N)",ycolor:"--ch1",y2color:"--ch2",
+      series:[{x:out.t,y:out.x,color:"--ch1"},{x:out.t,y:out.f,color:"--ch2",axis:2}],hlines:[{y:50,color:"--ch3",label:"wall",left:true},{y:60,color:"--ch5",dash:[2,4],label:"command",left:true}]});
+    readouts("ro-imp",[["Steady contact force",eng(fss,"N")],["Predicted K·k_w·δ/(K + k_w)",eng(pred,"N")],["Peak contact force",eng(fpk,"N"),chip(fpk<50,fpk<500,"gentle","firm","hard hit")],["Penetration into wall",eng(Math.max(0,out.x[out.x.length-1]/1000-0.05),"m")]]);
+  }
+  irender();
+  return {render:()=>{ render(); irender(); }};
+});
+
+/* ================= 25 tendons ================= */
+defineSim("tendons",()=>{
+  const cv=$("cv-tendons");
+  const c=controls("c-tendons",[
+    {id:"mu",label:"Friction coefficient μ",min:0.02,max:0.3,step:0.01,value:0.1,fmt:v=>fx(v,2)},
+    {id:"wrap",label:"Total sliding wrap",min:0,max:720,step:10,value:360,fmt:v=>v.toFixed(0)+"°"},
+    {id:"tau",label:"Joint torque",min:0.1,max:10,step:0.1,value:1,fmt:v=>fx(v,1)+" N·m"},
+    {id:"r",label:"Joint pulley radius",min:3,max:40,step:1,value:10,fmt:v=>v.toFixed(0)+" mm"},
+    {id:"T0",label:"Pretension per cable",min:0,max:1000,step:5,value:150,fmt:v=>v.toFixed(0)+" N"},
+    {id:"EA",label:"Cable stiffness EA",min:1,max:200,value:10,log:true,fmt:v=>fx(v,v<10?1:0)+" kN"},
+    {id:"L",label:"Cable route length",min:100,max:2000,step:10,value:500,fmt:v=>v.toFixed(0)+" mm"}
+  ],render);
+  function render(){
+    const v=c.vals, r=v.r/1000, th=v.wrap*D2R, Tj=v.T0+v.tau/(2*r), Tslack=v.T0-v.tau/(2*r);
+    const Tdrive=Tj*Math.exp(v.mu*th), Tback=Tj*Math.exp(-v.mu*th);
+    const xs=linspace(0,v.wrap,120), yd=xs.map(a=>Tdrive*Math.exp(-v.mu*a*D2R)), yb=xs.map(a=>Tj*Math.exp(-v.mu*(v.wrap-a)*D2R));
+    plot(cv,{x:[0,Math.max(v.wrap,10)],y:[0,Math.max(Tdrive,1)*1.15],xlabel:"Wrap angle along route, motor → joint (°)",ylabel:"Taut-cable tension (N)",
+      series:[{x:xs,y:yd,color:"--ch1"},{x:xs,y:yb,color:"--ch2"}],hlines:[{y:Tj,color:"--scope-text",label:"tension needed at joint",left:true}]});
+    const k=v.EA*1000/(v.L/1000), kth=2*k*r*r, dT=Tdrive-Tback, hyst=dT*(v.L/1000)/(2*v.EA*1000)/r*R2D;
+    readouts("ro-tendons",[["Taut-side tension at joint",fx(Tj,0)+" N"],["Motor-side tension when driving",fx(Tdrive,0)+" N"],["When back-driven",fx(Tback,0)+" N"],
+      ["Transmission efficiency",fx(100*Math.exp(-v.mu*th),0)+" %",chip(Math.exp(-v.mu*th)>0.8,Math.exp(-v.mu*th)>0.6,"good","lossy","very lossy")],
+      ["Slack-side tension",fx(Tslack,0)+" N",chip(Tslack>0.2*v.T0&&Tslack>0,Tslack>0,"taut","marginal","slack: control lost")],["Minimum pretension",fx(v.tau/(2*r),0)+" N"],
+      ["Joint stiffness 2kr²",fx(kth,1)+" N·m/rad ("+fx(kth*D2R,2)+" N·m/°)"],["Rough hysteresis band",fx(hyst,2)+"° at the joint"]]);
+  }
+  render(); return {render};
+});
+
+/* ================= 26 compliant ================= */
+defineSim("compliant",()=>{
+  const cv=$("cv-compliant");
+  const c=controls("c-compliant",[
+    {id:"m",label:"Reflected mass m_r",min:1,max:500,value:50,log:true,fmt:v=>fx(v,v<10?1:0)+" kg"},
+    {id:"k",label:"Series spring k",min:1,max:1000,value:50,log:true,fmt:v=>fx(v,v<10?1:0)+" N/mm"},
+    {id:"ke",label:"Obstacle stiffness",min:10,max:100000,value:10000,log:true,fmt:v=>eng(v*1000,"N/m")},
+    {id:"v",label:"Impact speed",min:0.05,max:2,step:0.05,value:0.5,fmt:v=>fx(v,2)+" m/s"}
+  ],render);
+  function render(){
+    const v=c.vals, m=v.m, k=v.k*1000, ke=v.ke*1000, b=2*0.05*Math.sqrt(k*m), fs=logspace(0.1,1000,300);
+    const zr=f=>{ const w=TAU*f; return Math.hypot(b,w*m); };
+    const zs=f=>{ const w=TAU*f, Zm=[b,w*m], Zk=[0,-k/w], num=[Zm[0]*Zk[0]-Zm[1]*Zk[1],Zm[0]*Zk[1]+Zm[1]*Zk[0]], den=[Zm[0]+Zk[0],Zm[1]+Zk[1]]; return Math.hypot(num[0],num[1])/Math.hypot(den[0],den[1]); };
+    const yr=fs.map(zr), ysv=fs.map(zs), all=yr.concat(ysv), lo=Math.pow(10,Math.floor(Math.log10(Math.min(...all)))), hi=Math.pow(10,Math.ceil(Math.log10(Math.max(...all))));
+    const fc=Math.sqrt(k/m)/TAU;
+    plot(cv,{x:[0.1,1000],logx:true,logy:true,y:[lo,hi],xlabel:"Frequency (Hz)",ylabel:"|Z| (N·s/m)",series:[{x:fs,y:yr,color:"--ch1"},{x:fs,y:ysv,color:"--ch2"}],vlines:[{x:clamp(fc,0.1,1000),color:"--ch5",label:"√(k/m_r)"}]});
+    const Fr=v.v*Math.sqrt(m*ke), keff=k*ke/(k+ke), Fs=v.v*Math.sqrt(m*keff);
+    readouts("ro-compliant",[["Spring takeover frequency",eng(fc,"Hz")],["Impact force, rigid drive",eng(Fr,"N")],["Impact force, series elastic",eng(Fs,"N")],["Reduction",fx(Fr/Fs,1)+" ×"],["Force resolution (1 µm deflection sensing)",eng(k*1e-6,"N")]]);
+  }
+  render(); return {render};
+});
+
+/* ================= 27 teleop ================= */
+function simTeleop(v){
+  const ml=0.5, mf=1, kh=800, bh=20, bf=2, xw=0.05, ke=v.ke, Kc=v.Kc, Bc=v.Bc, dt=1e-4, T=4, nd=Math.round(v.Td/1000/dt);
+  const hand=t=>{ const ramp=(a,b,t)=>{ const s=clamp((t-a)/(b-a),0,1); return 10*s**3-15*s**4+6*s**5; }; return 0.08*(ramp(0.2,1.2,t)-ramp(2.6,3.6,t)); };
+  const bufX=new Float64Array(nd+1), bufV=new Float64Array(nd+1), bufXf=new Float64Array(nd+1), bufVf=new Float64Array(nd+1);
+  let xl=0,vl=0,xf=0,vf=0,bi=0; const out={t:[],xl:[],xf:[],fe:[],fh:[]}; let bad=false, ph=0;
+  for(let i=0;i<=T/dt;i++){
+    const t=i*dt; bufX[bi]=xl; bufV[bi]=vl; bufXf[bi]=xf; bufVf[bi]=vf; const j=(bi+1)%(nd+1);
+    const xlD=nd?bufX[j]:xl, vlD=nd?bufV[j]:vl, xfD=nd?bufXf[j]:xf, vfD=nd?bufVf[j]:vf; bi=j;
+    const xh=hand(t), vh=(hand(t+1e-4)-hand(t-1e-4))/2e-4;
+    const Fh=kh*(xh-xl)+bh*(vh-vl), Fcl=Kc*(xfD-xl)+Bc*(vfD-vl), Fcf=Kc*(xlD-xf)+Bc*(vlD-vf);
+    const pen=xf-xw, Fe=pen>0?Math.max(0,ke*pen+2*0.05*Math.sqrt(ke*mf)*vf):0;
+    vl+=(Fh+Fcl)/ml*dt; xl+=vl*dt; vf+=(Fcf-Fe-bf*vf)/mf*dt; xf+=vf*dt;
+    if(!isFinite(xl)||Math.abs(xl)>1){ bad=true; break; }
+    if(i%40===0){ out.t.push(t); out.xl.push(xl*1000); out.xf.push(xf*1000); out.fe.push(Fe); out.fh.push(Fh); }
+  }
+  out.bad=bad; return out;
+}
+defineSim("teleop",()=>{
+  const cv=$("cv-teleop");
+  const c=controls("c-teleop",[
+    {id:"Td",label:"One-way delay",min:0,max:100,step:1,value:10,fmt:v=>v.toFixed(0)+" ms"},
+    {id:"Kc",label:"Coupling stiffness K_c",min:100,max:5000,value:3000,log:true,fmt:v=>eng(v,"N/m")},
+    {id:"Bc",label:"Coupling damping B_c",min:0,max:80,step:1,value:10,fmt:v=>v.toFixed(0)+" N·s/m"},
+    {id:"ke",label:"Wall stiffness",min:1000,max:100000,value:5000,log:true,fmt:v=>eng(v,"N/m")}
+  ],render);
+  function render(){
+    const o=simTeleop(c.vals);
+    const fmax=Math.max(5,...o.fe,...o.fh.map(Math.abs))*1.15;
+    plot(cv,{x:[0,4],y:[-10,110],y2:[-fmax*0.1,fmax],xlabel:"Time (s)",ylabel:"Position (mm)",y2label:"Force (N)",ycolor:"--ch1",y2color:"--ch3",
+      series:[{x:o.t,y:o.xl,color:"--ch1"},{x:o.t,y:o.xf,color:"--ch2"},{x:o.t,y:o.fe,color:"--ch3",axis:2,width:1.4},{x:o.t,y:o.fh,color:"--ch5",axis:2,width:1.4}],
+      hlines:[{y:50,color:"--scope-text",label:"wall",left:true}]});
+    const idx=o.t.map((t,i)=>i).filter(i=>o.t[i]>=1.8&&o.t[i]<=2.5), fe=idx.map(i=>o.fe[i]), fh=idx.map(i=>o.fh[i]);
+    const mean=a=>a.reduce((s,x)=>s+x,0)/Math.max(1,a.length), sd=a=>{ const m=mean(a); return Math.sqrt(mean(a.map(x=>(x-m)**2))); };
+    const osc=fe.length&&mean(fe)>1?sd(fe)/mean(fe):0, lag=Math.max(0,...o.t.map((t,i)=>t<0.9?Math.abs(o.xl[i]-o.xf[i]):0));
+    readouts("ro-teleop",[["Contact behavior",o.bad?"diverged":(osc>0.1?"oscillating":"steady"),o.bad?["bad","unstable"]:chip(osc<0.03,osc<0.1,"stable","ringing","chattering")],
+      ["Peak contact force",eng(Math.max(...o.fe),"N")],["Holding: contact / felt force",`${fx(mean(fe),1)} / ${fx(mean(fh),1)} N`],["Free-motion lag (leader − follower)",fx(lag,1)+" mm"],["Round-trip delay",fx(2*c.vals.Td,0)+" ms"]]);
+  }
+  render(); return {render};
+});
+
+/* ================= 28 parallel ================= */
+defineSim("parallel",()=>{
+  const cv=$("cv-parallel"); let lastInv=null, reach=true;
+  const c=controls("c-parallel",[
+    {id:"x",label:"Tool x",min:-0.6,max:0.6,step:0.005,value:0,fmt:v=>fx(v*1000,0)+" mm"},
+    {id:"y",label:"Tool y",min:-0.2,max:0.8,step:0.005,value:0.42,fmt:v=>fx(v*1000,0)+" mm"},
+    {id:"b",label:"Base half-spacing",min:0.05,max:0.3,step:0.005,value:0.12,fmt:v=>fx(v*1000,0)+" mm"},
+    {id:"L1",label:"Proximal link L₁",min:0.1,max:0.5,step:0.005,value:0.25,fmt:v=>fx(v*1000,0)+" mm"},
+    {id:"L2",label:"Distal link L₂",min:0.1,max:0.6,step:0.005,value:0.35,fmt:v=>fx(v*1000,0)+" mm"},
+    {id:"m1",type:"seg",label:"Left leg mode",value:1,options:[{label:"Elbow out",value:1},{label:"Elbow in",value:-1}]},
+    {id:"m2",type:"seg",label:"Right leg mode",value:-1,options:[{label:"Elbow in",value:1},{label:"Elbow out",value:-1}]}
+  ],render);
+  function leg(bx,p,L1,L2,mode){ const dx=p[0]-bx, dy=p[1], d=Math.hypot(dx,dy); const cg=(L1*L1+d*d-L2*L2)/(2*L1*d); if(Math.abs(cg)>1||d<1e-9) return null; const q=Math.atan2(dy,dx)+mode*Math.acos(cg); return {q,c:[bx+L1*Math.cos(q),L1*Math.sin(q)]}; }
+  function render(){
+    const v=c.vals, p=[v.x,v.y], ext=Math.max(0.5,v.b+v.L1+v.L2)*1.05;
+    const V=armFrame(cv,ext,0,ext*0.55); if(!V) return; const {ctx,P,s}=V; lastInv=V.inv;
+    [-v.b,v.b].forEach(bx=>{ circleW(ctx,P,s,bx,0,v.L1+v.L2,"--scope-text",[3,5]); if(Math.abs(v.L1-v.L2)>0.005) circleW(ctx,P,s,bx,0,Math.abs(v.L1-v.L2),"--scope-text",[3,5]); });
+    const A=leg(-v.b,p,v.L1,v.L2,v.m1), B=leg(v.b,p,v.L1,v.L2,v.m2); reach=!!(A&&B);
+    ctx.save(); ctx.strokeStyle=cssVar("--scope-text"); ctx.lineWidth=2; const [b0x,b0y]=P(-v.b-0.04,0),[b1x]=P(v.b+0.04,0); ctx.beginPath(); ctx.moveTo(b0x,b0y+8); ctx.lineTo(b1x,b0y+8); ctx.stroke(); ctx.restore();
+    if(A) drawChain(ctx,P,[[-v.b,0],A.c,p],"--ch1",5); if(B) drawChain(ctx,P,[[v.b,0],B.c,p],"--ch2",5);
+    dotW(ctx,P,p[0],p[1],"--ch3",6);
+    if(!reach){ readouts("ro-parallel",[["Tool point",`(${fx(p[0]*1000,0)}, ${fx(p[1]*1000,0)}) mm`,["bad","out of reach"]],["Hint","Move inside both legs' reach circles"]]); return; }
+    const u1=[p[0]-A.c[0],p[1]-A.c[1]], u2=[p[0]-B.c[0],p[1]-B.c[1]];
+    const detA=(u1[0]*u2[1]-u1[1]*u2[0])/(v.L2*v.L2);
+    const bii=(L,q,u)=>(u[0]*(-Math.sin(q))+u[1]*Math.cos(q))*L, B1=bii(v.L1,A.q,u1)/(v.L1*v.L2), B2=bii(v.L1,B.q,u2)/(v.L1*v.L2);
+    const ch=x=>chip(Math.abs(x)>0.25,Math.abs(x)>0.1,"clear","approaching","near singular");
+    readouts("ro-parallel",[["Motor angles q₁, q₂",`${fx(A.q*R2D,1)}°, ${fx(B.q*R2D,1)}°`],["Type II indicator det A (normalized)",fx(detA,3),ch(detA)],
+      ["Type I, left leg B₁₁",fx(B1,3),ch(B1)],["Type I, right leg B₂₂",fx(B2,3),ch(B2)],["Tool point",`(${fx(p[0]*1000,0)}, ${fx(p[1]*1000,0)}) mm`]]);
+  }
+  dragOn(cv,()=>lastInv,(x,y)=>{ c.set("x",clamp(+x.toFixed(3),-0.6,0.6)); c.set("y",clamp(+y.toFixed(3),-0.2,0.8)); render(); });
+  render(); return {render};
 });
 /* ================= init ================= */
 buildNav(); refreshProgress(); route();
