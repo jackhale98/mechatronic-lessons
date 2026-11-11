@@ -97,11 +97,16 @@ main{min-width:0}
   .topbar{display:flex;align-items:center;gap:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--surface);border-bottom:1px solid var(--line);
     padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px}
   .app{display:block;padding-block:22px 64px}
-  .rail{position:static;display:none;max-height:none;overflow:visible;padding:4px 0 20px;margin-bottom:22px;border-bottom:2px solid var(--ink)}
-  .rail.open{display:block}
-  .rail .brand{display:none}
-  .menu-btn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+  .rail{position:fixed;top:0;left:0;height:100vh;height:100dvh;max-height:none;width:min(86vw,320px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+    z-index:55;background:var(--surface);border-right:1px solid var(--line);transform:translateX(-105%);visibility:hidden;transition:transform .22s ease,visibility 0s linear .22s;
+    padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(24px + env(safe-area-inset-bottom,0px)) calc(14px + env(safe-area-inset-left,0px))}
+  .rail.open{transform:none;visibility:visible;transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.28)}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(10,14,16,.45);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+  .scrim.on{opacity:1;pointer-events:auto}
+  .drawer-close{display:inline-flex}
 }
+.drawer-close{display:none;align-self:flex-end;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 10px;font-size:.84rem;cursor:pointer;margin-bottom:6px}
+@media (prefers-reduced-motion: reduce){ .rail{transition:none!important} }
 @media (prefers-reduced-motion: reduce){ .rail,.scrim,.prog .bar i{transition:none} }
 
 /* ---------- module typography ---------- */
@@ -281,6 +286,7 @@ pre.code .c{color:#7f948f}
 
 <div class="app">
   <nav class="rail" id="rail" aria-label="Course modules">
+    <button class="drawer-close" id="drawerClose" type="button" aria-label="Close module list">Close ✕</button>
     <div class="brand">
       <a href="#start"><span class="name">Mechatronic Lessons</span></a>
       <span class="sub">Electromechanical systems, from the shaft outward</span>
@@ -2015,7 +2021,22 @@ function refreshProgress(){
 
 /* ================= router & drawer ================= */
 const rail=$("rail"), scrim=$("scrim"), menuBtn=$("menuBtn");
-function openDrawer(on){ rail.classList.toggle("open",on); scrim.classList.toggle("on",on); menuBtn.setAttribute("aria-expanded",String(on)); menuBtn.lastChild.textContent=on?" Close":" Modules"; if(on) window.scrollTo(0,0); }
+const mobileNav=window.matchMedia("(max-width:959px)"); let lockY=0, locked=false;
+function lockBody(on){
+  const b=document.body.style;
+  if(on&&!locked){ lockY=window.scrollY; b.position="fixed"; b.top=(-lockY)+"px"; b.left="0"; b.right="0"; b.width="100%"; locked=true; }
+  else if(!on&&locked){ b.position=b.top=b.left=b.right=b.width=""; window.scrollTo(0,lockY); locked=false; }
+}
+function openDrawer(on){
+  if(on && !mobileNav.matches) return;
+  if(on===rail.classList.contains("open")) return;
+  rail.classList.toggle("open",on); scrim.classList.toggle("on",on); menuBtn.setAttribute("aria-expanded",String(on));
+  lockBody(on);
+  if(on){ const a=rail.querySelector(".nav-item.active"); rail.scrollTop = a ? Math.max(0,a.offsetTop-rail.clientHeight/3) : 0; (a||$("drawerClose")).focus({preventScroll:true}); }
+  else menuBtn.focus({preventScroll:true});
+}
+$("drawerClose").addEventListener("click",()=>openDrawer(false));
+mobileNav.addEventListener&&mobileNav.addEventListener("change",()=>{ if(!mobileNav.matches) openDrawer(false); });
 menuBtn.addEventListener("click",()=>openDrawer(!rail.classList.contains("open")));
 scrim.addEventListener("click",()=>openDrawer(false));
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") openDrawer(false); });
